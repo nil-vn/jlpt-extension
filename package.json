@@ -10,14 +10,18 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
+    "@lucide/svelte": "^1.16.0",
+    "bits-ui": "^2.18.1",
+    "clsx": "^2.1.1",
     "svelte": "latest",
+    "tailwind-merge": "^3.6.0",
     "vite": "latest"
   },
   "devDependencies": {
-    "@types/chrome": "latest",
-    "svelte-check": "latest",
-    "typescript": "latest",
     "@sveltejs/vite-plugin-svelte": "latest",
-    "@types/node": "latest"
+    "@types/chrome": "latest",
+    "@types/node": "latest",
+    "svelte-check": "latest",
+    "typescript": "latest"
   }
 }

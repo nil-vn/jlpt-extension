@@ -1,7 +1,11 @@
 <script lang="ts">
+  import { Bell, BookOpenCheck, CheckCircle2, Database, FileJson, Info, RotateCcw, Settings2, Shuffle, SlidersHorizontal, SunMoon, Target, UploadCloud } from '@lucide/svelte';
   import { onMount } from 'svelte';
   import '../app.css';
   import { LevelSelector } from '../lib/components';
+  import { Badge } from '../lib/components/ui/badge';
+  import { Button } from '../lib/components/ui/button';
+  import { Card } from '../lib/components/ui/card';
   import { levelDescriptions } from '../lib/data';
   import { validateDataset, type DatasetValidationError } from '../lib/data/dataset-validator';
   import {
@@ -248,33 +252,38 @@
 </script>
 
 <main class="app-shell options-shell">
-  <section class="hero">
+  <section class="hero options-hero">
+    <Badge class="hero__eyebrow" variant="outline"><Settings2 size={14} /> Control center</Badge>
     <h1>Study settings</h1>
     <p>Tune your extension defaults for daily JLPT practice. All options are saved in chrome.storage.local.</p>
   </section>
 
   {#if isLoading}
-    <section class="panel empty-state">
+    <Card class="empty-state">
       <h2>Đang tải cài đặt…</h2>
       <p>Vui lòng chờ trong giây lát.</p>
-    </section>
+    </Card>
   {:else}
-    <section class="panel settings-grid">
+    <Card class="settings-grid">
       <div class="section-heading">
         <div>
-          <h2>Dataset</h2>
+          <h2><Database size={20} /> Dataset</h2>
           <p>Nạp file JSON flashcard. Card chỉ được lưu khi đủ field và không có lỗi validation.</p>
         </div>
-        <button class="secondary-button compact-button" type="button" on:click={resetDataset}>Reset dataset</button>
+        <Button class="compact-button" variant="outline" on:click={resetDataset}><RotateCcw size={16} /> Reset dataset</Button>
       </div>
 
-      <label class="setting-row">
-        <span>JSON file</span>
-        <input accept="application/json,.json" type="file" on:change={handleDatasetFile} />
-      </label>
+      <div class="setting-row">
+        <span><FileJson size={16} /> JSON file</span>
+        <label class="file-dropzone">
+          <UploadCloud size={24} />
+          <span>Chọn hoặc kéo thả file JSON flashcard</span>
+          <input accept="application/json,.json" type="file" on:change={handleDatasetFile} />
+        </label>
+      </div>
 
       <div class:status-card={true} class:status-card--error={validation.status === 'invalid'}>
-        <strong>{validation.fileName ?? 'Dataset status'}</strong>
+        <strong><CheckCircle2 size={16} /> {validation.fileName ?? 'Dataset status'}</strong>
         <p>{validation.message}</p>
         <p>{validation.validCount} card hợp lệ · {validation.invalidCount} lỗi validation · {dataset.length} card đang lưu</p>
         {#if validation.errors.length > 0}
@@ -288,11 +297,11 @@
           {/if}
         {/if}
       </div>
-    </section>
+    </Card>
 
-    <section class="panel settings-grid">
+    <Card class="settings-grid">
       <div class="section-heading">
-        <h2>Study mode</h2>
+        <h2><Shuffle size={20} /> Study mode</h2>
       </div>
 
       <label class="radio-row">
@@ -316,11 +325,11 @@
         />
         <span>Sequential</span>
       </label>
-    </section>
+    </Card>
 
-    <section class="panel settings-grid">
+    <Card class="settings-grid">
       <div class="section-heading">
-        <h2>Notifications</h2>
+        <h2><Bell size={20} /> Notifications</h2>
       </div>
 
       <label class="switch-row">
@@ -361,11 +370,11 @@
         Chrome Notifications API không đảm bảo thời lượng hiển thị cố định; hệ điều hành có thể tự quyết định.
         MVP lưu giá trị duration để service worker có thể dùng làm hint hoặc tự clear notification khi phù hợp.
       </p>
-    </section>
+    </Card>
 
-    <section class="panel settings-grid">
+    <Card class="settings-grid">
       <div class="section-heading">
-        <h2>Appearance</h2>
+        <h2><SunMoon size={20} /> Appearance</h2>
       </div>
 
       <label class="setting-row">
@@ -376,19 +385,19 @@
           <option value="system">System</option>
         </select>
       </label>
-    </section>
+    </Card>
 
-    <section class="panel settings-grid">
+    <Card class="settings-grid">
       <div class="section-heading">
         <div>
-          <h2>General settings</h2>
+          <h2><SlidersHorizontal size={20} /> General settings</h2>
           <p>Daily goal and active JLPT levels are also persisted to chrome.storage.local.</p>
         </div>
-        <button class="secondary-button compact-button" type="button" on:click={resetSettings}>Reset settings</button>
+        <Button class="compact-button" variant="outline" on:click={resetSettings}><RotateCcw size={16} /> Reset settings</Button>
       </div>
 
       <label class="setting-row">
-        <span>Daily review goal</span>
+        <span><Target size={16} /> Daily review goal</span>
         <input bind:value={settings.dailyGoal} min="1" type="number" on:change={persistSettings} />
       </label>
 
@@ -396,17 +405,17 @@
         <span>Active JLPT levels</span>
         <LevelSelector selectedLevels={settings.selectedLevels} on:change={updateLevels} />
       </div>
-    </section>
+    </Card>
 
-    <section class="panel settings-grid">
-      <h2>Level guide</h2>
+    <Card class="settings-grid level-guide">
+      <h2><BookOpenCheck size={20} /> Level guide</h2>
       {#each selectedLevelDescriptions as level}
         <article>
-          <strong>{level}</strong>
+          <strong><Info size={16} /> {level.toUpperCase()}</strong>
           <p>{levelDescriptions[level]}</p>
         </article>
       {/each}
-    </section>
+    </Card>
 
     {#if saveStatus || isSaving}
       <p class="save-status">{isSaving ? 'Đang lưu…' : saveStatus}</p>

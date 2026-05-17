@@ -1,7 +1,11 @@
 <script lang="ts">
+  import { Bell, BellOff, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Eye, EyeOff, Settings, Sparkles } from '@lucide/svelte';
   import { onDestroy, onMount } from 'svelte';
   import '../app.css';
   import { LevelSelector, StudyCard } from '../lib/components';
+  import { Badge } from '../lib/components/ui/badge';
+  import { Button } from '../lib/components/ui/button';
+  import { Card } from '../lib/components/ui/card';
   import { starterFlashcards } from '../lib/data';
   import {
     getExtensionState,
@@ -173,51 +177,70 @@
   }
 </script>
 
-<main class="app-shell">
+<main class="app-shell popup-shell">
   <section class="hero">
     <div class="hero__header">
       <div>
+        <Badge class="hero__eyebrow" variant="outline"><Sparkles size={14} /> Daily JLPT</Badge>
         <h1>JLPT Study Companion</h1>
         <p>Ôn flashcard JLPT, nghe audio, ghi chú và đánh dấu xem lại.</p>
       </div>
-      <button class="secondary-button compact-button" type="button" on:click={openOptionsPage}>Cài đặt</button>
+      <Button class="compact-button hero__settings" variant="secondary" on:click={openOptionsPage}><Settings size={16} /> Cài đặt</Button>
     </div>
   </section>
 
-  <section class="panel">
+  <Card class="level-panel">
+    <div class="panel-label">Chọn cấp độ</div>
     <LevelSelector {selectedLevels} on:change={updateLevels} />
-  </section>
+  </Card>
 
   {#if isLoading}
-    <section class="panel empty-state">
+    <Card class="empty-state">
       <h2>Đang tải dữ liệu…</h2>
       <p>Vui lòng chờ trong giây lát.</p>
-    </section>
+    </Card>
   {:else if dataset.length === 0}
-    <section class="panel empty-state">
+    <Card class="empty-state">
       <h2>Chưa có dataset</h2>
       <p>Hãy mở trang cài đặt và nạp file JSON flashcard trước khi bắt đầu học.</p>
-      <button class="primary-button" type="button" on:click={openOptionsPage}>Mở trang cài đặt</button>
-    </section>
+      <Button on:click={openOptionsPage}><Settings size={16} /> Mở trang cài đặt</Button>
+    </Card>
   {:else if currentCard}
     <StudyCard card={currentCard} {revealed} />
 
     <div class="actions actions--wrap">
-      <button class="secondary-button" type="button" on:click={previousCard}>Previous</button>
-      <button class="primary-button" type="button" on:click={() => (revealed = !revealed)}>
-        {revealed ? 'Ẩn đáp án' : 'Hiện đáp án'}
-      </button>
-      <button class="secondary-button" type="button" on:click={nextCard}>Next</button>
+      <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> Previous</Button>
+      <Button on:click={() => (revealed = !revealed)}>
+        {#if revealed}
+          <EyeOff size={16} />
+          Ẩn đáp án
+        {:else}
+          <Eye size={16} />
+          Hiện đáp án
+        {/if}
+      </Button>
+      <Button variant="outline" on:click={nextCard}>Next <ChevronRight size={16} /></Button>
     </div>
 
-    <section class="panel study-tools">
+    <Card class="study-tools">
       <div class="actions actions--wrap">
-        <button class="secondary-button" type="button" on:click={toggleBookmark} aria-pressed={isBookmarked}>
-          {isBookmarked ? '★ Đã đánh dấu' : '☆ Đánh dấu xem lại'}
-        </button>
-        <button class="secondary-button" type="button" on:click={toggleNotifications} aria-pressed={!notificationPaused}>
+        <Button variant={isBookmarked ? 'secondary' : 'outline'} on:click={toggleBookmark} aria-pressed={isBookmarked}>
+          {#if isBookmarked}
+            <BookmarkCheck size={16} />
+            Đã đánh dấu
+          {:else}
+            <Bookmark size={16} />
+            Đánh dấu xem lại
+          {/if}
+        </Button>
+        <Button variant="outline" on:click={toggleNotifications} aria-pressed={!notificationPaused}>
+          {#if notificationPaused}
+            <Bell size={16} />
+          {:else}
+            <BellOff size={16} />
+          {/if}
           {notificationButtonLabel}
-        </button>
+        </Button>
       </div>
 
       <p class="help-text">{notificationStatusLabel}</p>
@@ -231,11 +254,11 @@
           placeholder="Nhập mnemonic, ví dụ riêng hoặc điểm cần xem lại…"
         ></textarea>
       </label>
-    </section>
+    </Card>
   {:else}
-    <section class="panel empty-state">
+    <Card class="empty-state">
       <h2>Không có thẻ phù hợp</h2>
       <p>Dataset đã được nạp, nhưng chưa có thẻ nào thuộc level đang chọn.</p>
-    </section>
+    </Card>
   {/if}
 </main>
