@@ -40,16 +40,27 @@
   let notificationPaused = false;
   let noteSaveTimer: ReturnType<typeof setTimeout> | undefined;
   let historyStack: number[] = [];
+  let showBookmarkedOnly = false;
   let isLoading = true;
 
-  $: filteredCards = dataset.filter((card) => selectedLevels.includes(normalizeLevel(card.level)));
-  $: if (filteredCards.length > 0 && currentIndex >= filteredCards.length) {
+  $: cardsById = new Map(dataset.map((card) => [getCardId(card), card]));
+  $: levelFilteredCards = dataset.filter((card) => selectedLevels.includes(normalizeLevel(card.level)));
+  $: bookmarkedCards = bookmarkedCardIds.map((cardId) => cardsById.get(cardId)).filter(isPlannedFlashcard).reverse();
+  $: studyCards = showBookmarkedOnly ? bookmarkedCards : levelFilteredCards;
+  $: if (studyCards.length > 0 && currentIndex >= studyCards.length) {
     currentIndex = 0;
   }
-  $: currentCard = filteredCards.length > 0 ? filteredCards[currentIndex] : undefined;
+  $: if (showBookmarkedOnly && bookmarkedCards.length === 0) {
+    showBookmarkedOnly = false;
+  }
+  $: currentCard = studyCards.length > 0 ? studyCards[currentIndex] : undefined;
   $: currentCardId = currentCard ? getCardId(currentCard) : '';
   $: isBookmarked = currentCardId ? bookmarkedCardIds.includes(currentCardId) : false;
   $: currentNote = currentCardId ? notesByCardId[currentCardId] ?? '' : '';
+  $: bookmarkReviewButtonLabel = showBookmarkedOnly ? 'Quay lại thẻ theo cấp độ' : 'Mở lại từ đã bookmark';
+  $: studyProgressLabel = showBookmarkedOnly
+    ? `Bookmark ${studyCards.length === 0 ? 0 : currentIndex + 1}/${studyCards.length}`
+    : `Thẻ ${studyCards.length === 0 ? 0 : currentIndex + 1}/${studyCards.length}`;
   $: notificationButtonLabel = notificationPaused ? 'Resume notification' : 'Pause notification';
   $: notificationStatusLabel = notificationPaused
     ? 'Notifications đang tạm dừng cho tới khi bạn bật lại.'
@@ -73,6 +84,10 @@
     return createFlashcardId(card);
   }
 
+  function isPlannedFlashcard(card: PlannedFlashcard | undefined): card is PlannedFlashcard {
+    return Boolean(card);
+  }
+
   async function loadState() {
     const stored = await getExtensionState();
 
@@ -89,31 +104,31 @@
   }
 
   function nextCard() {
-    if (filteredCards.length === 0) return;
+    if (studyCards.length === 0) return;
 
     historyStack = [...historyStack, currentIndex];
-    currentIndex = studyMode === 'random' ? nextRandomIndex() : (currentIndex + 1) % filteredCards.length;
+    currentIndex = studyMode === 'random' ? nextRandomIndex() : (currentIndex + 1) % studyCards.length;
     void updateCurrentIndex(currentIndex);
   }
 
   function previousCard() {
-    if (filteredCards.length === 0) return;
+    if (studyCards.length === 0) return;
 
     if (studyMode === 'random' && historyStack.length > 0) {
       currentIndex = historyStack[historyStack.length - 1];
       historyStack = historyStack.slice(0, -1);
     } else {
-      currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+      currentIndex = (currentIndex - 1 + studyCards.length) % studyCards.length;
     }
     void updateCurrentIndex(currentIndex);
   }
 
   function nextRandomIndex() {
-    if (filteredCards.length < 2) return currentIndex;
+    if (studyCards.length < 2) return currentIndex;
 
     let nextIndex = currentIndex;
     while (nextIndex === currentIndex) {
-      nextIndex = Math.floor(Math.random() * filteredCards.length);
+      nextIndex = Math.floor(Math.random() * studyCards.length);
     }
 
     return nextIndex;
@@ -148,6 +163,26 @@
     void toggleStoredBookmark(currentCardId).then((state) => {
       bookmarkedCardIds = state.bookmarkedCardIds;
     });
+  }
+
+
+  function toggleBookmarkReview() {
+    if (!showBookmarkedOnly && bookmarkedCards.length === 0) return;
+
+    showBookmarkedOnly = !showBookmarkedOnly;
+    currentIndex = 0;
+    historyStack = [];
+    void updateCurrentIndex(currentIndex);
+  }
+
+  function openBookmarkedCard(cardId: string) {
+    const bookmarkedIndex = bookmarkedCards.findIndex((card) => getCardId(card) === cardId);
+    if (bookmarkedIndex === -1) return;
+
+    showBookmarkedOnly = true;
+    currentIndex = bookmarkedIndex;
+    historyStack = [];
+    void updateCurrentIndex(currentIndex);
   }
 
   function scheduleNoteSave() {
@@ -219,6 +254,38 @@
     <LevelSelector {selectedLevels} on:change={updateLevels} />
   </Card>
 
+  <Card class="bookmark-panel">
+    <div class="bookmark-panel__header">
+      <div>
+        <div class="panel-label"><BookmarkCheck size={16} /> Từ vựng đã bookmark</div>
+        <p class="help-text">{bookmarkedCards.length} từ đã lưu để mở lại và ôn nhanh.</p>
+      </div>
+      <Button variant={showBookmarkedOnly ? 'secondary' : 'outline'} on:click={toggleBookmarkReview} disabled={bookmarkedCards.length === 0}>
+        <Bookmark size={16} />
+        {bookmarkReviewButtonLabel}
+      </Button>
+    </div>
+
+    {#if bookmarkedCards.length > 0}
+      <div class="bookmark-list" aria-label="Danh sách từ vựng đã bookmark">
+        {#each bookmarkedCards.slice(0, 5) as bookmarkedCard (getCardId(bookmarkedCard))}
+          <button
+            class:active={showBookmarkedOnly && currentCardId === getCardId(bookmarkedCard)}
+            class="bookmark-chip"
+            type="button"
+            on:click={() => openBookmarkedCard(getCardId(bookmarkedCard))}
+          >
+            <span>{bookmarkedCard.name}</span>
+            <small>{bookmarkedCard.hiragana || bookmarkedCard.mean}</small>
+          </button>
+        {/each}
+      </div>
+      {#if bookmarkedCards.length > 5}
+        <p class="help-text">Hiển thị 5 từ bookmark mới nhất. Bấm “Mở lại từ đã bookmark” để duyệt tất cả.</p>
+      {/if}
+    {/if}
+  </Card>
+
   {#if isLoading}
     <Card class="empty-state">
       <h2>Đang tải dữ liệu…</h2>
@@ -231,6 +298,10 @@
       <Button on:click={openOptionsPage}><Settings size={16} /> Mở trang cài đặt</Button>
     </Card>
   {:else if currentCard}
+    <div class="study-progress" aria-live="polite">
+      <Badge variant={showBookmarkedOnly ? 'success' : 'secondary'}>{studyProgressLabel}</Badge>
+    </div>
+
     <StudyCard card={currentCard} {revealed} />
 
     <div class="actions learning-pagination">
@@ -289,7 +360,7 @@
   {:else}
     <Card class="empty-state">
       <h2>Không có thẻ phù hợp</h2>
-      <p>Dataset đã được nạp, nhưng chưa có thẻ nào thuộc level đang chọn.</p>
+      <p>{showBookmarkedOnly ? 'Bạn chưa có bookmark nào để mở lại.' : 'Dataset đã được nạp, nhưng chưa có thẻ nào thuộc level đang chọn.'}</p>
     </Card>
   {/if}
 </main>
