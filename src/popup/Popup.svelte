@@ -38,6 +38,7 @@
   let notesByCardId: Record<string, string> = {};
   let currentNote = '';
   let notificationPaused = false;
+  let notificationFeedback = '';
   let noteSaveTimer: ReturnType<typeof setTimeout> | undefined;
   let historyStack: number[] = [];
   let showBookmarkedOnly = false;
@@ -209,13 +210,19 @@
       notificationPaused = state.notificationPaused ?? !state.settings.notificationEnabled;
 
       if (!notificationPaused) {
-        void showNotificationNow();
+        void showNotificationNow().then((result) => {
+          notificationFeedback = result.ok
+            ? 'Đã gửi notification test. Nếu vẫn không thấy, hãy kiểm tra quyền thông báo của Chrome trong hệ điều hành.'
+            : `Không gửi được notification: ${result.error ?? 'Lỗi không xác định.'}`;
+        });
       }
     });
   }
 
-  function showNotificationNow() {
-    if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage) return Promise.resolve();
+  function showNotificationNow(): Promise<{ ok: boolean; error?: string }> {
+    if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage) {
+      return Promise.resolve({ ok: false, error: 'Chrome runtime API không khả dụng.' });
+    }
 
     return chrome.runtime.sendMessage({ type: 'SHOW_STUDY_NOTIFICATION_NOW' });
   }
@@ -346,6 +353,9 @@
       </div>
 
       <p class="help-text">{notificationStatusLabel}</p>
+      {#if notificationFeedback}
+        <p class="help-text">{notificationFeedback}</p>
+      {/if}
 
       <label class="note-field">
         <span>Ghi chú cho thẻ hiện tại</span>
