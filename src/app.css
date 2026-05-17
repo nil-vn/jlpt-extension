@@ -75,6 +75,7 @@ button {
   min-height: 13rem;
 }
 
+.study-card__header,
 .study-card__meta,
 .level-selector {
   display: flex;
@@ -87,6 +88,39 @@ button {
   border: 1px solid rgba(23, 32, 51, 0.12);
   border-radius: 999px;
   padding: 0.35rem 0.65rem;
+}
+
+
+.study-card__header {
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.study-card__header-actions {
+  align-items: flex-end;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.study-card-controls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.study-card-bookmark-button {
+  box-shadow: 0 0.45rem 0.9rem rgba(15, 23, 42, 0.08);
+}
+
+.study-card__note {
+  border-top: 1px solid var(--border);
+  margin-top: 0.25rem;
+  padding-top: 0.85rem;
 }
 
 .study-card h2 {
@@ -473,7 +507,7 @@ textarea:focus-visible {
 }
 
 .level-panel,
-.study-tools,
+.notification-panel,
 .settings-grid,
 .empty-state {
   display: grid;
@@ -850,9 +884,23 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
-.study-progress {
-  display: flex;
-  justify-content: flex-end;
+.notification-panel .help-text {
+  margin: 0;
+}
+
+.study-progress-badge {
+  white-space: nowrap;
+}
+
+@media (max-width: 390px) {
+  .study-card__header {
+    display: grid;
+  }
+
+  .study-card__header-actions,
+  .study-card-controls {
+    justify-content: flex-start;
+  }
 }
 
 @media (min-width: 430px) {

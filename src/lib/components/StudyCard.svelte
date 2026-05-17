@@ -36,9 +36,14 @@
 </script>
 
 <Card class="study-card" aria-live="polite">
-  <div class="study-card__meta">
-    <Badge>{levelLabel}</Badge>
-    <Badge variant="secondary">{categoryLabel}</Badge>
+  <div class="study-card__header">
+    <div class="study-card__meta">
+      <Badge>{levelLabel}</Badge>
+      <Badge variant="secondary">{categoryLabel}</Badge>
+    </div>
+    <div class="study-card__header-actions">
+      <slot name="header-actions" />
+    </div>
   </div>
 
   <h2>{cardName}</h2>
@@ -66,4 +71,6 @@
   {:else}
     <p class="study-card__hint"><Lightbulb size={16} /> Bấm “Hiện đáp án” để kiểm tra nghĩa của thẻ.</p>
   {/if}
+
+  <slot name="footer" />
 </Card>
