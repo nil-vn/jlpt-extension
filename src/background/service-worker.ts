@@ -46,6 +46,15 @@ if (typeof chrome !== 'undefined') {
     });
   }
 
+  if (chrome.runtime?.onMessage) {
+    chrome.runtime.onMessage.addListener((message: { type?: string }, _sender, sendResponse) => {
+      if (message?.type !== 'SHOW_STUDY_NOTIFICATION_NOW') return false;
+
+      void showStudyNotification().then(() => sendResponse({ ok: true }));
+      return true;
+    });
+  }
+
   if (chrome.alarms?.onAlarm) {
     chrome.alarms.onAlarm.addListener((alarm) => {
       if (alarm.name !== NOTIFICATION_ALARM_NAME) return;
@@ -193,7 +202,7 @@ function formatNotificationTitle(card: Flashcard) {
 
 function createNotificationAlarm(intervalMinutes: number) {
   return new Promise<void>((resolve) => {
-    const normalizedInterval = Math.max(1, Math.round(intervalMinutes));
+    const normalizedInterval = Math.max(0.5, intervalMinutes);
 
     chrome.alarms.create(NOTIFICATION_ALARM_NAME, {
       delayInMinutes: normalizedInterval,

@@ -10,10 +10,12 @@
   import { validateDataset, type DatasetValidationError } from '../lib/data/dataset-validator';
   import {
     DEFAULT_SETTINGS,
+    NOTIFICATION_INTERVAL_OPTIONS,
     getExtensionState,
     hasChromeStorage,
     saveDataset,
     updateSettings,
+    normalizeNotificationInterval,
     type UserSettings
   } from '../lib/extension/storage';
   import type { Flashcard, FlashcardCategory, JlptLevel } from '../lib/types/flashcard';
@@ -81,12 +83,7 @@
       dailyGoal: Number(stored.settings.dailyGoal ?? defaultSettings.dailyGoal),
       selectedLevels: normalizeStoredLevels(stored.settings.selectedLevels),
       enabledCategories: normalizeStoredCategories(stored.settings.enabledCategories),
-      notificationIntervalMinutes: clampNumber(
-        stored.settings.notificationIntervalMinutes,
-        defaultSettings.notificationIntervalMinutes,
-        1,
-        1440
-      ),
+      notificationIntervalMinutes: normalizeNotificationInterval(stored.settings.notificationIntervalMinutes),
       orderMode: stored.settings.orderMode === 'random' ? 'random' : 'sequential',
       theme: normalizeTheme(stored.settings.theme),
       notificationEnabled: Boolean(stored.settings.notificationEnabled)
@@ -195,7 +192,7 @@
     settings = {
       ...settings,
       dailyGoal: clampNumber(settings.dailyGoal, defaultSettings.dailyGoal, 1, 999),
-      notificationIntervalMinutes: clampNumber(settings.notificationIntervalMinutes, 60, 1, 1440)
+      notificationIntervalMinutes: normalizeNotificationInterval(settings.notificationIntervalMinutes)
     };
 
     isSaving = true;
@@ -305,7 +302,7 @@
           aria-pressed={settings.orderMode === 'random'}
           on:click={() => updateSetting('orderMode', 'random')}
         >
-          <Shuffle size={18} />
+          <Shuffle size={14} />
           <span>Random</span>
         </button>
         <button
@@ -315,7 +312,7 @@
           aria-pressed={settings.orderMode === 'sequential'}
           on:click={() => updateSetting('orderMode', 'sequential')}
         >
-          <ListOrdered size={18} />
+          <ListOrdered size={14} />
           <span>Sequential</span>
         </button>
       </div>
@@ -326,7 +323,7 @@
         <h2><Bell size={20} /> Notifications</h2>
       </div>
 
-      <label class="switch-row">
+      <label class="ios-switch-row">
         <span>Enable reminder notifications</span>
         <input
           checked={settings.notificationEnabled}
@@ -334,18 +331,24 @@
           type="checkbox"
           on:change={(event) => updateSetting('notificationEnabled', event.currentTarget.checked)}
         />
+        <span class="ios-switch-track" aria-hidden="true">
+          <span class="ios-switch-icon ios-switch-icon--off">Off</span>
+          <span class="ios-switch-icon ios-switch-icon--on">On</span>
+          <span class="ios-switch-thumb"></span>
+        </span>
       </label>
 
       <label class="setting-row">
-        <span>Interval minutes</span>
-        <input
+        <span>Interval Display</span>
+        <select
           disabled={!settings.notificationEnabled}
-          min="1"
-          max="1440"
-          type="number"
-          bind:value={settings.notificationIntervalMinutes}
-          on:change={persistSettings}
-        />
+          value={settings.notificationIntervalMinutes}
+          on:change={(event) => updateSetting('notificationIntervalMinutes', Number(event.currentTarget.value))}
+        >
+          {#each NOTIFICATION_INTERVAL_OPTIONS as option}
+            <option value={option.minutes}>{option.label}</option>
+          {/each}
+        </select>
       </label>
 
       <p class="help-text">
@@ -367,7 +370,7 @@
           aria-pressed={settings.theme === 'light'}
           on:click={() => updateSetting('theme', 'light')}
         >
-          <Sun size={18} />
+          <Sun size={14} />
           <span>Light</span>
         </button>
         <button
@@ -377,7 +380,7 @@
           aria-pressed={settings.theme === 'dark'}
           on:click={() => updateSetting('theme', 'dark')}
         >
-          <Moon size={18} />
+          <Moon size={14} />
           <span>Dark</span>
         </button>
       </div>
