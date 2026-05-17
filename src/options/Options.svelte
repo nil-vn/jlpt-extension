@@ -3,14 +3,11 @@
   import '../app.css';
   import { LevelSelector } from '../lib/components';
   import { levelDescriptions } from '../lib/data';
+  import { validateDataset, type DatasetValidationError } from '../lib/data/dataset-validator';
   import type { Flashcard, FlashcardCategory, JlptLevel, StudySettings } from '../lib/types/flashcard';
 
   type StudyMode = 'random' | 'sequential';
   type ThemeMode = 'light' | 'dark' | 'system';
-  type PlannedFlashcard = Flashcard & {
-    level: string;
-    category: string;
-  };
   type StoredStudySettings = StudySettings & {
     orderMode: StudyMode;
     notificationEnabled: boolean;
@@ -20,8 +17,8 @@
     theme: ThemeMode;
   };
   type StorageSnapshot = {
-    jlptDataset?: PlannedFlashcard[];
-    dataset?: PlannedFlashcard[];
+    jlptDataset?: Flashcard[];
+    dataset?: Flashcard[];
     jlptSettings?: Partial<StoredStudySettings>;
   };
   type DatasetValidation = {
@@ -29,6 +26,7 @@
     message: string;
     validCount: number;
     invalidCount: number;
+    errors: DatasetValidationError[];
     fileName?: string;
   };
 
@@ -48,12 +46,13 @@
   const validCategories: FlashcardCategory[] = ['gramma', 'locabulary', 'kanji', 'reading', 'listening'];
 
   let settings: StoredStudySettings = { ...defaultSettings };
-  let dataset: PlannedFlashcard[] = [];
+  let dataset: Flashcard[] = [];
   let validation: DatasetValidation = {
     status: 'idle',
     message: 'Chưa chọn file JSON. Dataset hiện tại sẽ được đọc từ chrome.storage.local nếu có.',
     validCount: 0,
-    invalidCount: 0
+    invalidCount: 0,
+    errors: []
   };
   let isLoading = true;
   let isSaving = false;
@@ -69,9 +68,6 @@
     return typeof chrome !== 'undefined' && Boolean(chrome.storage?.local);
   }
 
-  function isRecord(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
-  }
 
   function isJlptLevel(value: unknown): value is JlptLevel {
     return typeof value === 'string' && validLevels.includes(value.toLowerCase() as JlptLevel);
@@ -94,16 +90,6 @@
     return typeof value === 'string' && validCategories.includes(normalizeCategory(value));
   }
 
-  function normalizeString(value: unknown) {
-    return typeof value === 'string' ? value.trim() : '';
-  }
-
-  function normalizeNullableString(value: unknown) {
-    if (value === null || value === undefined) return undefined;
-
-    const normalized = normalizeString(value);
-    return normalized.length > 0 ? normalized : undefined;
-  }
 
   function readStorage(keys: Array<keyof StorageSnapshot>): Promise<StorageSnapshot> {
     if (!hasChromeStorage()) return Promise.resolve({});
@@ -156,7 +142,8 @@
           ? `Đã tải ${dataset.length} card từ chrome.storage.local.`
           : 'Chưa có dataset trong chrome.storage.local. Hãy chọn file JSON để nạp dữ liệu.',
       validCount: dataset.length,
-      invalidCount: 0
+      invalidCount: 0,
+      errors: []
     };
     isLoading = false;
   }
@@ -192,64 +179,6 @@
     return value === 'light' || value === 'dark' || value === 'system' ? value : 'system';
   }
 
-  function validateCard(rawCard: unknown, index: number): PlannedFlashcard | undefined {
-    if (!isRecord(rawCard)) return undefined;
-
-    const level = normalizeLevel(rawCard.level);
-    const category = normalizeCategory(rawCard.category);
-    const name = normalizeString(rawCard.name ?? rawCard.prompt);
-    const mean = normalizeString(rawCard.mean ?? rawCard.answer);
-
-    if (!isJlptLevel(level) || !isFlashcardCategory(category) || name.length === 0 || mean.length === 0) {
-      return undefined;
-    }
-
-    return {
-      level,
-      category,
-      name,
-      mean,
-      hiragana: normalizeNullableString(rawCard.hiragana ?? rawCard.reading) ?? '',
-      image: normalizeNullableString(rawCard.image) ?? null,
-      audio: normalizeNullableString(rawCard.audio) ?? null,
-      example: normalizeNullableString(rawCard.example) ?? null
-    };
-  }
-
-  function validateDataset(rawDataset: unknown) {
-    if (!Array.isArray(rawDataset)) {
-      return {
-        validCards: [],
-        validation: {
-          status: 'invalid' as const,
-          message: 'JSON phải là một array các flashcard.',
-          validCount: 0,
-          invalidCount: 0
-        }
-      };
-    }
-
-    const validCards = rawDataset
-      .map((card, index) => validateCard(card, index))
-      .filter((card): card is PlannedFlashcard => Boolean(card));
-    const invalidCount = rawDataset.length - validCards.length;
-
-    return {
-      validCards,
-      validation: {
-        status: validCards.length === 0 ? ('invalid' as const) : invalidCount > 0 ? ('partial' as const) : ('valid' as const),
-        message:
-          validCards.length === 0
-            ? 'Không tìm thấy card hợp lệ. Mỗi card cần level, category, name và mean.'
-            : invalidCount > 0
-              ? `Đã lưu ${validCards.length} card hợp lệ và bỏ qua ${invalidCount} card lỗi.`
-              : `Dataset hợp lệ. Đã lưu ${validCards.length} card.`,
-        validCount: validCards.length,
-        invalidCount
-      }
-    };
-  }
-
   function readFileAsText(file: File) {
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
@@ -270,10 +199,20 @@
       const text = await readFileAsText(file);
       const parsed = JSON.parse(text) as unknown;
       const result = validateDataset(parsed);
+      const hasErrors = result.errors.length > 0;
 
-      validation = { ...result.validation, fileName: file.name };
+      validation = {
+        status: hasErrors ? 'invalid' : 'valid',
+        message: hasErrors
+          ? `Dataset có ${result.errors.length} lỗi. Vui lòng sửa file JSON trước khi lưu.`
+          : `Dataset hợp lệ. Đã lưu ${result.validCards.length} card.`,
+        validCount: result.validCards.length,
+        invalidCount: result.errors.length,
+        errors: result.errors,
+        fileName: file.name
+      };
 
-      if (result.validCards.length === 0) return;
+      if (hasErrors) return;
 
       dataset = result.validCards;
       await persistDataset(dataset);
@@ -282,7 +221,8 @@
         status: 'invalid',
         message: `Lỗi parse JSON: ${error instanceof Error ? error.message : 'File không hợp lệ.'}`,
         validCount: 0,
-        invalidCount: 0,
+        invalidCount: 1,
+        errors: [{ message: error instanceof Error ? error.message : 'File không hợp lệ.' }],
         fileName: file.name
       };
     } finally {
@@ -290,7 +230,7 @@
     }
   }
 
-  async function persistDataset(cards: PlannedFlashcard[]) {
+  async function persistDataset(cards: Flashcard[]) {
     isSaving = true;
     await writeStorage({ jlptDataset: cards, jlptCurrentIndex: 0 });
     isSaving = false;
@@ -327,7 +267,8 @@
       status: 'idle',
       message: 'Đã reset dataset. Popup sẽ yêu cầu nạp file JSON mới.',
       validCount: 0,
-      invalidCount: 0
+      invalidCount: 0,
+      errors: []
     };
     isSaving = true;
     await writeStorage({ jlptDataset: [], jlptCurrentIndex: 0 });
@@ -360,7 +301,7 @@
       <div class="section-heading">
         <div>
           <h2>Dataset</h2>
-          <p>Nạp file JSON flashcard. Card hợp lệ cần level, category, name và mean.</p>
+          <p>Nạp file JSON flashcard. Card chỉ được lưu khi đủ field và không có lỗi validation.</p>
         </div>
         <button class="secondary-button compact-button" type="button" on:click={resetDataset}>Reset dataset</button>
       </div>
@@ -373,7 +314,17 @@
       <div class:status-card={true} class:status-card--error={validation.status === 'invalid'}>
         <strong>{validation.fileName ?? 'Dataset status'}</strong>
         <p>{validation.message}</p>
-        <p>{validation.validCount} card hợp lệ · {validation.invalidCount} card lỗi · {dataset.length} card đang lưu</p>
+        <p>{validation.validCount} card hợp lệ · {validation.invalidCount} lỗi validation · {dataset.length} card đang lưu</p>
+        {#if validation.errors.length > 0}
+          <ul class="validation-errors" aria-label="Dataset validation errors">
+            {#each validation.errors.slice(0, 5) as error}
+              <li>{error.message}</li>
+            {/each}
+          </ul>
+          {#if validation.errors.length > 5}
+            <p>…và {validation.errors.length - 5} lỗi khác.</p>
+          {/if}
+        {/if}
       </div>
     </section>
 

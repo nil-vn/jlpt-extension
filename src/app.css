@@ -261,6 +261,17 @@ textarea {
   color: #7f1d1d;
 }
 
+.validation-errors {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.validation-errors li {
+  line-height: 1.35;
+}
+
 .radio-row,
 .switch-row {
   align-items: center;
