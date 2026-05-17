@@ -6,7 +6,7 @@
   import { Badge } from '../lib/components/ui/badge';
   import { Button } from '../lib/components/ui/button';
   import { Card } from '../lib/components/ui/card';
-  import { levelDescriptions } from '../lib/data';
+  import { formatInterval, supportedLanguages, translate, type AppLanguage, type TranslationKey } from '../lib/i18n';
   import { validateDataset, type DatasetValidationError } from '../lib/data/dataset-validator';
   import {
     DEFAULT_SETTINGS,
@@ -38,7 +38,7 @@
   let dataset: Flashcard[] = [];
   let validation: DatasetValidation = {
     status: 'idle',
-    message: 'Chưa chọn file JSON. Dataset hiện tại sẽ được đọc từ chrome.storage.local nếu có.',
+    message: translate('en', 'datasetCurrentStatus'),
     validCount: 0,
     invalidCount: 0,
     errors: []
@@ -47,6 +47,8 @@
   let isSaving = false;
   let saveStatus = '';
 
+  $: language = settings.language;
+  $: t = (key: TranslationKey, params?: Parameters<typeof translate>[2]) => translate(language, key, params);
   $: selectedLevelDescriptions = settings.selectedLevels.filter(isJlptLevel);
 
   onMount(() => {
@@ -86,7 +88,8 @@
       notificationIntervalMinutes: normalizeNotificationInterval(stored.settings.notificationIntervalMinutes),
       orderMode: stored.settings.orderMode === 'random' ? 'random' : 'sequential',
       theme: normalizeTheme(stored.settings.theme),
-      notificationEnabled: Boolean(stored.settings.notificationEnabled)
+      notificationEnabled: Boolean(stored.settings.notificationEnabled),
+      language: normalizeLanguage(stored.settings.language)
     };
 
     dataset = stored.dataset;
@@ -94,8 +97,8 @@
       status: dataset.length > 0 ? 'valid' : 'idle',
       message:
         dataset.length > 0
-          ? `Đã tải ${dataset.length} card từ chrome.storage.local.`
-          : 'Chưa có dataset trong chrome.storage.local. Hãy chọn file JSON để nạp dữ liệu.',
+          ? t('datasetLoaded', { count: dataset.length })
+          : t('datasetNoStored'),
       validCount: dataset.length,
       invalidCount: 0,
       errors: []
@@ -128,11 +131,19 @@
     return value === 'dark' ? 'dark' : 'light';
   }
 
+  function normalizeLanguage(value: unknown): AppLanguage {
+    return supportedLanguages.includes(value as AppLanguage) ? (value as AppLanguage) : 'en';
+  }
+
+  function getLevelDescriptionKey(level: JlptLevel): TranslationKey {
+    return `levelDescription${level.toUpperCase()}` as TranslationKey;
+  }
+
   function readFileAsText(file: File) {
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result ?? ''));
-      reader.onerror = () => reject(new Error('Không thể đọc file JSON.'));
+      reader.onerror = () => reject(new Error(t('fileReadError')));
       reader.readAsText(file);
     });
   }
@@ -147,14 +158,14 @@
     try {
       const text = await readFileAsText(file);
       const parsed = JSON.parse(text) as unknown;
-      const result = validateDataset(parsed);
+      const result = validateDataset(parsed, language);
       const hasErrors = result.errors.length > 0;
 
       validation = {
         status: hasErrors ? 'invalid' : 'valid',
         message: hasErrors
-          ? `Dataset có ${result.errors.length} lỗi. Vui lòng sửa file JSON trước khi lưu.`
-          : `Dataset hợp lệ. Đã lưu ${result.validCards.length} card.`,
+          ? t('datasetErrors', { count: result.errors.length })
+          : t('datasetValid', { count: result.validCards.length }),
         validCount: result.validCards.length,
         invalidCount: result.errors.length,
         errors: result.errors,
@@ -168,10 +179,10 @@
     } catch (error) {
       validation = {
         status: 'invalid',
-        message: `Lỗi parse JSON: ${error instanceof Error ? error.message : 'File không hợp lệ.'}`,
+        message: t('parseJsonError', { message: error instanceof Error ? error.message : t('statusInvalidFile') }),
         validCount: 0,
         invalidCount: 1,
-        errors: [{ message: error instanceof Error ? error.message : 'File không hợp lệ.' }],
+        errors: [{ message: error instanceof Error ? error.message : t('statusInvalidFile') }],
         fileName: file.name
       };
     } finally {
@@ -184,8 +195,8 @@
     await saveDataset(cards);
     isSaving = false;
     saveStatus = hasChromeStorage()
-      ? 'Đã lưu dataset vào chrome.storage.local.'
-      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; dataset chỉ được lưu tạm trong phiên dev.';
+      ? t('chromeStorageDatasetSaved')
+      : t('chromeStorageDatasetDev');
   }
 
   async function persistSettings() {
@@ -199,8 +210,8 @@
     await updateSettings(settings);
     isSaving = false;
     saveStatus = hasChromeStorage()
-      ? 'Đã lưu settings vào chrome.storage.local.'
-      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; settings chỉ được lưu tạm trong phiên dev.';
+      ? t('chromeStorageSettingsSaved')
+      : t('chromeStorageSettingsDev');
   }
 
   function updateLevels(event: CustomEvent<JlptLevel[]>) {
@@ -217,7 +228,7 @@
     dataset = [];
     validation = {
       status: 'idle',
-      message: 'Đã reset dataset. Popup sẽ yêu cầu nạp file JSON mới.',
+      message: t('datasetReset'),
       validCount: 0,
       invalidCount: 0,
       errors: []
@@ -226,8 +237,8 @@
     await saveDataset([]);
     isSaving = false;
     saveStatus = hasChromeStorage()
-      ? 'Đã xóa dataset trong chrome.storage.local.'
-      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; dataset chỉ được reset tạm trong phiên dev.';
+      ? t('chromeStorageDatasetReset')
+      : t('chromeStorageDatasetResetDev');
   }
 
   async function resetSettings() {
@@ -236,54 +247,54 @@
     await updateSettings(settings);
     isSaving = false;
     saveStatus = hasChromeStorage()
-      ? 'Đã reset settings trong chrome.storage.local.'
-      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; settings chỉ được reset tạm trong phiên dev.';
+      ? t('chromeStorageSettingsReset')
+      : t('chromeStorageSettingsResetDev');
   }
 </script>
 
 <main class="app-shell options-shell">
   <section class="hero options-hero">
-    <Badge class="hero__eyebrow" variant="outline"><Settings2 size={14} /> Control center</Badge>
-    <h1>Study settings</h1>
-    <p>Tune your extension defaults for daily JLPT practice. All options are saved in chrome.storage.local.</p>
+    <Badge class="hero__eyebrow" variant="outline"><Settings2 size={14} /> {t('controlCenter')}</Badge>
+    <h1>{t('studySettings')}</h1>
+    <p>{t('tuneDefaults')}</p>
   </section>
 
   {#if isLoading}
     <Card class="empty-state">
-      <h2>Đang tải cài đặt…</h2>
-      <p>Vui lòng chờ trong giây lát.</p>
+      <h2>{t('loadingSettings')}</h2>
+      <p>{t('validLevelOnly')}</p>
     </Card>
   {:else}
     <Card class="settings-grid">
       <div class="section-heading">
         <div>
-          <h2><Database size={20} /> Dataset</h2>
-          <p>Nạp file JSON flashcard. Card chỉ được lưu khi đủ field và không có lỗi validation.</p>
+          <h2><Database size={20} /> {t('dataset')}</h2>
+          <p>{t('datasetDescription')}</p>
         </div>
-        <Button class="compact-button" variant="outline" on:click={resetDataset}><RotateCcw size={16} /> Reset dataset</Button>
+        <Button class="compact-button" variant="outline" on:click={resetDataset}><RotateCcw size={16} /> {t('resetDataset')}</Button>
       </div>
 
       <div class="setting-row">
-        <span><FileJson size={16} /> JSON file</span>
+        <span><FileJson size={16} /> {t('jsonFile')}</span>
         <label class="file-dropzone">
           <UploadCloud size={24} />
-          <span>Chọn hoặc kéo thả file JSON flashcard</span>
+          <span>{t('chooseDatasetFile')}</span>
           <input accept="application/json,.json" type="file" on:change={handleDatasetFile} />
         </label>
       </div>
 
       <div class:status-card={true} class:status-card--error={validation.status === 'invalid'}>
-        <strong><CheckCircle2 size={16} /> {validation.fileName ?? 'Dataset status'}</strong>
+        <strong><CheckCircle2 size={16} /> {validation.fileName ?? t('datasetStatus')}</strong>
         <p>{validation.message}</p>
-        <p>{validation.validCount} card hợp lệ · {validation.invalidCount} lỗi validation · {dataset.length} card đang lưu</p>
+        <p>{t('datasetSummary', { valid: validation.validCount, invalid: validation.invalidCount, stored: dataset.length })}</p>
         {#if validation.errors.length > 0}
-          <ul class="validation-errors" aria-label="Dataset validation errors">
+          <ul class="validation-errors" aria-label={t('datasetValidationErrorsLabel')}>
             {#each validation.errors.slice(0, 5) as error}
               <li>{error.message}</li>
             {/each}
           </ul>
           {#if validation.errors.length > 5}
-            <p>…và {validation.errors.length - 5} lỗi khác.</p>
+            <p>{t('otherErrors', { count: validation.errors.length - 5 })}</p>
           {/if}
         {/if}
       </div>
@@ -291,10 +302,10 @@
 
     <Card class="settings-grid settings-grid--compact">
       <div class="section-heading">
-        <h2><Shuffle size={20} /> Study mode</h2>
+        <h2><Shuffle size={20} /> {t('studyMode')}</h2>
       </div>
 
-      <div class="segmented-toggle" role="group" aria-label="Study mode">
+      <div class="segmented-toggle" role="group" aria-label={t('studyMode')}>
         <button
           class:active={settings.orderMode === 'random'}
           class="toggle-icon-button"
@@ -303,7 +314,7 @@
           on:click={() => updateSetting('orderMode', 'random')}
         >
           <Shuffle size={14} />
-          <span>Random</span>
+          <span>{t('random')}</span>
         </button>
         <button
           class:active={settings.orderMode === 'sequential'}
@@ -313,18 +324,18 @@
           on:click={() => updateSetting('orderMode', 'sequential')}
         >
           <ListOrdered size={14} />
-          <span>Sequential</span>
+          <span>{t('sequential')}</span>
         </button>
       </div>
     </Card>
 
     <Card class="settings-grid">
       <div class="section-heading">
-        <h2><Bell size={20} /> Notifications</h2>
+        <h2><Bell size={20} /> {t('notifications')}</h2>
       </div>
 
       <label class="ios-switch-row">
-        <span>Enable reminder notifications</span>
+        <span>{t('reminderNotifications')}</span>
         <input
           checked={settings.notificationEnabled}
           role="switch"
@@ -332,37 +343,36 @@
           on:change={(event) => updateSetting('notificationEnabled', event.currentTarget.checked)}
         />
         <span class="ios-switch-track" aria-hidden="true">
-          <span class="ios-switch-icon ios-switch-icon--off">Off</span>
-          <span class="ios-switch-icon ios-switch-icon--on">On</span>
+          <span class="ios-switch-icon ios-switch-icon--off">{t('switchOff')}</span>
+          <span class="ios-switch-icon ios-switch-icon--on">{t('switchOn')}</span>
           <span class="ios-switch-thumb"></span>
         </span>
       </label>
 
       <label class="setting-row">
-        <span>Interval Display</span>
+        <span>{t('intervalDisplay')}</span>
         <select
           disabled={!settings.notificationEnabled}
           value={settings.notificationIntervalMinutes}
           on:change={(event) => updateSetting('notificationIntervalMinutes', Number(event.currentTarget.value))}
         >
           {#each NOTIFICATION_INTERVAL_OPTIONS as option}
-            <option value={option.minutes}>{option.label}</option>
+            <option value={option.minutes}>{formatInterval(language, option.minutes)}</option>
           {/each}
         </select>
       </label>
 
       <p class="help-text">
-        Bật notification để service worker tạo alarm theo interval đã cấu hình; thay đổi interval sẽ tự cập nhật alarm đang chạy.
-        Thời lượng hiển thị notification do Chrome và hệ điều hành tự xử lý.
+        {t('notificationsHelp')}
       </p>
     </Card>
 
     <Card class="settings-grid settings-grid--compact">
       <div class="section-heading">
-        <h2><Sun size={20} /> Appearance</h2>
+        <h2><Sun size={20} /> {t('appearance')}</h2>
       </div>
 
-      <div class="segmented-toggle" role="group" aria-label="Theme">
+      <div class="segmented-toggle" role="group" aria-label={t('theme')}>
         <button
           class:active={settings.theme === 'light'}
           class="toggle-icon-button"
@@ -371,7 +381,7 @@
           on:click={() => updateSetting('theme', 'light')}
         >
           <Sun size={14} />
-          <span>Light</span>
+          <span>{t('light')}</span>
         </button>
         <button
           class:active={settings.theme === 'dark'}
@@ -381,7 +391,7 @@
           on:click={() => updateSetting('theme', 'dark')}
         >
           <Moon size={14} />
-          <span>Dark</span>
+          <span>{t('dark')}</span>
         </button>
       </div>
     </Card>
@@ -389,35 +399,46 @@
     <Card class="settings-grid">
       <div class="section-heading">
         <div>
-          <h2><SlidersHorizontal size={20} /> General settings</h2>
-          <p>Daily goal and active JLPT levels are also persisted to chrome.storage.local.</p>
+          <h2><SlidersHorizontal size={20} /> {t('generalSettings')}</h2>
+          <p>{t('generalSettingsDescription')}</p>
         </div>
-        <Button class="compact-button" variant="outline" on:click={resetSettings}><RotateCcw size={16} /> Reset settings</Button>
+        <Button class="compact-button" variant="outline" on:click={resetSettings}><RotateCcw size={16} /> {t('resetSettings')}</Button>
       </div>
 
       <label class="setting-row">
-        <span><Target size={16} /> Daily review goal</span>
+        <span><Target size={16} /> {t('dailyGoal')}</span>
         <input bind:value={settings.dailyGoal} min="1" type="number" on:change={persistSettings} />
       </label>
 
+      <label class="setting-row">
+        <span>{t('language')}</span>
+        <select
+          value={settings.language}
+          on:change={(event) => updateSetting('language', normalizeLanguage(event.currentTarget.value))}
+        >
+          <option value="en">{t('languageEnglish')}</option>
+          <option value="vi">{t('languageVietnamese')}</option>
+        </select>
+      </label>
+
       <div class="setting-row">
-        <span>Active JLPT levels</span>
+        <span>{t('activeJlptLevels')}</span>
         <LevelSelector selectedLevels={settings.selectedLevels} on:change={updateLevels} />
       </div>
     </Card>
 
     <Card class="settings-grid level-guide">
-      <h2><BookOpenCheck size={20} /> Level guide</h2>
+      <h2><BookOpenCheck size={20} /> {t('levelGuide')}</h2>
       {#each selectedLevelDescriptions as level}
         <article>
           <strong><Info size={16} /> {level.toUpperCase()}</strong>
-          <p>{levelDescriptions[level]}</p>
+          <p>{t(getLevelDescriptionKey(level))}</p>
         </article>
       {/each}
     </Card>
 
     {#if saveStatus || isSaving}
-      <p class="save-status">{isSaving ? 'Đang lưu…' : saveStatus}</p>
+      <p class="save-status">{isSaving ? t('loadingData') : saveStatus}</p>
     {/if}
   {/if}
 </main>

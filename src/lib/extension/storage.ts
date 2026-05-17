@@ -1,4 +1,5 @@
 import { defaultN2Vocabulary } from '../data/flashcards';
+import { DEFAULT_LANGUAGE, normalizeLanguage, type AppLanguage } from '../i18n';
 import type { Flashcard, FlashcardCategory, JlptLevel, StudySettings } from '../types/flashcard';
 
 export type UserSettings = StudySettings & {
@@ -7,6 +8,7 @@ export type UserSettings = StudySettings & {
   notificationEnabled: boolean;
   orderMode: 'random' | 'sequential';
   revealAnswers: boolean;
+  language: AppLanguage;
 };
 
 export type NotificationIntervalOption = {
@@ -36,10 +38,10 @@ type StorageSnapshot = {
 };
 
 export const NOTIFICATION_INTERVAL_OPTIONS: NotificationIntervalOption[] = [
-  { label: '30 giây', minutes: 0.5 },
-  { label: '1 phút', minutes: 1 },
-  { label: '3 phút', minutes: 3 },
-  { label: '10 phút', minutes: 10 }
+  { label: '30 seconds', minutes: 0.5 },
+  { label: '1 minute', minutes: 1 },
+  { label: '3 minutes', minutes: 3 },
+  { label: '10 minutes', minutes: 10 }
 ];
 
 export const DEFAULT_NOTIFICATION_INTERVAL_MINUTES = 1;
@@ -64,7 +66,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   notificationIntervalMinutes: DEFAULT_NOTIFICATION_INTERVAL_MINUTES,
   notificationEnabled: false,
   orderMode: 'sequential',
-  revealAnswers: false
+  revealAnswers: false,
+  language: DEFAULT_LANGUAGE
 };
 
 export const DEFAULT_EXTENSION_STATE: ExtensionState = {
@@ -228,7 +231,8 @@ function normalizeSettings(settings: Partial<UserSettings> | undefined): UserSet
     notificationIntervalMinutes: normalizeNotificationInterval(merged.notificationIntervalMinutes),
     notificationEnabled: Boolean(merged.notificationEnabled),
     orderMode: merged.orderMode === 'random' ? 'random' : 'sequential',
-    revealAnswers: Boolean(merged.revealAnswers)
+    revealAnswers: Boolean(merged.revealAnswers),
+    language: normalizeLanguage(merged.language)
   };
 }
 

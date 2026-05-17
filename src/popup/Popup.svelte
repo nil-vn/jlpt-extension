@@ -7,7 +7,9 @@
   import { Button } from '../lib/components/ui/button';
   import { Card } from '../lib/components/ui/card';
   import { starterFlashcards } from '../lib/data';
+  import { formatInterval, translate, type AppLanguage } from '../lib/i18n';
   import {
+    DEFAULT_SETTINGS,
     getExtensionState,
     hasChromeStorage,
     saveNote,
@@ -34,7 +36,7 @@
   let currentIndex = 0;
   let revealed = false;
   let studyMode: StudyMode = 'sequential';
-  let storedSettings: UserSettings;
+  let storedSettings: UserSettings = { ...DEFAULT_SETTINGS };
   let bookmarkedCardIds: string[] = [];
   let notesByCardId: Record<string, string> = {};
   let currentNote = '';
@@ -43,6 +45,7 @@
   let historyStack: number[] = [];
   let showBookmarkedOnly = false;
   let isLoading = true;
+  let language: AppLanguage = 'en';
 
   $: cardsById = new Map(dataset.map((card) => [getCardId(card), card]));
   $: levelFilteredCards = dataset.filter(
@@ -60,14 +63,15 @@
   $: currentCardId = currentCard ? getCardId(currentCard) : '';
   $: isBookmarked = currentCardId ? bookmarkedCardIds.includes(currentCardId) : false;
   $: currentNote = currentCardId ? notesByCardId[currentCardId] ?? '' : '';
-  $: bookmarkReviewButtonLabel = showBookmarkedOnly ? 'Quay lại thẻ theo cấp độ' : 'Mở lại từ đã bookmark';
+  $: t = (key: Parameters<typeof translate>[1], params?: Parameters<typeof translate>[2]) => translate(language, key, params);
+  $: bookmarkReviewButtonLabel = showBookmarkedOnly ? t('returnToLevelCards') : t('reviewBookmarked');
   $: studyProgressLabel = showBookmarkedOnly
-    ? `Bookmark ${studyCards.length === 0 ? 0 : currentIndex + 1}/${studyCards.length}`
-    : `Thẻ ${studyCards.length === 0 ? 0 : currentIndex + 1}/${studyCards.length}`;
-  $: notificationButtonLabel = notificationPaused ? 'Resume notification' : 'Pause notification';
+    ? t('bookmarksProgress', { current: studyCards.length === 0 ? 0 : currentIndex + 1, total: studyCards.length })
+    : t('cardProgress', { current: studyCards.length === 0 ? 0 : currentIndex + 1, total: studyCards.length });
+  $: notificationButtonLabel = notificationPaused ? t('resumeNotification') : t('pauseNotification');
   $: notificationStatusLabel = notificationPaused
-    ? 'Notifications đang tạm dừng cho tới khi bạn bật lại.'
-    : `Notifications đang bật mỗi ${formatNotificationInterval(storedSettings?.notificationIntervalMinutes)}.`;
+    ? t('notificationPauseStatus')
+    : t('notificationEnabledStatus', { interval: formatInterval(language, storedSettings?.notificationIntervalMinutes) });
 
   onMount(() => {
     void loadState();
@@ -116,6 +120,7 @@
     notesByCardId = stored.notesByCardId;
     notificationPaused = stored.notificationPaused ?? !stored.settings.notificationEnabled;
     revealed = stored.settings.revealAnswers;
+    language = stored.settings.language;
   }
 
   function handleStorageChange(changes: Record<string, chrome.storage.StorageChange>, areaName: string) {
@@ -233,8 +238,8 @@
         void showNotificationNow().then((result) => {
           console.log(
             result.ok
-              ? 'Đã gửi notification test. Nếu vẫn không thấy, hãy kiểm tra quyền thông báo của Chrome trong hệ điều hành.'
-              : `Không gửi được notification: ${result.error ?? 'Lỗi không xác định.'}`,
+              ? t('notificationImmediateSuccess')
+              : t('notificationImmediateFailure', { message: result.error ?? t('statusInvalidFile') }),
           );
         });
       }
@@ -243,17 +248,10 @@
 
   function showNotificationNow(): Promise<{ ok: boolean; error?: string }> {
     if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage) {
-      return Promise.resolve({ ok: false, error: 'Chrome runtime API không khả dụng.' });
+      return Promise.resolve({ ok: false, error: t('chromeRuntimeUnavailable') });
     }
 
     return chrome.runtime.sendMessage({ type: 'SHOW_STUDY_NOTIFICATION_NOW' });
-  }
-
-  function formatNotificationInterval(intervalMinutes: number | undefined) {
-    if (intervalMinutes === 0.5) return '30 giây';
-    if (intervalMinutes === 1) return '1 phút';
-
-    return `${intervalMinutes ?? 1} phút`;
   }
 
   function openOptionsPage() {
@@ -268,73 +266,73 @@
 
 <main class="app-shell popup-shell">
   <Card class="level-panel">
-    <div class="panel-label">Chọn cấp độ</div>
+    <div class="panel-label">{t('chooseLevel')}</div>
     <LevelSelector {selectedLevels} on:change={updateLevels} />
   </Card>
 
   {#if isLoading}
     <Card class="empty-state">
-      <h2>Đang tải dữ liệu…</h2>
-      <p>Vui lòng chờ trong giây lát.</p>
+      <h2>{t('loadingData')}</h2>
+      <p>{t('validLevelOnly')}</p>
     </Card>
   {:else if dataset.length === 0}
     <Card class="empty-state">
-      <h2>Chưa có dataset</h2>
-      <p>Hãy mở trang cài đặt và nạp file JSON flashcard trước khi bắt đầu học.</p>
-      <Button on:click={openOptionsPage}><Settings size={16} /> Mở trang cài đặt</Button>
+      <h2>{t('emptyDatasetTitle')}</h2>
+      <p>{t('emptyDatasetDescription')}</p>
+      <Button on:click={openOptionsPage}><Settings size={16} /> {t('openSettings')}</Button>
     </Card>
   {:else if currentCard}
-    <StudyCard card={currentCard} {revealed}>
+    <StudyCard card={currentCard} {revealed} {language}>
       <div class="study-card-controls" slot="header-actions">
         <Button class="study-card-bookmark-button" variant={isBookmarked ? 'secondary' : 'outline'} size="sm" on:click={toggleBookmark} aria-pressed={isBookmarked}>
           {#if isBookmarked}
             <BookmarkCheck size={16} />
-            Đã đánh dấu
+            {t('bookmarkAdded')}
           {:else}
             <Bookmark size={16} />
-            Đánh dấu xem lại
+            {t('bookmarkReview')}
           {/if}
         </Button>
         <Badge class="study-progress-badge" variant={showBookmarkedOnly ? 'success' : 'secondary'}>{studyProgressLabel}</Badge>
       </div>
 
       <label class="note-field study-card__note" slot="footer">
-        <span>Ghi chú cho thẻ hiện tại</span>
+        <span>{t('noteLabel')}</span>
         <textarea
           bind:value={currentNote}
           on:input={scheduleNoteSave}
           rows="4"
-          placeholder="Nhập mnemonic, ví dụ riêng hoặc điểm cần xem lại…"
+          placeholder={t('notePlaceholder')}
         ></textarea>
       </label>
     </StudyCard>
 
     <div class="actions learning-pagination">
-      <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> Trước</Button>
+      <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> {t('previous')}</Button>
       <Button on:click={toggleRevealed} aria-pressed={revealed}>
         {#if revealed}
           <EyeOff size={16} />
-          Ẩn đáp án
+          {t('hideAnswer')}
         {:else}
           <Eye size={16} />
-          Hiện đáp án
+          {t('showAnswer')}
         {/if}
       </Button>
-      <Button variant="outline" on:click={nextCard}>Sau <ChevronRight size={16} /></Button>
+      <Button variant="outline" on:click={nextCard}>{t('next')} <ChevronRight size={16} /></Button>
     </div>
 
   {:else}
     <Card class="empty-state">
-      <h2>Không có thẻ phù hợp</h2>
-      <p>{showBookmarkedOnly ? 'Bạn chưa có bookmark nào để mở lại.' : 'Dataset đã được nạp, nhưng chưa có thẻ nào thuộc level đang chọn.'}</p>
+      <h2>{t('noMatchingCardsTitle')}</h2>
+      <p>{showBookmarkedOnly ? t('bookmarkEmpty') : t('noMatchingCardsDescription')}</p>
     </Card>
   {/if}
   {#if !isLoading}
     <Card class="bookmark-panel">
       <div class="bookmark-panel__header">
         <div>
-          <div class="panel-label"><BookmarkCheck size={16} /> Từ vựng đã bookmark</div>
-          <p class="help-text">{bookmarkedCards.length} từ đã lưu để mở lại và ôn nhanh.</p>
+          <div class="panel-label"><BookmarkCheck size={16} /> {t('bookmarkPanelTitle')}</div>
+          <p class="help-text">{t('bookmarkHelp', { count: bookmarkedCards.length })}</p>
         </div>
         <Button variant={showBookmarkedOnly ? 'secondary' : 'outline'} on:click={toggleBookmarkReview} disabled={bookmarkedCards.length === 0}>
           <Bookmark size={16} />
@@ -343,7 +341,7 @@
       </div>
 
       {#if bookmarkedCards.length > 0}
-        <div class="bookmark-list" aria-label="Danh sách từ vựng đã bookmark">
+        <div class="bookmark-list" aria-label={t('bookmarkListLabel')}>
           {#each bookmarkedCards.slice(0, 5) as bookmarkedCard (getCardId(bookmarkedCard))}
             <button
               class:active={showBookmarkedOnly && currentCardId === getCardId(bookmarkedCard)}
@@ -357,7 +355,7 @@
           {/each}
         </div>
         {#if bookmarkedCards.length > 5}
-          <p class="help-text">Hiển thị 5 từ bookmark mới nhất. Bấm “Mở lại từ đã bookmark” để duyệt tất cả.</p>
+          <p class="help-text">{t('bookmarkLatestHelp')}</p>
         {/if}
       {/if}
     </Card>
@@ -368,9 +366,9 @@
       <div>
         <Badge class="hero__eyebrow" variant="outline"><Sparkles size={14} /> Daily JLPT</Badge>
         <h1>JLPT Study Companion</h1>
-        <p>Ôn flashcard JLPT, nghe audio, ghi chú và đánh dấu xem lại.</p>
+        <p>{t('jlptDescription')}</p>
       </div>
-      <Button class="compact-button hero__settings" variant="secondary" on:click={openOptionsPage}><Settings size={16} /> Cài đặt</Button>
+      <Button class="compact-button hero__settings" variant="secondary" on:click={openOptionsPage}><Settings size={16} /> {t('settings')}</Button>
     </div>
   </section>
 
@@ -385,8 +383,8 @@
           on:change={toggleNotifications}
         />
         <span class="ios-switch-track" aria-hidden="true">
-          <span class="ios-switch-icon ios-switch-icon--off">Off</span>
-          <span class="ios-switch-icon ios-switch-icon--on">On</span>
+          <span class="ios-switch-icon ios-switch-icon--off">{t('switchOff')}</span>
+          <span class="ios-switch-icon ios-switch-icon--on">{t('switchOn')}</span>
           <span class="ios-switch-thumb"></span>
         </span>
       </label>
