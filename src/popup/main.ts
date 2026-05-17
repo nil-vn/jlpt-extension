@@ -1,6 +1,7 @@
+import { mount } from 'svelte';
 import Popup from './Popup.svelte';
 
-const app = new Popup({
+const app = mount(Popup, {
   target: document.getElementById('app') as HTMLElement
 });
 
