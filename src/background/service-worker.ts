@@ -8,18 +8,7 @@ import {
 } from "../lib/extension/storage";
 import type { Flashcard } from "../lib/types/flashcard";
 
-const NOTIFICATION_ICON_DATA_URL = `data:image/png;base64,${[
-  "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAABiElEQVR42u3asQ2A",
-  "MBRDwUxHy/4DMAeIAShBIe++5B7ZV6GM8fHt23HKc8YKZ8ggDgNFMRgjCkH5",
-  "YQgKjyJQchiCYsMIFBpGoMgwAgWGESgujkBpYQAKCyNQVByBksIAFBRHoJww",
-  "AMXEESgFAMVUASgkjkAZACgEAAFAABAApARAEXEESgBAEQAIAAKAADBt/nYA",
-  "AAAAAAAAAAAAAAAAAAAAAADAewDq3wMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-  "AAAAAAAAAAAAHoR4EAIAAAAAAAAAAAAAAAAAAAAAAH4E+REEAAAAAAAAAAAAAAAAAAAA",
-  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAehQIAAAAAAAAAAAAAAAAAAAAAA",
-  "AACgAAgAAgAAoDMBuA+RYTHBwAAAABQBgACgAAgRQAQxMcHAAAA6gAgiI8P",
-  "AAAQ1McHAAAI6uNDYHwAAIAgPz4ExofA+BAYHwLjg2B4CIwPguFBMDwMRodj",
-  "oZEvIOo8RQRuA9UAAAAASUVORK5CYII=",
-].join("")}`;
+const NOTIFICATION_ICON_URL = chrome.runtime.getURL("notification-icon.svg");
 const NOTIFICATION_ALARM_NAME = "jlpt-card-reminder";
 const NOTIFICATION_ID_PREFIX = "jlpt-card-reminder";
 const STORAGE_STATE_KEY = "jlptExtensionState";
@@ -263,7 +252,7 @@ function createNotification(notificationId: string, card: Flashcard) {
         notificationId,
         {
           type: "basic",
-          iconUrl: NOTIFICATION_ICON_DATA_URL,
+          iconUrl: NOTIFICATION_ICON_URL,
           title,
           message,
           priority: 2,
