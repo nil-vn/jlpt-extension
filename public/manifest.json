@@ -12,6 +12,10 @@
     "service_worker": "service-worker.js",
     "type": "module"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications"
+  ],
   "icons": {}
 }
