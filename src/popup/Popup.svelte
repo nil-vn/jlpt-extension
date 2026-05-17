@@ -39,7 +39,6 @@
   let notesByCardId: Record<string, string> = {};
   let currentNote = '';
   let notificationPaused = false;
-  let notificationFeedback = '';
   let noteSaveTimer: ReturnType<typeof setTimeout> | undefined;
   let historyStack: number[] = [];
   let showBookmarkedOnly = false;
@@ -232,9 +231,11 @@
 
       if (!notificationPaused) {
         void showNotificationNow().then((result) => {
-          notificationFeedback = result.ok
-            ? 'Đã gửi notification test. Nếu vẫn không thấy, hãy kiểm tra quyền thông báo của Chrome trong hệ điều hành.'
-            : `Không gửi được notification: ${result.error ?? 'Lỗi không xác định.'}`;
+          console.log(
+            result.ok
+              ? 'Đã gửi notification test. Nếu vẫn không thấy, hãy kiểm tra quyền thông báo của Chrome trong hệ điều hành.'
+              : `Không gửi được notification: ${result.error ?? 'Lỗi không xác định.'}`,
+          );
         });
       }
     });
@@ -374,10 +375,6 @@
       </div>
 
       <p class="help-text">{notificationStatusLabel}</p>
-      {#if notificationFeedback}
-        <p class="help-text">{notificationFeedback}</p>
-      {/if}
-
       <label class="note-field">
         <span>Ghi chú cho thẻ hiện tại</span>
         <textarea
