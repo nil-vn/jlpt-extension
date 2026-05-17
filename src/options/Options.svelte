@@ -343,6 +343,7 @@
       <label class="setting-row">
         <span>Interval minutes</span>
         <input
+          disabled={!settings.notificationEnabled}
           min="1"
           max="1440"
           type="number"
@@ -368,6 +369,7 @@
       </label>
 
       <p class="help-text">
+        Bật notification để service worker tạo alarm định kỳ; thay đổi interval sẽ tự cập nhật alarm đang chạy.
         Chrome Notifications API không đảm bảo thời lượng hiển thị cố định; hệ điều hành có thể tự quyết định.
         MVP lưu giá trị này để service worker có thể dùng làm hint hoặc tự clear notification khi phù hợp.
       </p>

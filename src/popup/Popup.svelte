@@ -46,6 +46,10 @@
   $: currentCardId = currentCard ? getCardId(currentCard) : '';
   $: isBookmarked = currentCardId ? bookmarkedCardIds.includes(currentCardId) : false;
   $: currentNote = currentCardId ? notesByCardId[currentCardId] ?? '' : '';
+  $: notificationButtonLabel = notificationPaused ? 'Resume notification' : 'Pause notification';
+  $: notificationStatusLabel = notificationPaused
+    ? 'Notifications đang tạm dừng cho tới khi bạn bật lại.'
+    : `Notifications đang bật mỗi ${storedSettings?.notificationIntervalMinutes ?? 60} phút.`;
 
   onMount(() => {
     void loadState();
@@ -211,10 +215,12 @@
         <button class="secondary-button" type="button" on:click={toggleBookmark} aria-pressed={isBookmarked}>
           {isBookmarked ? '★ Đã đánh dấu' : '☆ Đánh dấu xem lại'}
         </button>
-        <button class="secondary-button" type="button" on:click={toggleNotifications} aria-pressed={notificationPaused}>
-          {notificationPaused ? 'Resume notification' : 'Pause notification'}
+        <button class="secondary-button" type="button" on:click={toggleNotifications} aria-pressed={!notificationPaused}>
+          {notificationButtonLabel}
         </button>
       </div>
+
+      <p class="help-text">{notificationStatusLabel}</p>
 
       <label class="note-field">
         <span>Ghi chú cho thẻ hiện tại</span>
