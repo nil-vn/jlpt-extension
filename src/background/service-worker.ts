@@ -267,7 +267,6 @@ function createNotification(notificationId: string, card: Flashcard) {
           title,
           message,
           priority: 2,
-          requireInteraction: true,
         },
         (createdNotificationId) => {
           const errorMessage = chrome.runtime?.lastError?.message;
