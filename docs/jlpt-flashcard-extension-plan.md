@@ -29,7 +29,7 @@ Dataset là một file JSON gồm danh sách flashcard. Mỗi item cần đủ f
 
 ```ts
 type JlptLevel = "n5" | "n4" | "n3" | "n2" | "n1";
-type JlptCategory = "gramma" | "locabulary" | "kanji" | "reading" | "listening";
+type JlptCategory = "gramma" | "vocabulary" | "kanji" | "reading" | "listening";
 
 type Flashcard = {
   level: JlptLevel;
@@ -43,7 +43,7 @@ type Flashcard = {
 };
 ```
 
-Ghi chú: enum `gramma` và `locabulary` được giữ đúng theo yêu cầu dataset đầu vào để tương thích. Trong UI nên map nhãn hiển thị thành `Ngữ pháp` và `Từ vựng`.
+Ghi chú: enum `gramma` và `vocabulary` được giữ đúng theo yêu cầu dataset đầu vào để tương thích. Trong UI nên map nhãn hiển thị thành `Ngữ pháp` và `Từ vựng`.
 
 ### 3.2. Màn hình setting/options
 

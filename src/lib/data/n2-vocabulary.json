@@ -1,7 +1,7 @@
 [
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "曖昧",
     "hiragana": "あいまい",
     "mean": "mơ hồ; không rõ ràng",
@@ -11,7 +11,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "明らか",
     "hiragana": "あきらか",
     "mean": "rõ ràng; hiển nhiên",
@@ -21,7 +21,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "改める",
     "hiragana": "あらためる",
     "mean": "sửa đổi; xem xét lại",
@@ -31,7 +31,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "意外",
     "hiragana": "いがい",
     "mean": "bất ngờ; ngoài dự đoán",
@@ -41,7 +41,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "維持",
     "hiragana": "いじ",
     "mean": "duy trì; bảo trì",
@@ -51,7 +51,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "依頼",
     "hiragana": "いらい",
     "mean": "yêu cầu; nhờ vả",
@@ -61,7 +61,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "印象",
     "hiragana": "いんしょう",
     "mean": "ấn tượng",
@@ -71,7 +71,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "引用",
     "hiragana": "いんよう",
     "mean": "trích dẫn",
@@ -81,7 +81,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "影響",
     "hiragana": "えいきょう",
     "mean": "ảnh hưởng",
@@ -91,7 +91,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "援助",
     "hiragana": "えんじょ",
     "mean": "viện trợ; giúp đỡ",
@@ -101,7 +101,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "応用",
     "hiragana": "おうよう",
     "mean": "ứng dụng",
@@ -111,7 +111,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "大幅",
     "hiragana": "おおはば",
     "mean": "quy mô lớn; đáng kể",
@@ -121,7 +121,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "お互い",
     "hiragana": "おたがい",
     "mean": "lẫn nhau; nhau",
@@ -131,7 +131,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "穏やか",
     "hiragana": "おだやか",
     "mean": "ôn hòa; yên ả",
@@ -141,7 +141,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "解決",
     "hiragana": "かいけつ",
     "mean": "giải quyết",
@@ -151,7 +151,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "快適",
     "hiragana": "かいてき",
     "mean": "thoải mái; dễ chịu",
@@ -161,7 +161,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "確認",
     "hiragana": "かくにん",
     "mean": "xác nhận; kiểm tra",
@@ -171,7 +171,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "可能",
     "hiragana": "かのう",
     "mean": "có thể; khả thi",
@@ -181,7 +181,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "課題",
     "hiragana": "かだい",
     "mean": "bài tập; vấn đề cần giải quyết",
@@ -191,7 +191,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "価値",
     "hiragana": "かち",
     "mean": "giá trị",
@@ -201,7 +201,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "活用",
     "hiragana": "かつよう",
     "mean": "tận dụng; vận dụng",
@@ -211,7 +211,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "仮定",
     "hiragana": "かてい",
     "mean": "giả định",
@@ -221,7 +221,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "管理",
     "hiragana": "かんり",
     "mean": "quản lý",
@@ -231,7 +231,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "完了",
     "hiragana": "かんりょう",
     "mean": "hoàn tất",
@@ -241,7 +241,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "関連",
     "hiragana": "かんれん",
     "mean": "liên quan",
@@ -251,7 +251,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "企業",
     "hiragana": "きぎょう",
     "mean": "doanh nghiệp",
@@ -261,7 +261,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "基準",
     "hiragana": "きじゅん",
     "mean": "tiêu chuẩn; chuẩn mực",
@@ -271,7 +271,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "期待",
     "hiragana": "きたい",
     "mean": "kỳ vọng; mong đợi",
@@ -281,7 +281,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "機能",
     "hiragana": "きのう",
     "mean": "chức năng",
@@ -291,7 +291,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "規模",
     "hiragana": "きぼ",
     "mean": "quy mô",
@@ -301,7 +301,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "供給",
     "hiragana": "きょうきゅう",
     "mean": "cung cấp; nguồn cung",
@@ -311,7 +311,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "協力",
     "hiragana": "きょうりょく",
     "mean": "hợp tác",
@@ -321,7 +321,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "具体的",
     "hiragana": "ぐたいてき",
     "mean": "cụ thể",
@@ -331,7 +331,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "工夫",
     "hiragana": "くふう",
     "mean": "sáng kiến; cách làm khéo léo",
@@ -341,7 +341,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "経営",
     "hiragana": "けいえい",
     "mean": "quản trị; kinh doanh",
@@ -351,7 +351,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "傾向",
     "hiragana": "けいこう",
     "mean": "xu hướng; khuynh hướng",
@@ -361,7 +361,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "継続",
     "hiragana": "けいぞく",
     "mean": "tiếp tục; duy trì",
@@ -371,7 +371,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "契約",
     "hiragana": "けいやく",
     "mean": "hợp đồng; ký hợp đồng",
@@ -381,7 +381,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "結果",
     "hiragana": "けっか",
     "mean": "kết quả",
@@ -391,7 +391,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "欠点",
     "hiragana": "けってん",
     "mean": "khuyết điểm; nhược điểm",
@@ -401,7 +401,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "検討",
     "hiragana": "けんとう",
     "mean": "xem xét; cân nhắc",
@@ -411,7 +411,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "効果",
     "hiragana": "こうか",
     "mean": "hiệu quả; tác dụng",
@@ -421,7 +421,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "交換",
     "hiragana": "こうかん",
     "mean": "trao đổi; đổi",
@@ -431,7 +431,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "貢献",
     "hiragana": "こうけん",
     "mean": "đóng góp; cống hiến",
@@ -441,7 +441,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "候補",
     "hiragana": "こうほ",
     "mean": "ứng viên; phương án",
@@ -451,7 +451,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "考慮",
     "hiragana": "こうりょ",
     "mean": "cân nhắc; xem xét",
@@ -461,7 +461,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "克服",
     "hiragana": "こくふく",
     "mean": "khắc phục; vượt qua",
@@ -471,7 +471,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "個人",
     "hiragana": "こじん",
     "mean": "cá nhân",
@@ -481,7 +481,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "異なる",
     "hiragana": "ことなる",
     "mean": "khác nhau; khác biệt",
@@ -491,7 +491,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "混乱",
     "hiragana": "こんらん",
     "mean": "hỗn loạn; bối rối",
@@ -501,7 +501,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "作業",
     "hiragana": "さぎょう",
     "mean": "công việc; thao tác",
@@ -511,7 +511,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "削除",
     "hiragana": "さくじょ",
     "mean": "xóa bỏ",
@@ -521,7 +521,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "作成",
     "hiragana": "さくせい",
     "mean": "tạo; soạn thảo",
@@ -531,7 +531,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "支給",
     "hiragana": "しきゅう",
     "mean": "cấp phát; chi trả",
@@ -541,7 +541,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "事実",
     "hiragana": "じじつ",
     "mean": "sự thật; thực tế",
@@ -551,7 +551,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "実施",
     "hiragana": "じっし",
     "mean": "thực hiện; tiến hành",
@@ -561,7 +561,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "実際",
     "hiragana": "じっさい",
     "mean": "thực tế",
@@ -571,7 +571,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "自動",
     "hiragana": "じどう",
     "mean": "tự động",
@@ -581,7 +581,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "締切",
     "hiragana": "しめきり",
     "mean": "hạn chót",
@@ -591,7 +591,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "重要",
     "hiragana": "じゅうよう",
     "mean": "quan trọng",
@@ -601,7 +601,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "修正",
     "hiragana": "しゅうせい",
     "mean": "chỉnh sửa; sửa lại",
@@ -611,7 +611,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "集中",
     "hiragana": "しゅうちゅう",
     "mean": "tập trung",
@@ -621,7 +621,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "収入",
     "hiragana": "しゅうにゅう",
     "mean": "thu nhập",
@@ -631,7 +631,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "手段",
     "hiragana": "しゅだん",
     "mean": "phương tiện; biện pháp",
@@ -641,7 +641,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "需要",
     "hiragana": "じゅよう",
     "mean": "nhu cầu",
@@ -651,7 +651,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "順調",
     "hiragana": "じゅんちょう",
     "mean": "thuận lợi; suôn sẻ",
@@ -661,7 +661,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "承認",
     "hiragana": "しょうにん",
     "mean": "phê duyệt; chấp thuận",
@@ -671,7 +671,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "証明",
     "hiragana": "しょうめい",
     "mean": "chứng minh; giấy chứng nhận",
@@ -681,7 +681,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "省略",
     "hiragana": "しょうりゃく",
     "mean": "lược bỏ; giản lược",
@@ -691,7 +691,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "資料",
     "hiragana": "しりょう",
     "mean": "tài liệu",
@@ -701,7 +701,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "慎重",
     "hiragana": "しんちょう",
     "mean": "thận trọng",
@@ -711,7 +711,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "申請",
     "hiragana": "しんせい",
     "mean": "đăng ký; xin cấp",
@@ -721,7 +721,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "信頼",
     "hiragana": "しんらい",
     "mean": "tin cậy; tín nhiệm",
@@ -731,7 +731,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "制限",
     "hiragana": "せいげん",
     "mean": "hạn chế; giới hạn",
@@ -741,7 +741,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "制度",
     "hiragana": "せいど",
     "mean": "chế độ; hệ thống",
@@ -751,7 +751,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "積極的",
     "hiragana": "せっきょくてき",
     "mean": "tích cực; chủ động",
@@ -761,7 +761,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "節約",
     "hiragana": "せつやく",
     "mean": "tiết kiệm",
@@ -771,7 +771,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "選択",
     "hiragana": "せんたく",
     "mean": "lựa chọn",
@@ -781,7 +781,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "全体",
     "hiragana": "ぜんたい",
     "mean": "toàn thể; tổng thể",
@@ -791,7 +791,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "対応",
     "hiragana": "たいおう",
     "mean": "ứng phó; hỗ trợ; tương thích",
@@ -801,7 +801,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "対象",
     "hiragana": "たいしょう",
     "mean": "đối tượng",
@@ -811,7 +811,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "達成",
     "hiragana": "たっせい",
     "mean": "đạt được; hoàn thành",
@@ -821,7 +821,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "担当",
     "hiragana": "たんとう",
     "mean": "phụ trách",
@@ -831,7 +831,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "単純",
     "hiragana": "たんじゅん",
     "mean": "đơn giản; đơn thuần",
@@ -841,7 +841,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "調整",
     "hiragana": "ちょうせい",
     "mean": "điều chỉnh; sắp xếp",
@@ -851,7 +851,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "追加",
     "hiragana": "ついか",
     "mean": "thêm vào; bổ sung",
@@ -861,7 +861,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "通過",
     "hiragana": "つうか",
     "mean": "đi qua; thông qua",
@@ -871,7 +871,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "提案",
     "hiragana": "ていあん",
     "mean": "đề xuất",
@@ -881,7 +881,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "適切",
     "hiragana": "てきせつ",
     "mean": "thích hợp; phù hợp",
@@ -891,7 +891,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "手続き",
     "hiragana": "てつづき",
     "mean": "thủ tục",
@@ -901,7 +901,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "導入",
     "hiragana": "どうにゅう",
     "mean": "giới thiệu; đưa vào áp dụng",
@@ -911,7 +911,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "特徴",
     "hiragana": "とくちょう",
     "mean": "đặc trưng; đặc điểm",
@@ -921,7 +921,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "独立",
     "hiragana": "どくりつ",
     "mean": "độc lập",
@@ -931,7 +931,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "認識",
     "hiragana": "にんしき",
     "mean": "nhận thức; nhận biết",
@@ -941,7 +941,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "判断",
     "hiragana": "はんだん",
     "mean": "phán đoán; quyết định",
@@ -951,7 +951,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "比較",
     "hiragana": "ひかく",
     "mean": "so sánh",
@@ -961,7 +961,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "表現",
     "hiragana": "ひょうげん",
     "mean": "biểu hiện; diễn đạt",
@@ -971,7 +971,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "評価",
     "hiragana": "ひょうか",
     "mean": "đánh giá",
@@ -981,7 +981,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "負担",
     "hiragana": "ふたん",
     "mean": "gánh nặng; chịu trách nhiệm",
@@ -991,7 +991,7 @@
   },
   {
     "level": "n2",
-    "category": "locabulary",
+    "category": "vocabulary",
     "name": "不足",
     "hiragana": "ふそく",
     "mean": "thiếu; không đủ",

@@ -16,7 +16,7 @@ const requiredFields = ['level', 'category', 'name', 'mean', 'hiragana', 'image'
 const nullableStringFields = ['image', 'audio', 'example'] as const;
 const stringFields = ['name', 'mean', 'hiragana'] as const;
 const validLevels: JlptLevel[] = ['n5', 'n4', 'n3', 'n2', 'n1'];
-const validCategories: FlashcardCategory[] = ['gramma', 'locabulary', 'kanji', 'reading', 'listening'];
+const validCategories: FlashcardCategory[] = ['gramma', 'vocabulary', 'kanji', 'reading', 'listening'];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

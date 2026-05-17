@@ -32,7 +32,7 @@
 
   const defaultSettings: StoredStudySettings = { ...DEFAULT_SETTINGS };
   const validLevels: JlptLevel[] = ['n5', 'n4', 'n3', 'n2', 'n1'];
-  const validCategories: FlashcardCategory[] = ['gramma', 'locabulary', 'kanji', 'reading', 'listening'];
+  const validCategories: FlashcardCategory[] = ['gramma', 'vocabulary', 'kanji', 'reading', 'listening'];
 
   let settings: StoredStudySettings = { ...defaultSettings };
   let dataset: Flashcard[] = [];
@@ -67,7 +67,7 @@
     const normalized = String(value).toLowerCase();
 
     if (normalized === 'grammar') return 'gramma';
-    if (normalized === 'vocabulary') return 'locabulary';
+    if (normalized === 'vocabulary') return 'vocabulary';
 
     return normalized as FlashcardCategory;
   }
