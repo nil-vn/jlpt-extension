@@ -30,6 +30,7 @@
 
   let dataset: PlannedFlashcard[] = [];
   let selectedLevels: JlptLevel[] = defaultSelectedLevels;
+  let enabledCategories: PlannedFlashcard['category'][] = [];
   let currentIndex = 0;
   let revealed = false;
   let studyMode: StudyMode = 'sequential';
@@ -45,7 +46,9 @@
   let isLoading = true;
 
   $: cardsById = new Map(dataset.map((card) => [getCardId(card), card]));
-  $: levelFilteredCards = dataset.filter((card) => selectedLevels.includes(normalizeLevel(card.level)));
+  $: levelFilteredCards = dataset.filter(
+    (card) => selectedLevels.includes(normalizeLevel(card.level)) && enabledCategories.includes(card.category)
+  );
   $: bookmarkedCards = bookmarkedCardIds.map((cardId) => cardsById.get(cardId)).filter(isPlannedFlashcard).reverse();
   $: studyCards = showBookmarkedOnly ? bookmarkedCards : levelFilteredCards;
   $: if (studyCards.length > 0 && currentIndex >= studyCards.length) {
@@ -69,9 +72,17 @@
 
   onMount(() => {
     void loadState();
+
+    if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
+      chrome.storage.onChanged.addListener(handleStorageChange);
+    }
   });
 
   onDestroy(() => {
+    if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    }
+
     if (noteSaveTimer) {
       clearTimeout(noteSaveTimer);
     }
@@ -91,9 +102,14 @@
 
   async function loadState() {
     const stored = await getExtensionState();
+    applyStoredState(stored);
+    isLoading = false;
+  }
 
+  function applyStoredState(stored: Awaited<ReturnType<typeof getExtensionState>>) {
     dataset = stored.dataset.length > 0 ? stored.dataset : hasChromeStorage() ? [] : starterFlashcards;
     selectedLevels = stored.settings.selectedLevels.map(normalizeLevel).filter((level, index, levels) => levels.indexOf(level) === index);
+    enabledCategories = stored.settings.enabledCategories;
     storedSettings = stored.settings;
     studyMode = stored.settings.orderMode;
     currentIndex = stored.currentIndex;
@@ -101,7 +117,12 @@
     notesByCardId = stored.notesByCardId;
     notificationPaused = stored.notificationPaused ?? !stored.settings.notificationEnabled;
     revealed = stored.settings.revealAnswers;
-    isLoading = false;
+  }
+
+  function handleStorageChange(changes: Record<string, chrome.storage.StorageChange>, areaName: string) {
+    if (areaName !== 'local' || !changes.jlptExtensionState) return;
+
+    void getExtensionState().then(applyStoredState);
   }
 
   function nextCard() {
