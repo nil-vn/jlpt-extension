@@ -816,17 +816,27 @@ textarea:focus-visible {
 }
 
 .segmented-toggle {
+  --segmented-toggle-height: 2rem;
+  --segmented-toggle-padding: 0.16rem;
+  align-items: center;
   background: #e5e7eb;
   border: 0;
   border-radius: 999px;
   box-shadow: inset 0 0.12rem 0.4rem rgba(15, 23, 42, 0.16);
-  padding: 0.28rem;
+  height: var(--segmented-toggle-height);
+  padding: var(--segmented-toggle-padding);
 }
 
 .toggle-icon-button {
   border-radius: 999px;
-  min-height: 2.1rem;
-  padding: 0.42rem 0.68rem;
+  height: calc(var(--segmented-toggle-height) - (var(--segmented-toggle-padding) * 2));
+  min-height: 0;
+  padding: 0 0.62rem;
+}
+
+.settings-grid--compact {
+  gap: 0.55rem;
+  padding: 0.75rem;
 }
 
 .toggle-icon-button.active {

@@ -289,7 +289,7 @@
       </div>
     </Card>
 
-    <Card class="settings-grid">
+    <Card class="settings-grid settings-grid--compact">
       <div class="section-heading">
         <h2><Shuffle size={20} /> Study mode</h2>
       </div>
@@ -357,7 +357,7 @@
       </p>
     </Card>
 
-    <Card class="settings-grid">
+    <Card class="settings-grid settings-grid--compact">
       <div class="section-heading">
         <h2><Sun size={20} /> Appearance</h2>
       </div>
