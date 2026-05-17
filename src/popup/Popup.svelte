@@ -327,11 +327,30 @@
       <Button on:click={openOptionsPage}><Settings size={16} /> Mở trang cài đặt</Button>
     </Card>
   {:else if currentCard}
-    <div class="study-progress" aria-live="polite">
-      <Badge variant={showBookmarkedOnly ? 'success' : 'secondary'}>{studyProgressLabel}</Badge>
-    </div>
+    <StudyCard card={currentCard} {revealed}>
+      <div class="study-card-controls" slot="header-actions">
+        <Badge class="study-progress-badge" variant={showBookmarkedOnly ? 'success' : 'secondary'}>{studyProgressLabel}</Badge>
+        <Button class="study-card-bookmark-button" variant={isBookmarked ? 'secondary' : 'outline'} size="sm" on:click={toggleBookmark} aria-pressed={isBookmarked}>
+          {#if isBookmarked}
+            <BookmarkCheck size={16} />
+            Đã đánh dấu
+          {:else}
+            <Bookmark size={16} />
+            Đánh dấu xem lại
+          {/if}
+        </Button>
+      </div>
 
-    <StudyCard card={currentCard} {revealed} />
+      <label class="note-field study-card__note" slot="footer">
+        <span>Ghi chú cho thẻ hiện tại</span>
+        <textarea
+          bind:value={currentNote}
+          on:input={scheduleNoteSave}
+          rows="4"
+          placeholder="Nhập mnemonic, ví dụ riêng hoặc điểm cần xem lại…"
+        ></textarea>
+      </label>
+    </StudyCard>
 
     <div class="actions learning-pagination">
       <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> Trước</Button>
@@ -347,43 +366,23 @@
       <Button variant="outline" on:click={nextCard}>Sau <ChevronRight size={16} /></Button>
     </div>
 
-    <Card class="study-tools">
-      <div class="actions actions--wrap">
-        <Button variant={isBookmarked ? 'secondary' : 'outline'} on:click={toggleBookmark} aria-pressed={isBookmarked}>
-          {#if isBookmarked}
-            <BookmarkCheck size={16} />
-            Đã đánh dấu
-          {:else}
-            <Bookmark size={16} />
-            Đánh dấu xem lại
-          {/if}
-        </Button>
-        <label class="notification-toggle">
-          <span><Bell size={16} /> {notificationButtonLabel}</span>
-          <input
-            checked={!notificationPaused}
-            role="switch"
-            type="checkbox"
-            on:change={toggleNotifications}
-          />
-          <span class="ios-switch-track" aria-hidden="true">
-            <span class="ios-switch-icon ios-switch-icon--off">Off</span>
-            <span class="ios-switch-icon ios-switch-icon--on">On</span>
-            <span class="ios-switch-thumb"></span>
-          </span>
-        </label>
-      </div>
+    <Card class="notification-panel">
+      <label class="notification-toggle">
+        <span><Bell size={16} /> {notificationButtonLabel}</span>
+        <input
+          checked={!notificationPaused}
+          role="switch"
+          type="checkbox"
+          on:change={toggleNotifications}
+        />
+        <span class="ios-switch-track" aria-hidden="true">
+          <span class="ios-switch-icon ios-switch-icon--off">Off</span>
+          <span class="ios-switch-icon ios-switch-icon--on">On</span>
+          <span class="ios-switch-thumb"></span>
+        </span>
+      </label>
 
       <p class="help-text">{notificationStatusLabel}</p>
-      <label class="note-field">
-        <span>Ghi chú cho thẻ hiện tại</span>
-        <textarea
-          bind:value={currentNote}
-          on:input={scheduleNoteSave}
-          rows="4"
-          placeholder="Nhập mnemonic, ví dụ riêng hoặc điểm cần xem lại…"
-        ></textarea>
-      </label>
     </Card>
   {:else}
     <Card class="empty-state">
