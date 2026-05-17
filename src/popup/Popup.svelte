@@ -267,52 +267,9 @@
 </script>
 
 <main class="app-shell popup-shell">
-  <section class="hero">
-    <div class="hero__header">
-      <div>
-        <Badge class="hero__eyebrow" variant="outline"><Sparkles size={14} /> Daily JLPT</Badge>
-        <h1>JLPT Study Companion</h1>
-        <p>Ôn flashcard JLPT, nghe audio, ghi chú và đánh dấu xem lại.</p>
-      </div>
-      <Button class="compact-button hero__settings" variant="secondary" on:click={openOptionsPage}><Settings size={16} /> Cài đặt</Button>
-    </div>
-  </section>
-
   <Card class="level-panel">
     <div class="panel-label">Chọn cấp độ</div>
     <LevelSelector {selectedLevels} on:change={updateLevels} />
-  </Card>
-
-  <Card class="bookmark-panel">
-    <div class="bookmark-panel__header">
-      <div>
-        <div class="panel-label"><BookmarkCheck size={16} /> Từ vựng đã bookmark</div>
-        <p class="help-text">{bookmarkedCards.length} từ đã lưu để mở lại và ôn nhanh.</p>
-      </div>
-      <Button variant={showBookmarkedOnly ? 'secondary' : 'outline'} on:click={toggleBookmarkReview} disabled={bookmarkedCards.length === 0}>
-        <Bookmark size={16} />
-        {bookmarkReviewButtonLabel}
-      </Button>
-    </div>
-
-    {#if bookmarkedCards.length > 0}
-      <div class="bookmark-list" aria-label="Danh sách từ vựng đã bookmark">
-        {#each bookmarkedCards.slice(0, 5) as bookmarkedCard (getCardId(bookmarkedCard))}
-          <button
-            class:active={showBookmarkedOnly && currentCardId === getCardId(bookmarkedCard)}
-            class="bookmark-chip"
-            type="button"
-            on:click={() => openBookmarkedCard(getCardId(bookmarkedCard))}
-          >
-            <span>{bookmarkedCard.name}</span>
-            <small>{bookmarkedCard.hiragana || bookmarkedCard.mean}</small>
-          </button>
-        {/each}
-      </div>
-      {#if bookmarkedCards.length > 5}
-        <p class="help-text">Hiển thị 5 từ bookmark mới nhất. Bấm “Mở lại từ đã bookmark” để duyệt tất cả.</p>
-      {/if}
-    {/if}
   </Card>
 
   {#if isLoading}
@@ -366,6 +323,58 @@
       <Button variant="outline" on:click={nextCard}>Sau <ChevronRight size={16} /></Button>
     </div>
 
+  {:else}
+    <Card class="empty-state">
+      <h2>Không có thẻ phù hợp</h2>
+      <p>{showBookmarkedOnly ? 'Bạn chưa có bookmark nào để mở lại.' : 'Dataset đã được nạp, nhưng chưa có thẻ nào thuộc level đang chọn.'}</p>
+    </Card>
+  {/if}
+  {#if !isLoading}
+    <Card class="bookmark-panel">
+      <div class="bookmark-panel__header">
+        <div>
+          <div class="panel-label"><BookmarkCheck size={16} /> Từ vựng đã bookmark</div>
+          <p class="help-text">{bookmarkedCards.length} từ đã lưu để mở lại và ôn nhanh.</p>
+        </div>
+        <Button variant={showBookmarkedOnly ? 'secondary' : 'outline'} on:click={toggleBookmarkReview} disabled={bookmarkedCards.length === 0}>
+          <Bookmark size={16} />
+          {bookmarkReviewButtonLabel}
+        </Button>
+      </div>
+
+      {#if bookmarkedCards.length > 0}
+        <div class="bookmark-list" aria-label="Danh sách từ vựng đã bookmark">
+          {#each bookmarkedCards.slice(0, 5) as bookmarkedCard (getCardId(bookmarkedCard))}
+            <button
+              class:active={showBookmarkedOnly && currentCardId === getCardId(bookmarkedCard)}
+              class="bookmark-chip"
+              type="button"
+              on:click={() => openBookmarkedCard(getCardId(bookmarkedCard))}
+            >
+              <span>{bookmarkedCard.name}</span>
+              <small>{bookmarkedCard.hiragana || bookmarkedCard.mean}</small>
+            </button>
+          {/each}
+        </div>
+        {#if bookmarkedCards.length > 5}
+          <p class="help-text">Hiển thị 5 từ bookmark mới nhất. Bấm “Mở lại từ đã bookmark” để duyệt tất cả.</p>
+        {/if}
+      {/if}
+    </Card>
+  {/if}
+
+  <section class="hero">
+    <div class="hero__header">
+      <div>
+        <Badge class="hero__eyebrow" variant="outline"><Sparkles size={14} /> Daily JLPT</Badge>
+        <h1>JLPT Study Companion</h1>
+        <p>Ôn flashcard JLPT, nghe audio, ghi chú và đánh dấu xem lại.</p>
+      </div>
+      <Button class="compact-button hero__settings" variant="secondary" on:click={openOptionsPage}><Settings size={16} /> Cài đặt</Button>
+    </div>
+  </section>
+
+  {#if currentCard}
     <Card class="notification-panel">
       <label class="notification-toggle">
         <span><Bell size={16} /> {notificationButtonLabel}</span>
@@ -384,10 +393,6 @@
 
       <p class="help-text">{notificationStatusLabel}</p>
     </Card>
-  {:else}
-    <Card class="empty-state">
-      <h2>Không có thẻ phù hợp</h2>
-      <p>{showBookmarkedOnly ? 'Bạn chưa có bookmark nào để mở lại.' : 'Dataset đã được nạp, nhưng chưa có thẻ nào thuộc level đang chọn.'}</p>
-    </Card>
   {/if}
+
 </main>

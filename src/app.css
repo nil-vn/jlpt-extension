@@ -90,6 +90,18 @@ button {
   padding: 0.35rem 0.65rem;
 }
 
+.study-card .ui-badge {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.study-card__meta {
+  flex-wrap: nowrap;
+  min-width: 0;
+}
 
 .study-card__header {
   align-items: flex-start;
@@ -108,9 +120,10 @@ button {
 .study-card-controls {
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   justify-content: flex-end;
+  min-width: 0;
 }
 
 .study-card-bookmark-button {

@@ -10,18 +10,9 @@
     category?: string;
   };
 
-  const categoryLabels: Record<string, string> = {
-    gramma: 'Ngữ pháp',
-    locabulary: 'Từ vựng',
-    kanji: 'Kanji',
-    reading: 'Đọc hiểu',
-    listening: 'Nghe hiểu'
-  };
-
   export let card: PlannedFlashcard;
   export let revealed = false;
 
-  $: categoryLabel = categoryLabels[String(card.category).toLowerCase()] ?? card.category;
   $: levelLabel = card.level ? card.level.toUpperCase() : '';
   $: cardName = card.name ?? '';
   $: cardMeaning = card.mean ?? '';
@@ -39,7 +30,6 @@
   <div class="study-card__header">
     <div class="study-card__meta">
       <Badge>{levelLabel}</Badge>
-      <Badge variant="secondary">{categoryLabel}</Badge>
     </div>
     <div class="study-card__header-actions">
       <slot name="header-actions" />
