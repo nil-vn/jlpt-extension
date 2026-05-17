@@ -1,3 +1,4 @@
+import { defaultN2Vocabulary } from '../data/flashcards';
 import type { Flashcard, FlashcardCategory, JlptLevel, StudySettings } from '../types/flashcard';
 
 export type UserSettings = StudySettings & {
@@ -43,7 +44,7 @@ const STORAGE_KEYS: Array<keyof StorageSnapshot> = [
 
 export const DEFAULT_SETTINGS: UserSettings = {
   dailyGoal: 20,
-  selectedLevels: ['n5', 'n4'],
+  selectedLevels: ['n2'],
   enabledCategories: ['locabulary', 'kanji', 'gramma'],
   theme: 'system',
   notificationIntervalMinutes: 60,
@@ -53,7 +54,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
 };
 
 export const DEFAULT_EXTENSION_STATE: ExtensionState = {
-  dataset: [],
+  dataset: defaultN2Vocabulary,
   currentIndex: 0,
   bookmarkedCardIds: [],
   notesByCardId: {},
@@ -168,7 +169,7 @@ export async function setNotificationPaused(notificationPaused: boolean): Promis
 function normalizeStoredState(stored: StorageSnapshot): ExtensionState {
   return normalizeState({
     ...stored.jlptExtensionState,
-    dataset: stored.jlptExtensionState?.dataset ?? stored.jlptDataset ?? stored.dataset ?? [],
+    dataset: stored.jlptExtensionState?.dataset ?? stored.jlptDataset ?? stored.dataset ?? defaultN2Vocabulary,
     currentIndex: stored.jlptExtensionState?.currentIndex ?? stored.jlptCurrentIndex ?? 0,
     bookmarkedCardIds: stored.jlptExtensionState?.bookmarkedCardIds ?? stored.jlptBookmarkedCardIds ?? [],
     notesByCardId: stored.jlptExtensionState?.notesByCardId ?? stored.jlptNotesByCardId ?? {},
