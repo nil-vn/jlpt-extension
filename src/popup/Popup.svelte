@@ -233,8 +233,8 @@
   {:else if currentCard}
     <StudyCard card={currentCard} {revealed} />
 
-    <div class="actions actions--wrap">
-      <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> Previous</Button>
+    <div class="actions learning-pagination">
+      <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> Trước</Button>
       <Button on:click={toggleRevealed} aria-pressed={revealed}>
         {#if revealed}
           <EyeOff size={16} />
@@ -244,7 +244,7 @@
           Hiện đáp án
         {/if}
       </Button>
-      <Button variant="outline" on:click={nextCard}>Next <ChevronRight size={16} /></Button>
+      <Button variant="outline" on:click={nextCard}>Sau <ChevronRight size={16} /></Button>
     </div>
 
     <Card class="study-tools">
