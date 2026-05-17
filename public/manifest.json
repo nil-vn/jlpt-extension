@@ -5,7 +5,13 @@
   "version": "0.1.0",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "JLPT Study Companion"
+    "default_title": "JLPT Study Companion",
+    "default_icon": {
+      "16": "logo.svg",
+      "32": "logo.svg",
+      "48": "logo.svg",
+      "128": "logo.svg"
+    }
   },
   "options_page": "options.html",
   "background": {
@@ -14,6 +20,9 @@
   },
   "permissions": ["storage", "alarms", "notifications"],
   "icons": {
-    "128": "notification-icon.svg"
+    "16": "logo.svg",
+    "32": "logo.svg",
+    "48": "logo.svg",
+    "128": "logo.svg"
   }
 }
