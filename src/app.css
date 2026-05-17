@@ -225,3 +225,66 @@ textarea {
 .empty-state p {
   margin: 0;
 }
+
+.options-shell h2,
+.options-shell p {
+  margin: 0;
+}
+
+.section-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.section-heading p,
+.help-text,
+.save-status {
+  color: #5d667a;
+  margin-top: 0.35rem;
+}
+
+.status-card {
+  background: #ecfdf5;
+  border: 1px solid rgba(22, 163, 74, 0.24);
+  border-radius: 0.85rem;
+  color: #14532d;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem;
+}
+
+.status-card--error {
+  background: #fef2f2;
+  border-color: rgba(220, 38, 38, 0.24);
+  color: #7f1d1d;
+}
+
+.radio-row,
+.switch-row {
+  align-items: center;
+  display: flex;
+  gap: 0.65rem;
+}
+
+.radio-row input,
+.switch-row input {
+  accent-color: #f97316;
+}
+
+.switch-row {
+  justify-content: space-between;
+}
+
+.switch-row input {
+  height: 1.25rem;
+  width: 2.25rem;
+}
+
+.setting-row select {
+  background: #fff;
+  border: 1px solid rgba(23, 32, 51, 0.16);
+  border-radius: 0.75rem;
+  padding: 0.7rem;
+}
