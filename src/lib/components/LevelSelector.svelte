@@ -3,7 +3,7 @@
   import { jlptLevels } from '../data';
   import type { JlptLevel } from '../types/flashcard';
 
-  export let selectedLevels: JlptLevel[] = ['N5'];
+  export let selectedLevels: JlptLevel[] = ['n5'];
 
   const dispatch = createEventDispatcher<{ change: JlptLevel[] }>();
 
@@ -24,7 +24,7 @@
       aria-pressed={selectedLevels.includes(level)}
       on:click={() => toggleLevel(level)}
     >
-      {level}
+      {level.toUpperCase()}
     </button>
   {/each}
 </div>

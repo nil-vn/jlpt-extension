@@ -1,20 +1,26 @@
-export type JlptLevel = 'N5' | 'N4' | 'N3' | 'N2' | 'N1';
+export type JlptLevel = 'n5' | 'n4' | 'n3' | 'n2' | 'n1';
 
-export type FlashcardCategory = 'vocabulary' | 'kanji' | 'grammar';
+export type FlashcardCategory = 'gramma' | 'locabulary' | 'kanji' | 'reading' | 'listening';
 
 export interface Flashcard {
-  id: string;
   level: JlptLevel;
   category: FlashcardCategory;
-  prompt: string;
-  answer: string;
-  reading?: string;
-  example?: string;
-  notes?: string;
+  name: string;
+  mean: string;
+  hiragana: string;
+  image: string | null;
+  audio: string | null;
+  example: string | null;
 }
 
 export interface StudySettings {
   dailyGoal: number;
   selectedLevels: JlptLevel[];
   enabledCategories: FlashcardCategory[];
+}
+
+export function createFlashcardId(card: Pick<Flashcard, 'level' | 'category' | 'name' | 'hiragana' | 'mean'>) {
+  return [card.level, card.category, card.name, card.hiragana, card.mean]
+    .map((part) => String(part ?? '').trim())
+    .join('|');
 }

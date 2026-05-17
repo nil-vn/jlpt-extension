@@ -7,15 +7,9 @@
 
   type StudyMode = 'random' | 'sequential';
   type ThemeMode = 'light' | 'dark' | 'system';
-  type PlannedFlashcard = Omit<Partial<Flashcard>, 'level' | 'category' | 'example'> & {
+  type PlannedFlashcard = Flashcard & {
     level: string;
     category: string;
-    name?: string;
-    mean?: string;
-    hiragana?: string;
-    image?: string | null;
-    audio?: string | null;
-    example?: string | null;
   };
   type StoredStudySettings = StudySettings & {
     orderMode: StudyMode;
@@ -41,8 +35,8 @@
   const storageKeys: Array<keyof StorageSnapshot> = ['jlptDataset', 'dataset', 'jlptSettings'];
   const defaultSettings: StoredStudySettings = {
     dailyGoal: 20,
-    selectedLevels: ['N5', 'N4'],
-    enabledCategories: ['vocabulary', 'kanji', 'grammar'],
+    selectedLevels: ['n5', 'n4'],
+    enabledCategories: ['locabulary', 'kanji', 'gramma'],
     orderMode: 'sequential',
     notificationEnabled: false,
     notificationIntervalMinutes: 60,
@@ -50,8 +44,8 @@
     notificationDisplaySeconds: 20,
     theme: 'system'
   };
-  const validLevels: JlptLevel[] = ['N5', 'N4', 'N3', 'N2', 'N1'];
-  const validCategories: FlashcardCategory[] = ['vocabulary', 'kanji', 'grammar'];
+  const validLevels: JlptLevel[] = ['n5', 'n4', 'n3', 'n2', 'n1'];
+  const validCategories: FlashcardCategory[] = ['gramma', 'locabulary', 'kanji', 'reading', 'listening'];
 
   let settings: StoredStudySettings = { ...defaultSettings };
   let dataset: PlannedFlashcard[] = [];
@@ -80,15 +74,24 @@
   }
 
   function isJlptLevel(value: unknown): value is JlptLevel {
-    return typeof value === 'string' && validLevels.includes(value.toUpperCase() as JlptLevel);
+    return typeof value === 'string' && validLevels.includes(value.toLowerCase() as JlptLevel);
   }
 
   function normalizeLevel(value: unknown): JlptLevel {
-    return String(value).toUpperCase() as JlptLevel;
+    return String(value).toLowerCase() as JlptLevel;
+  }
+
+  function normalizeCategory(value: unknown): FlashcardCategory {
+    const normalized = String(value).toLowerCase();
+
+    if (normalized === 'grammar') return 'gramma';
+    if (normalized === 'vocabulary') return 'locabulary';
+
+    return normalized as FlashcardCategory;
   }
 
   function isFlashcardCategory(value: unknown): value is FlashcardCategory {
-    return typeof value === 'string' && validCategories.includes(value as FlashcardCategory);
+    return typeof value === 'string' && validCategories.includes(normalizeCategory(value));
   }
 
   function normalizeString(value: unknown) {
@@ -168,7 +171,7 @@
   function normalizeStoredCategories(categories: unknown) {
     if (!Array.isArray(categories)) return defaultSettings.enabledCategories;
 
-    const normalized = categories.filter(isFlashcardCategory);
+    const normalized = categories.map(normalizeCategory).filter(isFlashcardCategory);
     return normalized.length > 0 ? Array.from(new Set(normalized)) : defaultSettings.enabledCategories;
   }
 
@@ -193,28 +196,23 @@
     if (!isRecord(rawCard)) return undefined;
 
     const level = normalizeLevel(rawCard.level);
-    const category = rawCard.category;
-    const prompt = normalizeString(rawCard.prompt ?? rawCard.name);
-    const answer = normalizeString(rawCard.answer ?? rawCard.mean);
+    const category = normalizeCategory(rawCard.category);
+    const name = normalizeString(rawCard.name ?? rawCard.prompt);
+    const mean = normalizeString(rawCard.mean ?? rawCard.answer);
 
-    if (!isJlptLevel(level) || !isFlashcardCategory(category) || prompt.length === 0 || answer.length === 0) {
+    if (!isJlptLevel(level) || !isFlashcardCategory(category) || name.length === 0 || mean.length === 0) {
       return undefined;
     }
 
     return {
-      id: normalizeNullableString(rawCard.id) ?? `${level}-${category}-${index + 1}`,
       level,
       category,
-      prompt,
-      answer,
-      name: normalizeNullableString(rawCard.name) ?? prompt,
-      mean: normalizeNullableString(rawCard.mean) ?? answer,
-      reading: normalizeNullableString(rawCard.reading ?? rawCard.hiragana),
-      hiragana: normalizeNullableString(rawCard.hiragana ?? rawCard.reading),
-      example: normalizeNullableString(rawCard.example) ?? null,
-      notes: normalizeNullableString(rawCard.notes),
+      name,
+      mean,
+      hiragana: normalizeNullableString(rawCard.hiragana ?? rawCard.reading) ?? '',
       image: normalizeNullableString(rawCard.image) ?? null,
-      audio: normalizeNullableString(rawCard.audio) ?? null
+      audio: normalizeNullableString(rawCard.audio) ?? null,
+      example: normalizeNullableString(rawCard.example) ?? null
     };
   }
 
@@ -242,7 +240,7 @@
         status: validCards.length === 0 ? ('invalid' as const) : invalidCount > 0 ? ('partial' as const) : ('valid' as const),
         message:
           validCards.length === 0
-            ? 'Không tìm thấy card hợp lệ. Mỗi card cần level, category, prompt/name và answer/mean.'
+            ? 'Không tìm thấy card hợp lệ. Mỗi card cần level, category, name và mean.'
             : invalidCount > 0
               ? `Đã lưu ${validCards.length} card hợp lệ và bỏ qua ${invalidCount} card lỗi.`
               : `Dataset hợp lệ. Đã lưu ${validCards.length} card.`,
@@ -362,7 +360,7 @@
       <div class="section-heading">
         <div>
           <h2>Dataset</h2>
-          <p>Nạp file JSON flashcard. Card hợp lệ cần level, category, prompt/name và answer/mean.</p>
+          <p>Nạp file JSON flashcard. Card hợp lệ cần level, category, name và mean.</p>
         </div>
         <button class="secondary-button compact-button" type="button" on:click={resetDataset}>Reset dataset</button>
       </div>
