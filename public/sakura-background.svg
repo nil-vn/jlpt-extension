@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Soft sakura background</title>
+  <desc id="desc">A simple pale spring background with cherry blossom branches and scattered petals.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff7fb"/>
+      <stop offset="0.48" stop-color="#fffaf2"/>
+      <stop offset="1" stop-color="#f7fbff"/>
+    </linearGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffd7e4" stop-opacity="0.78"/>
+      <stop offset="0.55" stop-color="#ffe6ef" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#ffe6ef" stop-opacity="0"/>
+    </radialGradient>
+    <g id="petal">
+      <path d="M0,-16 C12,-10 18,0 10,12 C2,22 -12,18 -16,6 C-20,-6 -10,-14 0,-16Z" fill="#ffd6e2"/>
+      <path d="M0,-12 C8,-8 12,-1 7,7 C1,14 -8,12 -11,4 C-13,-4 -7,-10 0,-12Z" fill="#fff0f6" opacity="0.82"/>
+    </g>
+    <g id="flower">
+      <use href="#petal" transform="rotate(0) translate(0 -10) scale(.62)"/>
+      <use href="#petal" transform="rotate(72) translate(0 -10) scale(.62)"/>
+      <use href="#petal" transform="rotate(144) translate(0 -10) scale(.62)"/>
+      <use href="#petal" transform="rotate(216) translate(0 -10) scale(.62)"/>
+      <use href="#petal" transform="rotate(288) translate(0 -10) scale(.62)"/>
+      <circle r="4.6" fill="#f7a8bd"/>
+      <circle r="2.4" fill="#fff7ad"/>
+    </g>
+  </defs>
+
+  <rect width="960" height="540" fill="url(#sky)"/>
+  <circle cx="150" cy="110" r="180" fill="url(#blush)"/>
+  <circle cx="770" cy="420" r="220" fill="url(#blush)" opacity="0.75"/>
+  <circle cx="470" cy="220" r="190" fill="#e0f2fe" opacity="0.16"/>
+
+  <g fill="none" stroke="#7c4a3a" stroke-linecap="round" opacity="0.38">
+    <path d="M-40 420 C140 300 250 235 420 215 C530 202 610 168 705 90" stroke-width="9"/>
+    <path d="M615 152 C670 150 730 174 800 225" stroke-width="5"/>
+    <path d="M245 242 C280 205 312 182 372 162" stroke-width="4.5"/>
+    <path d="M40 368 C95 365 145 382 205 420" stroke-width="4"/>
+  </g>
+
+  <g opacity="0.88">
+    <use href="#flower" x="700" y="93" transform="rotate(-12 700 93) scale(1.08)"/>
+    <use href="#flower" x="621" y="151" transform="rotate(16 621 151) scale(.82)"/>
+    <use href="#flower" x="526" y="191" transform="rotate(-20 526 191) scale(.62)"/>
+    <use href="#flower" x="390" y="215" transform="rotate(18 390 215) scale(.86)"/>
+    <use href="#flower" x="300" y="185" transform="rotate(-8 300 185) scale(.68)"/>
+    <use href="#flower" x="160" y="315" transform="rotate(12 160 315) scale(.72)"/>
+    <use href="#flower" x="82" y="365" transform="rotate(-18 82 365) scale(.58)"/>
+    <use href="#flower" x="790" y="223" transform="rotate(28 790 223) scale(.68)"/>
+  </g>
+
+  <g opacity="0.62">
+    <use href="#petal" x="118" y="110" transform="rotate(24 118 110) scale(.42)"/>
+    <use href="#petal" x="215" y="95" transform="rotate(-31 215 95) scale(.32)"/>
+    <use href="#petal" x="318" y="330" transform="rotate(62 318 330) scale(.38)"/>
+    <use href="#petal" x="480" y="104" transform="rotate(14 480 104) scale(.28)"/>
+    <use href="#petal" x="598" y="380" transform="rotate(-48 598 380) scale(.42)"/>
+    <use href="#petal" x="710" y="335" transform="rotate(35 710 335) scale(.31)"/>
+    <use href="#petal" x="844" y="118" transform="rotate(-10 844 118) scale(.36)"/>
+    <use href="#petal" x="880" y="425" transform="rotate(58 880 425) scale(.46)"/>
+  </g>
+</svg>

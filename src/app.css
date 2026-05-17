@@ -365,6 +365,7 @@ textarea {
 }
 
 :root {
+  --sakura-card-background: url('/sakura-background.svg');
   --background: #f8fafc;
   --foreground: #0f172a;
   --card: rgba(255, 255, 255, 0.92);
@@ -390,7 +391,12 @@ body {
 .ui-card,
 .panel,
 .study-card {
-  background: var(--card);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 247, 250, 0.82)),
+    var(--sakura-card-background),
+    var(--card);
+  background-position: center;
+  background-size: cover;
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) + 0.25rem);
   box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.55);
@@ -564,8 +570,11 @@ textarea:focus-visible {
 
 .study-card {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 237, 0.88)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 250, 0.82)),
+    var(--sakura-card-background),
     var(--card);
+  background-position: center;
+  background-size: cover;
   gap: 0.9rem;
   padding: 1.15rem;
 }
@@ -589,7 +598,7 @@ textarea:focus-visible {
 }
 
 .study-card__answer {
-  background: #fff7ed;
+  background: rgba(255, 247, 237, 0.88);
   border: 1px dashed rgba(249, 115, 22, 0.34);
   border-radius: 0.9rem;
   color: #7c2d12;
@@ -622,7 +631,7 @@ textarea:focus-visible {
 .note-field textarea,
 .setting-row input,
 .setting-row select {
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border);
   border-radius: 0.9rem;
   color: var(--foreground);
