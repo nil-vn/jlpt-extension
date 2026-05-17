@@ -1,3 +1,4 @@
+import { translate, type AppLanguage } from '../i18n';
 import type { Flashcard, FlashcardCategory, JlptLevel } from '../types/flashcard';
 
 export type DatasetValidationError = {
@@ -41,11 +42,11 @@ function formatItem(index: number) {
   return `Card #${index + 1}`;
 }
 
-export function validateDataset(input: unknown): DatasetValidationResult {
+export function validateDataset(input: unknown, language: AppLanguage = 'en'): DatasetValidationResult {
   if (!Array.isArray(input)) {
     return {
       validCards: [],
-      errors: [{ message: 'JSON phải là một array các flashcard.' }]
+      errors: [{ message: translate(language, 'validationArray') }]
     };
   }
 
@@ -54,7 +55,7 @@ export function validateDataset(input: unknown): DatasetValidationResult {
 
   input.forEach((item, index) => {
     if (!isRecord(item)) {
-      errors.push({ index, message: `${formatItem(index)} phải là object.` });
+      errors.push({ index, message: translate(language, 'validationObject', { item: formatItem(index) }) });
       return;
     }
 
@@ -62,7 +63,7 @@ export function validateDataset(input: unknown): DatasetValidationResult {
 
     requiredFields.forEach((field) => {
       if (!hasOwnField(item, field)) {
-        itemErrors.push({ index, field, message: `${formatItem(index)} thiếu field "${field}".` });
+        itemErrors.push({ index, field, message: translate(language, 'validationMissingField', { item: formatItem(index), field }) });
       }
     });
 
@@ -70,7 +71,7 @@ export function validateDataset(input: unknown): DatasetValidationResult {
       itemErrors.push({
         index,
         field: 'level',
-        message: `${formatItem(index)} field "level" phải là một trong: ${validLevels.join(', ')}.`
+        message: translate(language, 'validationInvalidOption', { item: formatItem(index), field: 'level', options: validLevels.join(', ') })
       });
     }
 
@@ -78,19 +79,19 @@ export function validateDataset(input: unknown): DatasetValidationResult {
       itemErrors.push({
         index,
         field: 'category',
-        message: `${formatItem(index)} field "category" phải là một trong: ${validCategories.join(', ')}.`
+        message: translate(language, 'validationInvalidOption', { item: formatItem(index), field: 'category', options: validCategories.join(', ') })
       });
     }
 
     stringFields.forEach((field) => {
       if (hasOwnField(item, field) && typeof item[field] !== 'string') {
-        itemErrors.push({ index, field, message: `${formatItem(index)} field "${field}" phải là string.` });
+        itemErrors.push({ index, field, message: translate(language, 'validationString', { item: formatItem(index), field }) });
       }
     });
 
     nullableStringFields.forEach((field) => {
       if (hasOwnField(item, field) && !isNullableString(item[field])) {
-        itemErrors.push({ index, field, message: `${formatItem(index)} field "${field}" phải là string hoặc null.` });
+        itemErrors.push({ index, field, message: translate(language, 'validationNullableString', { item: formatItem(index), field }) });
       }
     });
 

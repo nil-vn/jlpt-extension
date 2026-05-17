@@ -6,6 +6,7 @@ import {
   type ExtensionState,
   type UserSettings,
 } from "../lib/extension/storage";
+import { translate, type AppLanguage } from "../lib/i18n";
 import type { Flashcard } from "../lib/types/flashcard";
 
 const NOTIFICATION_ICON_PATHS = ["icon128.png", "logo.png"] as const;
@@ -15,12 +16,12 @@ const STORAGE_STATE_KEY = "jlptExtensionState";
 const LEGACY_SETTINGS_KEY = "jlptSettings";
 const LEGACY_PAUSED_KEY = "jlptNotificationPaused";
 
-const CATEGORY_LABELS: Record<Flashcard["category"], string> = {
-  gramma: "Ngữ pháp",
-  locabulary: "Từ vựng",
-  kanji: "Kanji",
-  reading: "Đọc hiểu",
-  listening: "Nghe hiểu",
+const CATEGORY_LABEL_KEYS: Record<Flashcard["category"], Parameters<typeof translate>[1]> = {
+  gramma: "categoryGrammar",
+  locabulary: "categoryVocabulary",
+  kanji: "categoryKanji",
+  reading: "categoryReading",
+  listening: "categoryListening",
 };
 
 if (typeof chrome !== "undefined") {
@@ -60,7 +61,7 @@ if (typeof chrome !== "undefined") {
               error:
                 error instanceof Error
                   ? error.message
-                  : "Không thể hiển thị notification.",
+                  : translate("en", "notificationImmediateFailure", { message: translate("en", "statusInvalidFile") }),
             }),
           );
         return true;
@@ -103,29 +104,30 @@ async function refreshNotificationAlarm(state?: ExtensionState) {
 }
 
 async function showStudyNotification() {
+  const state = await getExtensionState();
+  const language = state.settings.language;
+
   if (!chrome.notifications)
-    return { ok: false, error: "Chrome notifications API không khả dụng." };
+    return { ok: false, error: translate(language, "chromeNotificationsUnavailable") };
 
   const permissionLevel = await getNotificationPermissionLevel();
   if (permissionLevel === "denied") {
     return {
       ok: false,
-      error:
-        "Chrome hoặc hệ điều hành đang chặn notification cho extension này.",
+      error: translate(language, "chromeNotificationsBlocked"),
     };
   }
 
-  const state = await getExtensionState();
   if (!state.settings.notificationEnabled || state.notificationPaused) {
     await clearNotificationAlarm();
-    return { ok: false, error: "Notification đang tắt hoặc đang tạm dừng." };
+    return { ok: false, error: translate(language, "notificationDisabledOrPaused") };
   }
 
   const cards = getEligibleCards(state);
   if (cards.length === 0) {
     return {
       ok: false,
-      error: "Không có flashcard phù hợp với level/category đang chọn.",
+      error: translate(language, "notificationNoCards"),
     };
   }
 
@@ -137,7 +139,7 @@ async function showStudyNotification() {
   const card = cards[notificationIndex];
   const notificationId = `${NOTIFICATION_ID_PREFIX}-${Date.now()}`;
 
-  const result = await createNotification(notificationId, card);
+  const result = await createNotification(notificationId, card, language);
   if (!result.ok) return result;
 
   const nextIndex = getNextCurrentIndex(
@@ -240,8 +242,8 @@ function normalizeIndex(index: number, length: number) {
   return Math.min(Math.max(Math.round(index), 0), length - 1);
 }
 
-async function createNotification(notificationId: string, card: Flashcard) {
-  const title = formatNotificationTitle(card);
+async function createNotification(notificationId: string, card: Flashcard, language: AppLanguage) {
+  const title = formatNotificationTitle(card, language);
   const message = [card.mean, card.example]
     .filter(Boolean)
     .join("\n");
@@ -254,6 +256,7 @@ async function createNotification(notificationId: string, card: Flashcard) {
       iconPath,
       title,
       message,
+      language,
     );
 
     if (result.ok) return result;
@@ -265,7 +268,7 @@ async function createNotification(notificationId: string, card: Flashcard) {
     ok: false,
     error:
       lastError ??
-      "Chrome không thể tải icon PNG cho notification từ extension.",
+      translate(language, "notificationIconLoadFailed"),
   };
 }
 
@@ -274,6 +277,7 @@ function createNotificationWithIcon(
   iconPath: (typeof NOTIFICATION_ICON_PATHS)[number],
   title: string,
   message: string,
+  language: AppLanguage,
 ) {
   return new Promise<{ ok: boolean; notificationId?: string; error?: string }>(
     (resolve) => {
@@ -301,7 +305,7 @@ function createNotificationWithIcon(
           if (!createdNotificationId) {
             resolve({
               ok: false,
-              error: "Chrome không trả về notification id.",
+              error: translate(language, "notificationIdMissing"),
             });
             return;
           }
@@ -313,9 +317,9 @@ function createNotificationWithIcon(
   );
 }
 
-function formatNotificationTitle(card: Flashcard) {
+function formatNotificationTitle(card: Flashcard, language: AppLanguage) {
   const levelLabel = card.level.toUpperCase();
-  const categoryLabel = CATEGORY_LABELS[card.category];
+  const categoryLabel = translate(language, CATEGORY_LABEL_KEYS[card.category]);
   const reading = card.hiragana ? ` (${card.hiragana})` : "";
 
   return `[${levelLabel} - ${categoryLabel}]  ${card.name}${reading}`;
