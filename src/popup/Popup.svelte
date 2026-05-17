@@ -3,26 +3,22 @@
   import '../app.css';
   import { LevelSelector, StudyCard } from '../lib/components';
   import { starterFlashcards } from '../lib/data';
+  import {
+    getExtensionState,
+    hasChromeStorage,
+    saveNote,
+    setNotificationPaused,
+    toggleBookmark as toggleStoredBookmark,
+    updateCurrentIndex,
+    updateSettings,
+    type UserSettings
+  } from '../lib/extension/storage';
   import { createFlashcardId, type Flashcard, type JlptLevel } from '../lib/types/flashcard';
 
-  type StudyMode = 'sequential' | 'random';
+  type StudyMode = UserSettings['orderMode'];
   type PlannedFlashcard = Flashcard & {
     level: string;
     category: string;
-  };
-  type StoredStudySettings = {
-    selectedLevels?: string[];
-    orderMode?: StudyMode;
-    notificationEnabled?: boolean;
-  };
-  type StorageSnapshot = {
-    jlptDataset?: PlannedFlashcard[];
-    dataset?: PlannedFlashcard[];
-    jlptSettings?: StoredStudySettings;
-    jlptCurrentIndex?: number;
-    jlptBookmarkedCardIds?: string[];
-    jlptNotesByCardId?: Record<string, string>;
-    jlptNotificationPaused?: boolean;
   };
 
   const NOTE_SAVE_DELAY_MS = 400;
@@ -33,7 +29,7 @@
   let currentIndex = 0;
   let revealed = false;
   let studyMode: StudyMode = 'sequential';
-  let storedSettings: StoredStudySettings = {};
+  let storedSettings: UserSettings;
   let bookmarkedCardIds: string[] = [];
   let notesByCardId: Record<string, string> = {};
   let currentNote = '';
@@ -61,10 +57,6 @@
     }
   });
 
-  function hasChromeStorage() {
-    return typeof chrome !== 'undefined' && Boolean(chrome.storage?.local);
-  }
-
   function normalizeLevel(level: string): JlptLevel {
     return level.toLowerCase() as JlptLevel;
   }
@@ -73,39 +65,17 @@
     return createFlashcardId(card);
   }
 
-  function readStorage(keys: Array<keyof StorageSnapshot>): Promise<StorageSnapshot> {
-    if (!hasChromeStorage()) return Promise.resolve({});
-
-    return chrome.storage.local.get(keys) as Promise<StorageSnapshot>;
-  }
-
-  function writeStorage(items: Record<string, unknown>) {
-    if (!hasChromeStorage()) return Promise.resolve();
-
-    return chrome.storage.local.set(items);
-  }
-
   async function loadState() {
-    const stored = await readStorage([
-      'jlptDataset',
-      'dataset',
-      'jlptSettings',
-      'jlptCurrentIndex',
-      'jlptBookmarkedCardIds',
-      'jlptNotesByCardId',
-      'jlptNotificationPaused'
-    ]);
+    const stored = await getExtensionState();
 
-    dataset = stored.jlptDataset ?? stored.dataset ?? (hasChromeStorage() ? [] : starterFlashcards);
-    selectedLevels = ((stored.jlptSettings?.selectedLevels ?? defaultSelectedLevels).map(normalizeLevel) as JlptLevel[]).filter(
-      (level, index, levels) => levels.indexOf(level) === index
-    );
-    storedSettings = stored.jlptSettings ?? {};
-    studyMode = storedSettings.orderMode ?? 'sequential';
-    currentIndex = stored.jlptCurrentIndex ?? 0;
-    bookmarkedCardIds = stored.jlptBookmarkedCardIds ?? [];
-    notesByCardId = stored.jlptNotesByCardId ?? {};
-    notificationPaused = stored.jlptNotificationPaused ?? stored.jlptSettings?.notificationEnabled === false;
+    dataset = stored.dataset.length > 0 ? stored.dataset : hasChromeStorage() ? [] : starterFlashcards;
+    selectedLevels = stored.settings.selectedLevels.map(normalizeLevel).filter((level, index, levels) => levels.indexOf(level) === index);
+    storedSettings = stored.settings;
+    studyMode = stored.settings.orderMode;
+    currentIndex = stored.currentIndex;
+    bookmarkedCardIds = stored.bookmarkedCardIds;
+    notesByCardId = stored.notesByCardId;
+    notificationPaused = stored.notificationPaused ?? !stored.settings.notificationEnabled;
     isLoading = false;
   }
 
@@ -115,7 +85,7 @@
     revealed = false;
     historyStack = [...historyStack, currentIndex];
     currentIndex = studyMode === 'random' ? nextRandomIndex() : (currentIndex + 1) % filteredCards.length;
-    void writeStorage({ jlptCurrentIndex: currentIndex });
+    void updateCurrentIndex(currentIndex);
   }
 
   function previousCard() {
@@ -128,7 +98,7 @@
     } else {
       currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
     }
-    void writeStorage({ jlptCurrentIndex: currentIndex });
+    void updateCurrentIndex(currentIndex);
   }
 
   function nextRandomIndex() {
@@ -148,24 +118,21 @@
     revealed = false;
     historyStack = [];
     storedSettings = { ...storedSettings, selectedLevels, orderMode: studyMode, notificationEnabled: !notificationPaused };
-    void writeStorage({
-      jlptCurrentIndex: currentIndex,
-      jlptSettings: {
-        ...storedSettings,
-        selectedLevels,
-        orderMode: studyMode,
-        notificationEnabled: !notificationPaused
-      }
-    });
+    void updateSettings({ selectedLevels, orderMode: studyMode, notificationEnabled: !notificationPaused }).then(() =>
+      updateCurrentIndex(currentIndex)
+    );
   }
 
   function toggleBookmark() {
     if (!currentCardId) return;
 
-    bookmarkedCardIds = isBookmarked
+    const nextBookmarkedCardIds = isBookmarked
       ? bookmarkedCardIds.filter((cardId) => cardId !== currentCardId)
       : [...bookmarkedCardIds, currentCardId];
-    void writeStorage({ jlptBookmarkedCardIds: bookmarkedCardIds });
+    bookmarkedCardIds = nextBookmarkedCardIds;
+    void toggleStoredBookmark(currentCardId).then((state) => {
+      bookmarkedCardIds = state.bookmarkedCardIds;
+    });
   }
 
   function scheduleNoteSave() {
@@ -179,21 +146,16 @@
     const note = currentNote;
     noteSaveTimer = setTimeout(() => {
       notesByCardId = { ...notesByCardId, [cardId]: note };
-      void writeStorage({ jlptNotesByCardId: notesByCardId });
+      void saveNote(cardId, note);
     }, NOTE_SAVE_DELAY_MS);
   }
 
   function toggleNotifications() {
     notificationPaused = !notificationPaused;
     storedSettings = { ...storedSettings, selectedLevels, orderMode: studyMode, notificationEnabled: !notificationPaused };
-    void writeStorage({
-      jlptNotificationPaused: notificationPaused,
-      jlptSettings: {
-        ...storedSettings,
-        selectedLevels,
-        orderMode: studyMode,
-        notificationEnabled: !notificationPaused
-      }
+    void setNotificationPaused(notificationPaused).then((state) => {
+      storedSettings = state.settings;
+      notificationPaused = state.notificationPaused ?? !state.settings.notificationEnabled;
     });
   }
 

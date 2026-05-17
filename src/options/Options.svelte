@@ -4,23 +4,17 @@
   import { LevelSelector } from '../lib/components';
   import { levelDescriptions } from '../lib/data';
   import { validateDataset, type DatasetValidationError } from '../lib/data/dataset-validator';
-  import type { Flashcard, FlashcardCategory, JlptLevel, StudySettings } from '../lib/types/flashcard';
+  import {
+    DEFAULT_SETTINGS,
+    getExtensionState,
+    hasChromeStorage,
+    saveDataset,
+    updateSettings,
+    type UserSettings
+  } from '../lib/extension/storage';
+  import type { Flashcard, FlashcardCategory, JlptLevel } from '../lib/types/flashcard';
 
-  type StudyMode = 'random' | 'sequential';
-  type ThemeMode = 'light' | 'dark' | 'system';
-  type StoredStudySettings = StudySettings & {
-    orderMode: StudyMode;
-    notificationEnabled: boolean;
-    notificationIntervalMinutes: number;
-    notificationStartTime: string;
-    notificationDisplaySeconds: number;
-    theme: ThemeMode;
-  };
-  type StorageSnapshot = {
-    jlptDataset?: Flashcard[];
-    dataset?: Flashcard[];
-    jlptSettings?: Partial<StoredStudySettings>;
-  };
+  type StoredStudySettings = UserSettings;
   type DatasetValidation = {
     status: 'idle' | 'valid' | 'partial' | 'invalid';
     message: string;
@@ -30,18 +24,7 @@
     fileName?: string;
   };
 
-  const storageKeys: Array<keyof StorageSnapshot> = ['jlptDataset', 'dataset', 'jlptSettings'];
-  const defaultSettings: StoredStudySettings = {
-    dailyGoal: 20,
-    selectedLevels: ['n5', 'n4'],
-    enabledCategories: ['locabulary', 'kanji', 'gramma'],
-    orderMode: 'sequential',
-    notificationEnabled: false,
-    notificationIntervalMinutes: 60,
-    notificationStartTime: '09:00',
-    notificationDisplaySeconds: 20,
-    theme: 'system'
-  };
+  const defaultSettings: StoredStudySettings = { ...DEFAULT_SETTINGS };
   const validLevels: JlptLevel[] = ['n5', 'n4', 'n3', 'n2', 'n1'];
   const validCategories: FlashcardCategory[] = ['gramma', 'locabulary', 'kanji', 'reading', 'listening'];
 
@@ -64,11 +47,6 @@
     void loadOptions();
   });
 
-  function hasChromeStorage() {
-    return typeof chrome !== 'undefined' && Boolean(chrome.storage?.local);
-  }
-
-
   function isJlptLevel(value: unknown): value is JlptLevel {
     return typeof value === 'string' && validLevels.includes(value.toLowerCase() as JlptLevel);
   }
@@ -90,51 +68,34 @@
     return typeof value === 'string' && validCategories.includes(normalizeCategory(value));
   }
 
-
-  function readStorage(keys: Array<keyof StorageSnapshot>): Promise<StorageSnapshot> {
-    if (!hasChromeStorage()) return Promise.resolve({});
-
-    return chrome.storage.local.get(keys) as Promise<StorageSnapshot>;
-  }
-
-  function writeStorage(items: Record<string, unknown>) {
-    if (!hasChromeStorage()) {
-      saveStatus = 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; thay đổi chỉ hiển thị trong phiên này.';
-      return Promise.resolve();
-    }
-
-    return chrome.storage.local.set(items);
-  }
-
   async function loadOptions() {
-    const stored = await readStorage(storageKeys);
-    const storedSettings = stored.jlptSettings ?? {};
+    const stored = await getExtensionState();
 
     settings = {
       ...defaultSettings,
-      ...storedSettings,
-      dailyGoal: Number(storedSettings.dailyGoal ?? defaultSettings.dailyGoal),
-      selectedLevels: normalizeStoredLevels(storedSettings.selectedLevels),
-      enabledCategories: normalizeStoredCategories(storedSettings.enabledCategories),
+      ...stored.settings,
+      dailyGoal: Number(stored.settings.dailyGoal ?? defaultSettings.dailyGoal),
+      selectedLevels: normalizeStoredLevels(stored.settings.selectedLevels),
+      enabledCategories: normalizeStoredCategories(stored.settings.enabledCategories),
       notificationIntervalMinutes: clampNumber(
-        storedSettings.notificationIntervalMinutes,
+        stored.settings.notificationIntervalMinutes,
         defaultSettings.notificationIntervalMinutes,
         1,
         1440
       ),
       notificationDisplaySeconds: clampNumber(
-        storedSettings.notificationDisplaySeconds,
-        defaultSettings.notificationDisplaySeconds,
+        stored.settings.notificationDisplaySeconds,
+        defaultSettings.notificationDisplaySeconds ?? 20,
         5,
         120
       ),
-      notificationStartTime: normalizeTime(storedSettings.notificationStartTime),
-      orderMode: storedSettings.orderMode === 'random' ? 'random' : 'sequential',
-      theme: normalizeTheme(storedSettings.theme),
-      notificationEnabled: Boolean(storedSettings.notificationEnabled)
+      notificationStartTime: normalizeTime(stored.settings.notificationStartTime),
+      orderMode: stored.settings.orderMode === 'random' ? 'random' : 'sequential',
+      theme: normalizeTheme(stored.settings.theme),
+      notificationEnabled: Boolean(stored.settings.notificationEnabled)
     };
 
-    dataset = stored.jlptDataset ?? stored.dataset ?? [];
+    dataset = stored.dataset;
     validation = {
       status: dataset.length > 0 ? 'valid' : 'idle',
       message:
@@ -175,7 +136,7 @@
     return value;
   }
 
-  function normalizeTheme(value: unknown): ThemeMode {
+  function normalizeTheme(value: unknown): UserSettings['theme'] {
     return value === 'light' || value === 'dark' || value === 'system' ? value : 'system';
   }
 
@@ -232,9 +193,11 @@
 
   async function persistDataset(cards: Flashcard[]) {
     isSaving = true;
-    await writeStorage({ jlptDataset: cards, jlptCurrentIndex: 0 });
+    await saveDataset(cards);
     isSaving = false;
-    saveStatus = hasChromeStorage() ? 'Đã lưu dataset vào chrome.storage.local.' : saveStatus;
+    saveStatus = hasChromeStorage()
+      ? 'Đã lưu dataset vào chrome.storage.local.'
+      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; dataset chỉ được lưu tạm trong phiên dev.';
   }
 
   async function persistSettings() {
@@ -246,9 +209,11 @@
     };
 
     isSaving = true;
-    await writeStorage({ jlptSettings: settings, jlptNotificationPaused: !settings.notificationEnabled });
+    await updateSettings(settings);
     isSaving = false;
-    saveStatus = hasChromeStorage() ? 'Đã lưu settings vào chrome.storage.local.' : saveStatus;
+    saveStatus = hasChromeStorage()
+      ? 'Đã lưu settings vào chrome.storage.local.'
+      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; settings chỉ được lưu tạm trong phiên dev.';
   }
 
   function updateLevels(event: CustomEvent<JlptLevel[]>) {
@@ -271,17 +236,21 @@
       errors: []
     };
     isSaving = true;
-    await writeStorage({ jlptDataset: [], jlptCurrentIndex: 0 });
+    await saveDataset([]);
     isSaving = false;
-    saveStatus = hasChromeStorage() ? 'Đã xóa dataset trong chrome.storage.local.' : saveStatus;
+    saveStatus = hasChromeStorage()
+      ? 'Đã xóa dataset trong chrome.storage.local.'
+      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; dataset chỉ được reset tạm trong phiên dev.';
   }
 
   async function resetSettings() {
     settings = { ...defaultSettings };
     isSaving = true;
-    await writeStorage({ jlptSettings: settings, jlptNotificationPaused: !settings.notificationEnabled });
+    await updateSettings(settings);
     isSaving = false;
-    saveStatus = hasChromeStorage() ? 'Đã reset settings trong chrome.storage.local.' : saveStatus;
+    saveStatus = hasChromeStorage()
+      ? 'Đã reset settings trong chrome.storage.local.'
+      : 'Không tìm thấy chrome.storage.local trong môi trường hiện tại; settings chỉ được reset tạm trong phiên dev.';
   }
 </script>
 
