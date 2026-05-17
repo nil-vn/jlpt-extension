@@ -763,7 +763,8 @@ textarea:focus-visible {
 
 .toggle-icon-button {
   border-radius: 999px;
-  min-height: 2.55rem;
+  min-height: 2.1rem;
+  padding: 0.42rem 0.68rem;
 }
 
 .toggle-icon-button.active {
@@ -771,4 +772,9 @@ textarea:focus-visible {
   border-color: transparent;
   box-shadow: 0 0.2rem 0.55rem rgba(15, 23, 42, 0.2);
   color: #0f172a;
+}
+
+.segmented-toggle .toggle-icon-button svg {
+  height: 0.875rem;
+  width: 0.875rem;
 }

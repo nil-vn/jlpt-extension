@@ -302,7 +302,7 @@
           aria-pressed={settings.orderMode === 'random'}
           on:click={() => updateSetting('orderMode', 'random')}
         >
-          <Shuffle size={18} />
+          <Shuffle size={14} />
           <span>Random</span>
         </button>
         <button
@@ -312,7 +312,7 @@
           aria-pressed={settings.orderMode === 'sequential'}
           on:click={() => updateSetting('orderMode', 'sequential')}
         >
-          <ListOrdered size={18} />
+          <ListOrdered size={14} />
           <span>Sequential</span>
         </button>
       </div>
@@ -370,7 +370,7 @@
           aria-pressed={settings.theme === 'light'}
           on:click={() => updateSetting('theme', 'light')}
         >
-          <Sun size={18} />
+          <Sun size={14} />
           <span>Light</span>
         </button>
         <button
@@ -380,7 +380,7 @@
           aria-pressed={settings.theme === 'dark'}
           on:click={() => updateSetting('theme', 'dark')}
         >
-          <Moon size={18} />
+          <Moon size={14} />
           <span>Dark</span>
         </button>
       </div>
