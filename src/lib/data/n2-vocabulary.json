@@ -1,0 +1,1002 @@
+[
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "曖昧",
+    "hiragana": "あいまい",
+    "mean": "mơ hồ; không rõ ràng",
+    "image": null,
+    "audio": null,
+    "example": "彼の返事は曖昧だった。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "明らか",
+    "hiragana": "あきらか",
+    "mean": "rõ ràng; hiển nhiên",
+    "image": null,
+    "audio": null,
+    "example": "原因は明らかになった。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "改める",
+    "hiragana": "あらためる",
+    "mean": "sửa đổi; xem xét lại",
+    "image": null,
+    "audio": null,
+    "example": "悪い習慣を改めるべきだ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "意外",
+    "hiragana": "いがい",
+    "mean": "bất ngờ; ngoài dự đoán",
+    "image": null,
+    "audio": null,
+    "example": "意外な結果に驚いた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "維持",
+    "hiragana": "いじ",
+    "mean": "duy trì; bảo trì",
+    "image": null,
+    "audio": null,
+    "example": "健康を維持するには運動が大切だ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "依頼",
+    "hiragana": "いらい",
+    "mean": "yêu cầu; nhờ vả",
+    "image": null,
+    "audio": null,
+    "example": "資料の作成を同僚に依頼した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "印象",
+    "hiragana": "いんしょう",
+    "mean": "ấn tượng",
+    "image": null,
+    "audio": null,
+    "example": "彼女の発表は強い印象を残した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "引用",
+    "hiragana": "いんよう",
+    "mean": "trích dẫn",
+    "image": null,
+    "audio": null,
+    "example": "論文で有名な研究を引用した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "影響",
+    "hiragana": "えいきょう",
+    "mean": "ảnh hưởng",
+    "image": null,
+    "audio": null,
+    "example": "台風の影響で電車が遅れた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "援助",
+    "hiragana": "えんじょ",
+    "mean": "viện trợ; giúp đỡ",
+    "image": null,
+    "audio": null,
+    "example": "被災地に援助物資が届いた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "応用",
+    "hiragana": "おうよう",
+    "mean": "ứng dụng",
+    "image": null,
+    "audio": null,
+    "example": "学んだ知識を仕事に応用する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "大幅",
+    "hiragana": "おおはば",
+    "mean": "quy mô lớn; đáng kể",
+    "image": null,
+    "audio": null,
+    "example": "予算が大幅に増えた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "お互い",
+    "hiragana": "おたがい",
+    "mean": "lẫn nhau; nhau",
+    "image": null,
+    "audio": null,
+    "example": "お互いに助け合いましょう。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "穏やか",
+    "hiragana": "おだやか",
+    "mean": "ôn hòa; yên ả",
+    "image": null,
+    "audio": null,
+    "example": "今日は海が穏やかだ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "解決",
+    "hiragana": "かいけつ",
+    "mean": "giải quyết",
+    "image": null,
+    "audio": null,
+    "example": "問題を早く解決したい。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "快適",
+    "hiragana": "かいてき",
+    "mean": "thoải mái; dễ chịu",
+    "image": null,
+    "audio": null,
+    "example": "新しい部屋はとても快適だ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "確認",
+    "hiragana": "かくにん",
+    "mean": "xác nhận; kiểm tra",
+    "image": null,
+    "audio": null,
+    "example": "出発時間を確認してください。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "可能",
+    "hiragana": "かのう",
+    "mean": "có thể; khả thi",
+    "image": null,
+    "audio": null,
+    "example": "オンラインで申し込みが可能です。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "課題",
+    "hiragana": "かだい",
+    "mean": "bài tập; vấn đề cần giải quyết",
+    "image": null,
+    "audio": null,
+    "example": "環境問題は大きな課題だ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "価値",
+    "hiragana": "かち",
+    "mean": "giá trị",
+    "image": null,
+    "audio": null,
+    "example": "この経験には大きな価値がある。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "活用",
+    "hiragana": "かつよう",
+    "mean": "tận dụng; vận dụng",
+    "image": null,
+    "audio": null,
+    "example": "データを活用して計画を立てる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "仮定",
+    "hiragana": "かてい",
+    "mean": "giả định",
+    "image": null,
+    "audio": null,
+    "example": "雨が降ると仮定して準備する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "管理",
+    "hiragana": "かんり",
+    "mean": "quản lý",
+    "image": null,
+    "audio": null,
+    "example": "時間を上手に管理したい。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "完了",
+    "hiragana": "かんりょう",
+    "mean": "hoàn tất",
+    "image": null,
+    "audio": null,
+    "example": "登録が完了しました。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "関連",
+    "hiragana": "かんれん",
+    "mean": "liên quan",
+    "image": null,
+    "audio": null,
+    "example": "関連する資料を集めた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "企業",
+    "hiragana": "きぎょう",
+    "mean": "doanh nghiệp",
+    "image": null,
+    "audio": null,
+    "example": "多くの企業が新技術に投資している。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "基準",
+    "hiragana": "きじゅん",
+    "mean": "tiêu chuẩn; chuẩn mực",
+    "image": null,
+    "audio": null,
+    "example": "安全基準を満たす必要がある。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "期待",
+    "hiragana": "きたい",
+    "mean": "kỳ vọng; mong đợi",
+    "image": null,
+    "audio": null,
+    "example": "新しい制度に期待している。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "機能",
+    "hiragana": "きのう",
+    "mean": "chức năng",
+    "image": null,
+    "audio": null,
+    "example": "このアプリには便利な機能が多い。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "規模",
+    "hiragana": "きぼ",
+    "mean": "quy mô",
+    "image": null,
+    "audio": null,
+    "example": "会議の規模が大きくなった。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "供給",
+    "hiragana": "きょうきゅう",
+    "mean": "cung cấp; nguồn cung",
+    "image": null,
+    "audio": null,
+    "example": "電力の供給が安定している。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "協力",
+    "hiragana": "きょうりょく",
+    "mean": "hợp tác",
+    "image": null,
+    "audio": null,
+    "example": "成功には全員の協力が必要だ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "具体的",
+    "hiragana": "ぐたいてき",
+    "mean": "cụ thể",
+    "image": null,
+    "audio": null,
+    "example": "具体的な例を挙げて説明する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "工夫",
+    "hiragana": "くふう",
+    "mean": "sáng kiến; cách làm khéo léo",
+    "image": null,
+    "audio": null,
+    "example": "少し工夫すればもっと使いやすくなる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "経営",
+    "hiragana": "けいえい",
+    "mean": "quản trị; kinh doanh",
+    "image": null,
+    "audio": null,
+    "example": "父は小さな会社を経営している。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "傾向",
+    "hiragana": "けいこう",
+    "mean": "xu hướng; khuynh hướng",
+    "image": null,
+    "audio": null,
+    "example": "若者は新聞を読まない傾向がある。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "継続",
+    "hiragana": "けいぞく",
+    "mean": "tiếp tục; duy trì",
+    "image": null,
+    "audio": null,
+    "example": "毎日の練習を継続する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "契約",
+    "hiragana": "けいやく",
+    "mean": "hợp đồng; ký hợp đồng",
+    "image": null,
+    "audio": null,
+    "example": "来月で契約が切れる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "結果",
+    "hiragana": "けっか",
+    "mean": "kết quả",
+    "image": null,
+    "audio": null,
+    "example": "努力の結果、合格できた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "欠点",
+    "hiragana": "けってん",
+    "mean": "khuyết điểm; nhược điểm",
+    "image": null,
+    "audio": null,
+    "example": "この方法には欠点もある。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "検討",
+    "hiragana": "けんとう",
+    "mean": "xem xét; cân nhắc",
+    "image": null,
+    "audio": null,
+    "example": "計画をもう一度検討しましょう。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "効果",
+    "hiragana": "こうか",
+    "mean": "hiệu quả; tác dụng",
+    "image": null,
+    "audio": null,
+    "example": "薬の効果がすぐに現れた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "交換",
+    "hiragana": "こうかん",
+    "mean": "trao đổi; đổi",
+    "image": null,
+    "audio": null,
+    "example": "壊れた部品を交換した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "貢献",
+    "hiragana": "こうけん",
+    "mean": "đóng góp; cống hiến",
+    "image": null,
+    "audio": null,
+    "example": "地域社会に貢献したい。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "候補",
+    "hiragana": "こうほ",
+    "mean": "ứng viên; phương án",
+    "image": null,
+    "audio": null,
+    "example": "候補を三つに絞った。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "考慮",
+    "hiragana": "こうりょ",
+    "mean": "cân nhắc; xem xét",
+    "image": null,
+    "audio": null,
+    "example": "費用も考慮して決める。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "克服",
+    "hiragana": "こくふく",
+    "mean": "khắc phục; vượt qua",
+    "image": null,
+    "audio": null,
+    "example": "弱点を克服するために練習した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "個人",
+    "hiragana": "こじん",
+    "mean": "cá nhân",
+    "image": null,
+    "audio": null,
+    "example": "個人の意見を尊重する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "異なる",
+    "hiragana": "ことなる",
+    "mean": "khác nhau; khác biệt",
+    "image": null,
+    "audio": null,
+    "example": "国によって習慣が異なる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "混乱",
+    "hiragana": "こんらん",
+    "mean": "hỗn loạn; bối rối",
+    "image": null,
+    "audio": null,
+    "example": "突然の変更で現場が混乱した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "作業",
+    "hiragana": "さぎょう",
+    "mean": "công việc; thao tác",
+    "image": null,
+    "audio": null,
+    "example": "この作業には時間がかかる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "削除",
+    "hiragana": "さくじょ",
+    "mean": "xóa bỏ",
+    "image": null,
+    "audio": null,
+    "example": "不要なファイルを削除した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "作成",
+    "hiragana": "さくせい",
+    "mean": "tạo; soạn thảo",
+    "image": null,
+    "audio": null,
+    "example": "会議の資料を作成する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "支給",
+    "hiragana": "しきゅう",
+    "mean": "cấp phát; chi trả",
+    "image": null,
+    "audio": null,
+    "example": "交通費が会社から支給される。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "事実",
+    "hiragana": "じじつ",
+    "mean": "sự thật; thực tế",
+    "image": null,
+    "audio": null,
+    "example": "事実を正確に伝える。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "実施",
+    "hiragana": "じっし",
+    "mean": "thực hiện; tiến hành",
+    "image": null,
+    "audio": null,
+    "example": "アンケートを実施した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "実際",
+    "hiragana": "じっさい",
+    "mean": "thực tế",
+    "image": null,
+    "audio": null,
+    "example": "実際に使ってみると便利だった。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "自動",
+    "hiragana": "じどう",
+    "mean": "tự động",
+    "image": null,
+    "audio": null,
+    "example": "ドアが自動で開く。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "締切",
+    "hiragana": "しめきり",
+    "mean": "hạn chót",
+    "image": null,
+    "audio": null,
+    "example": "応募の締切は明日です。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "重要",
+    "hiragana": "じゅうよう",
+    "mean": "quan trọng",
+    "image": null,
+    "audio": null,
+    "example": "睡眠は健康に重要だ。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "修正",
+    "hiragana": "しゅうせい",
+    "mean": "chỉnh sửa; sửa lại",
+    "image": null,
+    "audio": null,
+    "example": "文章の誤りを修正した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "集中",
+    "hiragana": "しゅうちゅう",
+    "mean": "tập trung",
+    "image": null,
+    "audio": null,
+    "example": "試験勉強に集中する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "収入",
+    "hiragana": "しゅうにゅう",
+    "mean": "thu nhập",
+    "image": null,
+    "audio": null,
+    "example": "収入に合わせて生活費を考える。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "手段",
+    "hiragana": "しゅだん",
+    "mean": "phương tiện; biện pháp",
+    "image": null,
+    "audio": null,
+    "example": "連絡手段を確認しておく。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "需要",
+    "hiragana": "じゅよう",
+    "mean": "nhu cầu",
+    "image": null,
+    "audio": null,
+    "example": "海外で日本語教育の需要が高まっている。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "順調",
+    "hiragana": "じゅんちょう",
+    "mean": "thuận lợi; suôn sẻ",
+    "image": null,
+    "audio": null,
+    "example": "準備は順調に進んでいる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "承認",
+    "hiragana": "しょうにん",
+    "mean": "phê duyệt; chấp thuận",
+    "image": null,
+    "audio": null,
+    "example": "上司の承認を得た。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "証明",
+    "hiragana": "しょうめい",
+    "mean": "chứng minh; giấy chứng nhận",
+    "image": null,
+    "audio": null,
+    "example": "身分を証明する書類が必要です。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "省略",
+    "hiragana": "しょうりゃく",
+    "mean": "lược bỏ; giản lược",
+    "image": null,
+    "audio": null,
+    "example": "詳しい説明は省略します。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "資料",
+    "hiragana": "しりょう",
+    "mean": "tài liệu",
+    "image": null,
+    "audio": null,
+    "example": "会議の前に資料を読んでください。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "慎重",
+    "hiragana": "しんちょう",
+    "mean": "thận trọng",
+    "image": null,
+    "audio": null,
+    "example": "重要な決定は慎重に行う。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "申請",
+    "hiragana": "しんせい",
+    "mean": "đăng ký; xin cấp",
+    "image": null,
+    "audio": null,
+    "example": "ビザを申請する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "信頼",
+    "hiragana": "しんらい",
+    "mean": "tin cậy; tín nhiệm",
+    "image": null,
+    "audio": null,
+    "example": "信頼できる情報を集める。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "制限",
+    "hiragana": "せいげん",
+    "mean": "hạn chế; giới hạn",
+    "image": null,
+    "audio": null,
+    "example": "利用時間に制限がある。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "制度",
+    "hiragana": "せいど",
+    "mean": "chế độ; hệ thống",
+    "image": null,
+    "audio": null,
+    "example": "新しい制度が始まった。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "積極的",
+    "hiragana": "せっきょくてき",
+    "mean": "tích cực; chủ động",
+    "image": null,
+    "audio": null,
+    "example": "彼は積極的に意見を述べた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "節約",
+    "hiragana": "せつやく",
+    "mean": "tiết kiệm",
+    "image": null,
+    "audio": null,
+    "example": "電気を節約しましょう。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "選択",
+    "hiragana": "せんたく",
+    "mean": "lựa chọn",
+    "image": null,
+    "audio": null,
+    "example": "正しい選択をするのは難しい。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "全体",
+    "hiragana": "ぜんたい",
+    "mean": "toàn thể; tổng thể",
+    "image": null,
+    "audio": null,
+    "example": "全体の流れを確認する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "対応",
+    "hiragana": "たいおう",
+    "mean": "ứng phó; hỗ trợ; tương thích",
+    "image": null,
+    "audio": null,
+    "example": "お客様の質問に丁寧に対応する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "対象",
+    "hiragana": "たいしょう",
+    "mean": "đối tượng",
+    "image": null,
+    "audio": null,
+    "example": "このサービスは学生を対象としている。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "達成",
+    "hiragana": "たっせい",
+    "mean": "đạt được; hoàn thành",
+    "image": null,
+    "audio": null,
+    "example": "今年の目標を達成した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "担当",
+    "hiragana": "たんとう",
+    "mean": "phụ trách",
+    "image": null,
+    "audio": null,
+    "example": "私は予約管理を担当している。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "単純",
+    "hiragana": "たんじゅん",
+    "mean": "đơn giản; đơn thuần",
+    "image": null,
+    "audio": null,
+    "example": "問題はそんなに単純ではない。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "調整",
+    "hiragana": "ちょうせい",
+    "mean": "điều chỉnh; sắp xếp",
+    "image": null,
+    "audio": null,
+    "example": "会議の日程を調整する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "追加",
+    "hiragana": "ついか",
+    "mean": "thêm vào; bổ sung",
+    "image": null,
+    "audio": null,
+    "example": "必要な情報を追加してください。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "通過",
+    "hiragana": "つうか",
+    "mean": "đi qua; thông qua",
+    "image": null,
+    "audio": null,
+    "example": "電車はこの駅を通過します。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "提案",
+    "hiragana": "ていあん",
+    "mean": "đề xuất",
+    "image": null,
+    "audio": null,
+    "example": "新しい企画を提案した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "適切",
+    "hiragana": "てきせつ",
+    "mean": "thích hợp; phù hợp",
+    "image": null,
+    "audio": null,
+    "example": "状況に応じて適切に判断する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "手続き",
+    "hiragana": "てつづき",
+    "mean": "thủ tục",
+    "image": null,
+    "audio": null,
+    "example": "入学の手続きを済ませた。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "導入",
+    "hiragana": "どうにゅう",
+    "mean": "giới thiệu; đưa vào áp dụng",
+    "image": null,
+    "audio": null,
+    "example": "新しいシステムを導入した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "特徴",
+    "hiragana": "とくちょう",
+    "mean": "đặc trưng; đặc điểm",
+    "image": null,
+    "audio": null,
+    "example": "この町の特徴を調べる。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "独立",
+    "hiragana": "どくりつ",
+    "mean": "độc lập",
+    "image": null,
+    "audio": null,
+    "example": "将来は独立して店を持ちたい。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "認識",
+    "hiragana": "にんしき",
+    "mean": "nhận thức; nhận biết",
+    "image": null,
+    "audio": null,
+    "example": "問題の重要性を認識している。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "判断",
+    "hiragana": "はんだん",
+    "mean": "phán đoán; quyết định",
+    "image": null,
+    "audio": null,
+    "example": "情報を集めて判断する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "比較",
+    "hiragana": "ひかく",
+    "mean": "so sánh",
+    "image": null,
+    "audio": null,
+    "example": "二つの商品を比較した。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "表現",
+    "hiragana": "ひょうげん",
+    "mean": "biểu hiện; diễn đạt",
+    "image": null,
+    "audio": null,
+    "example": "気持ちを言葉で表現する。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "評価",
+    "hiragana": "ひょうか",
+    "mean": "đánh giá",
+    "image": null,
+    "audio": null,
+    "example": "この商品は高く評価されている。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "負担",
+    "hiragana": "ふたん",
+    "mean": "gánh nặng; chịu trách nhiệm",
+    "image": null,
+    "audio": null,
+    "example": "費用の負担を減らしたい。"
+  },
+  {
+    "level": "n2",
+    "category": "locabulary",
+    "name": "不足",
+    "hiragana": "ふそく",
+    "mean": "thiếu; không đủ",
+    "image": null,
+    "audio": null,
+    "example": "説明が不足していた。"
+  }
+]
