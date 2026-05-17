@@ -155,3 +155,73 @@ button {
   border-radius: 0.75rem;
   padding: 0.7rem;
 }
+
+textarea {
+  font: inherit;
+}
+
+.hero__header {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.compact-button {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.8rem;
+}
+
+.study-card__image {
+  border-radius: 0.85rem;
+  max-height: 12rem;
+  max-width: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.audio-button {
+  align-self: start;
+  background: #fff7ed;
+  border: 1px solid rgba(249, 115, 22, 0.34);
+  border-radius: 0.85rem;
+  color: #9a3412;
+  padding: 0.65rem 0.9rem;
+}
+
+.actions--wrap {
+  flex-wrap: wrap;
+}
+
+.study-tools {
+  display: grid;
+  gap: 1rem;
+}
+
+.note-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.note-field span {
+  color: #172033;
+  font-weight: 700;
+}
+
+.note-field textarea {
+  border: 1px solid rgba(23, 32, 51, 0.16);
+  border-radius: 0.85rem;
+  min-height: 6rem;
+  padding: 0.75rem;
+  resize: vertical;
+}
+
+.empty-state {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.empty-state h2,
+.empty-state p {
+  margin: 0;
+}

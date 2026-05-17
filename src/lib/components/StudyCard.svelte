@@ -1,28 +1,71 @@
 <script lang="ts">
   import type { Flashcard } from '../types/flashcard';
 
-  export let card: Flashcard;
+  type PlannedFlashcard = Omit<Partial<Flashcard>, 'level' | 'category' | 'example'> & {
+    level?: string;
+    category?: string;
+    name?: string;
+    mean?: string;
+    hiragana?: string;
+    image?: string | null;
+    audio?: string | null;
+    example?: string | null;
+  };
+
+  const categoryLabels: Record<string, string> = {
+    gramma: 'Ngữ pháp',
+    grammar: 'Ngữ pháp',
+    locabulary: 'Từ vựng',
+    vocabulary: 'Từ vựng',
+    kanji: 'Kanji',
+    reading: 'Đọc hiểu',
+    listening: 'Nghe hiểu'
+  };
+
+  export let card: PlannedFlashcard;
   export let revealed = false;
+
+  $: categoryLabel = categoryLabels[String(card.category).toLowerCase()] ?? card.category;
+  $: cardName = card.name ?? card.prompt;
+  $: cardMeaning = card.mean ?? card.answer;
+  $: cardReading = card.hiragana ?? card.reading;
+
+  function playAudio() {
+    if (!card.audio) return;
+
+    const audio = new Audio(card.audio);
+    audio.play();
+  }
 </script>
 
 <article class="study-card" aria-live="polite">
   <div class="study-card__meta">
     <span>{card.level}</span>
-    <span>{card.category}</span>
+    <span>{categoryLabel}</span>
   </div>
 
-  <h2>{card.prompt}</h2>
+  <h2>{cardName}</h2>
 
-  {#if card.reading}
-    <p class="study-card__reading">{card.reading}</p>
+  {#if cardReading}
+    <p class="study-card__reading">{cardReading}</p>
+  {/if}
+
+  {#if card.image}
+    <img class="study-card__image" src={card.image} alt={`Minh họa cho ${cardName}`} />
+  {/if}
+
+  {#if card.audio}
+    <button class="audio-button" type="button" on:click={playAudio} aria-label="Nghe phát âm">
+      ▶ Nghe audio
+    </button>
   {/if}
 
   {#if revealed}
-    <p class="study-card__answer">{card.answer}</p>
+    <p class="study-card__answer">{cardMeaning}</p>
     {#if card.example}
       <p class="study-card__example">{card.example}</p>
     {/if}
   {:else}
-    <p class="study-card__hint">Reveal the card to check your answer.</p>
+    <p class="study-card__hint">Bấm “Hiện đáp án” để kiểm tra nghĩa của thẻ.</p>
   {/if}
 </article>
