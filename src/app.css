@@ -793,3 +793,71 @@ textarea:focus-visible {
   height: 0.875rem;
   width: 0.875rem;
 }
+
+.bookmark-panel {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.bookmark-panel__header {
+  align-items: flex-start;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.bookmark-panel__header .help-text {
+  margin-bottom: 0;
+}
+
+.bookmark-list {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.1rem;
+}
+
+.bookmark-chip {
+  background: linear-gradient(135deg, #fff7ed, #ffffff);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: 0.9rem;
+  color: #7c2d12;
+  display: grid;
+  flex: 0 0 auto;
+  gap: 0.2rem;
+  min-width: 7rem;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.bookmark-chip:hover,
+.bookmark-chip.active {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0.45rem 0.9rem rgba(249, 115, 22, 0.14);
+  transform: translateY(-1px);
+}
+
+.bookmark-chip span {
+  font-weight: 900;
+}
+
+.bookmark-chip small {
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.study-progress {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (min-width: 430px) {
+  .bookmark-panel__header {
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
