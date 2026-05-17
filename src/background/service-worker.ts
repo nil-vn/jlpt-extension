@@ -8,7 +8,7 @@ import {
 } from "../lib/extension/storage";
 import type { Flashcard } from "../lib/types/flashcard";
 
-const NOTIFICATION_ICON_URL = chrome.runtime.getURL("notification-icon.svg");
+const NOTIFICATION_ICON_PATHS = ["icon128.png", "logo.png"] as const;
 const NOTIFICATION_ALARM_NAME = "jlpt-card-reminder";
 const NOTIFICATION_ID_PREFIX = "jlpt-card-reminder";
 const STORAGE_STATE_KEY = "jlptExtensionState";
@@ -240,19 +240,48 @@ function normalizeIndex(index: number, length: number) {
   return Math.min(Math.max(Math.round(index), 0), length - 1);
 }
 
-function createNotification(notificationId: string, card: Flashcard) {
+async function createNotification(notificationId: string, card: Flashcard) {
   const title = formatNotificationTitle(card);
   const message = [`Nghĩa: ${card.mean}`, card.example]
     .filter(Boolean)
     .join("\n");
 
+  let lastError: string | undefined;
+
+  for (const iconPath of NOTIFICATION_ICON_PATHS) {
+    const result = await createNotificationWithIcon(
+      notificationId,
+      iconPath,
+      title,
+      message,
+    );
+
+    if (result.ok) return result;
+
+    lastError = result.error;
+  }
+
+  return {
+    ok: false,
+    error:
+      lastError ??
+      "Chrome không thể tải icon PNG cho notification từ extension.",
+  };
+}
+
+function createNotificationWithIcon(
+  notificationId: string,
+  iconPath: (typeof NOTIFICATION_ICON_PATHS)[number],
+  title: string,
+  message: string,
+) {
   return new Promise<{ ok: boolean; notificationId?: string; error?: string }>(
     (resolve) => {
       chrome.notifications.create(
         notificationId,
         {
           type: "basic",
-          iconUrl: NOTIFICATION_ICON_URL,
+          iconUrl: chrome.runtime.getURL(iconPath),
           title,
           message,
           priority: 2,
@@ -261,7 +290,10 @@ function createNotification(notificationId: string, card: Flashcard) {
           const errorMessage = chrome.runtime?.lastError?.message;
 
           if (errorMessage) {
-            console.warn("JLPT notification failed:", errorMessage);
+            console.warn(
+              `JLPT notification failed with ${iconPath}:`,
+              errorMessage,
+            );
             resolve({ ok: false, error: errorMessage });
             return;
           }
