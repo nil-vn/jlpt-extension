@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { Check } from '@lucide/svelte';
   import { createEventDispatcher } from 'svelte';
+  import { Button } from './ui/button';
   import { jlptLevels } from '../data';
   import type { JlptLevel } from '../types/flashcard';
 
@@ -18,13 +20,17 @@
 
 <div class="level-selector" aria-label="JLPT levels">
   {#each jlptLevels as level}
-    <button
-      type="button"
-      class:active={selectedLevels.includes(level)}
+    <Button
+      variant={selectedLevels.includes(level) ? 'default' : 'outline'}
+      size="sm"
+      class={selectedLevels.includes(level) ? 'active' : ''}
       aria-pressed={selectedLevels.includes(level)}
       on:click={() => toggleLevel(level)}
     >
+      {#if selectedLevels.includes(level)}
+        <Check size={14} strokeWidth={2.5} />
+      {/if}
       {level.toUpperCase()}
-    </button>
+    </Button>
   {/each}
 </div>

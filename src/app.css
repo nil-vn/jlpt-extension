@@ -299,3 +299,313 @@ textarea {
   border-radius: 0.75rem;
   padding: 0.7rem;
 }
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: rgba(255, 255, 255, 0.92);
+  --card-foreground: #0f172a;
+  --primary: #ea580c;
+  --primary-foreground: #fff7ed;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: rgba(15, 23, 42, 0.1);
+  --ring: rgba(249, 115, 22, 0.28);
+  --radius: 1rem;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.18), transparent 26rem),
+    radial-gradient(circle at 85% 10%, rgba(14, 165, 233, 0.12), transparent 22rem),
+    linear-gradient(180deg, #fff7ed 0%, var(--background) 44%, #eef2ff 100%);
+}
+
+.ui-card,
+.panel,
+.study-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 0.25rem);
+  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  color: var(--card-foreground);
+  padding: 1rem;
+}
+
+.ui-button {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 0.85rem;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 0.45rem;
+  justify-content: center;
+  line-height: 1;
+  min-height: 2.55rem;
+  padding: 0.72rem 1rem;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms ease;
+  white-space: nowrap;
+}
+
+.ui-button:hover {
+  transform: translateY(-1px);
+}
+
+.ui-button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow: 0 0 0 0.25rem var(--ring);
+  outline: 0;
+}
+
+.ui-button--default {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: var(--primary-foreground);
+}
+
+.ui-button--secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.ui-button--outline {
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: var(--foreground);
+}
+
+.ui-button--ghost {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.ui-button--destructive {
+  background: #dc2626;
+  color: #fff;
+}
+
+.ui-button--sm {
+  border-radius: 999px;
+  min-height: 2.15rem;
+  padding: 0.48rem 0.78rem;
+}
+
+.ui-button--icon {
+  min-width: 2.55rem;
+  padding: 0;
+}
+
+.ui-badge {
+  align-items: center;
+  background: #ffedd5;
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: 999px;
+  color: #9a3412;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  gap: 0.35rem;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.65rem;
+  text-transform: uppercase;
+}
+
+.ui-badge--secondary {
+  background: #e0f2fe;
+  border-color: rgba(14, 165, 233, 0.22);
+  color: #075985;
+}
+
+.ui-badge--outline {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: inherit;
+}
+
+.ui-badge--success {
+  background: #dcfce7;
+  border-color: rgba(22, 163, 74, 0.22);
+  color: #166534;
+}
+
+.hero {
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94)),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.45), transparent 14rem);
+  overflow: hidden;
+  position: relative;
+}
+
+.hero::after {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 60%);
+  content: '';
+  height: 10rem;
+  position: absolute;
+  right: -4rem;
+  top: -5rem;
+  width: 10rem;
+}
+
+.hero__header,
+.options-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__eyebrow {
+  margin-bottom: 0.65rem;
+}
+
+.hero__settings {
+  box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.18);
+}
+
+.popup-shell {
+  max-width: 27rem;
+}
+
+.options-shell {
+  max-width: 54rem;
+}
+
+.level-panel,
+.study-tools,
+.settings-grid,
+.empty-state {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.panel-label,
+.setting-row > span,
+.note-field span {
+  align-items: center;
+  color: var(--foreground);
+  display: inline-flex;
+  font-weight: 800;
+  gap: 0.45rem;
+}
+
+.level-selector {
+  gap: 0.45rem;
+}
+
+.level-selector .ui-button.active {
+  box-shadow: 0 0.55rem 1rem rgba(249, 115, 22, 0.22);
+}
+
+.study-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 237, 0.88)),
+    var(--card);
+  gap: 0.9rem;
+  padding: 1.15rem;
+}
+
+.study-card h2 {
+  color: #111827;
+  font-size: clamp(2.5rem, 14vw, 4.6rem);
+  letter-spacing: -0.07em;
+  line-height: 0.95;
+}
+
+.study-card__reading {
+  color: #c2410c;
+}
+
+.study-card__answer,
+.study-card__hint {
+  align-items: center;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.study-card__answer {
+  background: #fff7ed;
+  border: 1px dashed rgba(249, 115, 22, 0.34);
+  border-radius: 0.9rem;
+  color: #7c2d12;
+  padding: 0.8rem;
+}
+
+.actions {
+  align-items: center;
+}
+
+.actions--wrap .ui-button {
+  flex: 1 1 auto;
+}
+
+.note-field textarea,
+.setting-row input,
+.setting-row select {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  color: var(--foreground);
+  padding: 0.75rem 0.85rem;
+}
+
+.file-dropzone {
+  align-items: center;
+  background: linear-gradient(135deg, #fff7ed, #ffffff);
+  border: 1px dashed rgba(249, 115, 22, 0.45);
+  border-radius: 1rem;
+  color: #9a3412;
+  cursor: pointer;
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.file-dropzone input {
+  inline-size: 100%;
+}
+
+.section-heading h2,
+.level-guide h2,
+.status-card strong,
+.level-guide strong {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.status-card {
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+}
+
+.status-card--error {
+  background: linear-gradient(135deg, #fef2f2, #fff7ed);
+}
+
+.radio-row,
+.switch-row {
+  background: rgba(248, 250, 252, 0.78);
+  border: 1px solid var(--border);
+  border-radius: 0.95rem;
+  padding: 0.75rem;
+}
+
+.save-status {
+  background: rgba(15, 23, 42, 0.86);
+  border-radius: 999px;
+  color: #fff7ed;
+  justify-self: start;
+  padding: 0.65rem 0.9rem;
+}
+
+@media (min-width: 760px) {
+  .options-shell {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .options-hero,
+  .options-shell > .empty-state,
+  .options-shell > .save-status {
+    grid-column: 1 / -1;
+  }
+}

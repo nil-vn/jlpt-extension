@@ -1,5 +1,9 @@
 <script lang="ts">
+  import { Headphones, Lightbulb, Volume2 } from '@lucide/svelte';
   import type { Flashcard } from '../types/flashcard';
+  import { Badge } from './ui/badge';
+  import { Button } from './ui/button';
+  import { Card } from './ui/card';
 
   type PlannedFlashcard = Partial<Flashcard> & {
     level?: string;
@@ -31,10 +35,10 @@
   }
 </script>
 
-<article class="study-card" aria-live="polite">
+<Card class="study-card" aria-live="polite">
   <div class="study-card__meta">
-    <span>{levelLabel}</span>
-    <span>{categoryLabel}</span>
+    <Badge>{levelLabel}</Badge>
+    <Badge variant="secondary">{categoryLabel}</Badge>
   </div>
 
   <h2>{cardName}</h2>
@@ -48,17 +52,18 @@
   {/if}
 
   {#if card.audio}
-    <button class="audio-button" type="button" on:click={playAudio} aria-label="Nghe phát âm">
-      ▶ Nghe audio
-    </button>
+    <Button class="audio-button" variant="outline" size="sm" on:click={playAudio} aria-label="Nghe phát âm">
+      <Volume2 size={16} />
+      Nghe audio
+    </Button>
   {/if}
 
   {#if revealed}
-    <p class="study-card__answer">{cardMeaning}</p>
+    <p class="study-card__answer"><Headphones size={18} /> {cardMeaning}</p>
     {#if card.example}
       <p class="study-card__example">{card.example}</p>
     {/if}
   {:else}
-    <p class="study-card__hint">Bấm “Hiện đáp án” để kiểm tra nghĩa của thẻ.</p>
+    <p class="study-card__hint"><Lightbulb size={16} /> Bấm “Hiện đáp án” để kiểm tra nghĩa của thẻ.</p>
   {/if}
-</article>
+</Card>
