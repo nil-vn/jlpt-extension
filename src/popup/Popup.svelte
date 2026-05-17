@@ -84,13 +84,13 @@
     bookmarkedCardIds = stored.bookmarkedCardIds;
     notesByCardId = stored.notesByCardId;
     notificationPaused = stored.notificationPaused ?? !stored.settings.notificationEnabled;
+    revealed = stored.settings.revealAnswers;
     isLoading = false;
   }
 
   function nextCard() {
     if (filteredCards.length === 0) return;
 
-    revealed = false;
     historyStack = [...historyStack, currentIndex];
     currentIndex = studyMode === 'random' ? nextRandomIndex() : (currentIndex + 1) % filteredCards.length;
     void updateCurrentIndex(currentIndex);
@@ -99,7 +99,6 @@
   function previousCard() {
     if (filteredCards.length === 0) return;
 
-    revealed = false;
     if (studyMode === 'random' && historyStack.length > 0) {
       currentIndex = historyStack[historyStack.length - 1];
       historyStack = historyStack.slice(0, -1);
@@ -123,12 +122,20 @@
   function updateLevels(event: CustomEvent<JlptLevel[]>) {
     selectedLevels = event.detail;
     currentIndex = 0;
-    revealed = false;
     historyStack = [];
     storedSettings = { ...storedSettings, selectedLevels, orderMode: studyMode, notificationEnabled: !notificationPaused };
     void updateSettings({ selectedLevels, orderMode: studyMode, notificationEnabled: !notificationPaused }).then(() =>
       updateCurrentIndex(currentIndex)
     );
+  }
+
+  function toggleRevealed() {
+    revealed = !revealed;
+    storedSettings = { ...storedSettings, revealAnswers: revealed };
+    void updateSettings({ revealAnswers: revealed }).then((state) => {
+      storedSettings = state.settings;
+      revealed = state.settings.revealAnswers;
+    });
   }
 
   function toggleBookmark() {
@@ -210,7 +217,7 @@
 
     <div class="actions actions--wrap">
       <Button variant="outline" on:click={previousCard}><ChevronLeft size={16} /> Previous</Button>
-      <Button on:click={() => (revealed = !revealed)}>
+      <Button on:click={toggleRevealed} aria-pressed={revealed}>
         {#if revealed}
           <EyeOff size={16} />
           Ẩn đáp án

@@ -356,6 +356,7 @@ body {
 .ui-button:focus-visible,
 input:focus-visible,
 select:focus-visible,
+.toggle-icon-button:focus-visible,
 textarea:focus-visible {
   box-shadow: 0 0 0 0.25rem var(--ring);
   outline: 0;
@@ -588,6 +589,45 @@ textarea:focus-visible {
   border: 1px solid var(--border);
   border-radius: 0.95rem;
   padding: 0.75rem;
+}
+
+
+.segmented-toggle {
+  background: rgba(248, 250, 252, 0.78);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0.35rem;
+}
+
+.toggle-icon-button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.8rem;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  font: inherit;
+  font-weight: 800;
+  gap: 0.45rem;
+  justify-content: center;
+  min-height: 2.65rem;
+  padding: 0.65rem 0.8rem;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.toggle-icon-button:hover {
+  color: var(--foreground);
+  transform: translateY(-1px);
+}
+
+.toggle-icon-button.active {
+  background: linear-gradient(135deg, #fff7ed, #ffffff);
+  border-color: rgba(249, 115, 22, 0.28);
+  box-shadow: 0 0.55rem 1rem rgba(249, 115, 22, 0.16);
+  color: #c2410c;
 }
 
 .save-status {

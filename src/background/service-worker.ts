@@ -8,12 +8,7 @@ import {
 } from '../lib/extension/storage';
 import type { Flashcard } from '../lib/types/flashcard';
 
-const NOTIFICATION_ICON_URL =
-  'data:image/svg+xml;charset=UTF-8,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><rect width="128" height="128" rx="28" fill="#4f46e5"/><text x="64" y="78" text-anchor="middle" font-family="Arial,sans-serif" font-size="42" font-weight="700" fill="white">日</text></svg>'
-  );
-
+const NOTIFICATION_ICON_PATH = 'notification-icon.svg';
 const NOTIFICATION_ALARM_NAME = 'jlpt-card-reminder';
 const NOTIFICATION_ID_PREFIX = 'jlpt-card-reminder';
 const STORAGE_STATE_KEY = 'jlptExtensionState';
@@ -29,6 +24,8 @@ const CATEGORY_LABELS: Record<Flashcard['category'], string> = {
 };
 
 if (typeof chrome !== 'undefined') {
+  void initializeExtensionState();
+
   if (chrome.runtime?.onInstalled) {
     chrome.runtime.onInstalled.addListener(() => {
       void initializeExtensionState();
@@ -97,10 +94,6 @@ async function showStudyNotification() {
 
   const nextIndex = getNextCurrentIndex(cards.length, notificationIndex, state.settings.orderMode);
   await updateCurrentIndex(nextIndex);
-
-  if (state.settings.notificationDisplaySeconds) {
-    scheduleNotificationClear(notificationId, state.settings.notificationDisplaySeconds);
-  }
 }
 
 function didNotificationScheduleChange(changes: Record<string, chrome.storage.StorageChange>) {
@@ -168,19 +161,24 @@ function normalizeIndex(index: number, length: number) {
 
 function createNotification(notificationId: string, card: Flashcard) {
   const title = formatNotificationTitle(card);
-  const message = [`[THỰC] ${card.mean}`, card.example].filter(Boolean).join('\n');
+  const message = [`Nghĩa: ${card.mean}`, card.example].filter(Boolean).join('\n');
 
   return new Promise<string>((resolve) => {
     chrome.notifications.create(
       notificationId,
       {
         type: 'basic',
-        iconUrl: NOTIFICATION_ICON_URL,
+        iconUrl: getNotificationIconUrl(),
         title,
         message,
         priority: 1
       },
-      (createdNotificationId) => resolve(createdNotificationId)
+      (createdNotificationId) => {
+        if (chrome.runtime?.lastError) {
+          console.warn('JLPT notification failed:', chrome.runtime.lastError.message);
+        }
+        resolve(createdNotificationId);
+      }
     );
   });
 }
@@ -195,9 +193,11 @@ function formatNotificationTitle(card: Flashcard) {
 
 function createNotificationAlarm(intervalMinutes: number) {
   return new Promise<void>((resolve) => {
+    const normalizedInterval = Math.max(1, Math.round(intervalMinutes));
+
     chrome.alarms.create(NOTIFICATION_ALARM_NAME, {
-      delayInMinutes: intervalMinutes,
-      periodInMinutes: intervalMinutes
+      delayInMinutes: normalizedInterval,
+      periodInMinutes: normalizedInterval
     });
     resolve();
   });
@@ -209,8 +209,8 @@ function clearNotificationAlarm() {
   });
 }
 
-function scheduleNotificationClear(notificationId: string, displaySeconds: number) {
-  setTimeout(() => {
-    chrome.notifications.clear(notificationId);
-  }, displaySeconds * 1000);
+function getNotificationIconUrl() {
+  if (chrome.runtime?.getURL) return chrome.runtime.getURL(NOTIFICATION_ICON_PATH);
+
+  return NOTIFICATION_ICON_PATH;
 }
