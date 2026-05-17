@@ -20,9 +20,23 @@ const STORAGE_STATE_KEY = 'jlptExtensionState';
 const LEGACY_SETTINGS_KEY = 'jlptSettings';
 const LEGACY_PAUSED_KEY = 'jlptNotificationPaused';
 
+const CATEGORY_LABELS: Record<Flashcard['category'], string> = {
+  gramma: 'Ngữ pháp',
+  locabulary: 'Từ vựng',
+  kanji: 'Kanji',
+  reading: 'Đọc hiểu',
+  listening: 'Nghe hiểu'
+};
+
 if (typeof chrome !== 'undefined') {
   if (chrome.runtime?.onInstalled) {
     chrome.runtime.onInstalled.addListener(() => {
+      void initializeExtensionState();
+    });
+  }
+
+  if (chrome.runtime?.onStartup) {
+    chrome.runtime.onStartup.addListener(() => {
       void initializeExtensionState();
     });
   }
@@ -153,9 +167,8 @@ function normalizeIndex(index: number, length: number) {
 }
 
 function createNotification(notificationId: string, card: Flashcard) {
-  const titleParts = [card.name, card.hiragana].filter(Boolean);
-  const contextParts = [card.level.toUpperCase(), card.category].filter(Boolean);
-  const messageParts = [card.mean, card.example].filter(Boolean);
+  const title = formatNotificationTitle(card);
+  const message = [`[THỰC] ${card.mean}`, card.example].filter(Boolean).join('\n');
 
   return new Promise<string>((resolve) => {
     chrome.notifications.create(
@@ -163,14 +176,21 @@ function createNotification(notificationId: string, card: Flashcard) {
       {
         type: 'basic',
         iconUrl: NOTIFICATION_ICON_URL,
-        title: titleParts.length > 0 ? titleParts.join(' · ') : 'JLPT flashcard reminder',
-        message: messageParts.join('\n'),
-        contextMessage: contextParts.join(' · '),
+        title,
+        message,
         priority: 1
       },
       (createdNotificationId) => resolve(createdNotificationId)
     );
   });
+}
+
+function formatNotificationTitle(card: Flashcard) {
+  const levelLabel = card.level.toUpperCase();
+  const categoryLabel = CATEGORY_LABELS[card.category];
+  const reading = card.hiragana ? ` (${card.hiragana})` : '';
+
+  return `[${levelLabel} - ${categoryLabel}]  ${card.name}${reading}`;
 }
 
 function createNotificationAlarm(intervalMinutes: number) {

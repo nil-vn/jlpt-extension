@@ -5,7 +5,6 @@ export type UserSettings = StudySettings & {
   notificationIntervalMinutes: number;
   notificationEnabled: boolean;
   orderMode: 'random' | 'sequential';
-  notificationStartTime?: string;
   notificationDisplaySeconds?: number;
 };
 
@@ -50,7 +49,6 @@ export const DEFAULT_SETTINGS: UserSettings = {
   notificationIntervalMinutes: 60,
   notificationEnabled: false,
   orderMode: 'sequential',
-  notificationStartTime: '09:00',
   notificationDisplaySeconds: 20
 };
 
@@ -220,7 +218,6 @@ function normalizeSettings(settings: Partial<UserSettings> | undefined): UserSet
     ),
     notificationEnabled: Boolean(merged.notificationEnabled),
     orderMode: merged.orderMode === 'random' ? 'random' : 'sequential',
-    notificationStartTime: normalizeTime(merged.notificationStartTime),
     notificationDisplaySeconds: clampNumber(
       merged.notificationDisplaySeconds,
       DEFAULT_SETTINGS.notificationDisplaySeconds ?? 20,
@@ -263,10 +260,6 @@ function normalizeCategory(category: unknown) {
 
 function normalizeTheme(theme: unknown): UserSettings['theme'] {
   return theme === 'light' || theme === 'dark' || theme === 'system' ? theme : DEFAULT_SETTINGS.theme;
-}
-
-function normalizeTime(time: unknown) {
-  return typeof time === 'string' && /^\d{2}:\d{2}$/.test(time) ? time : DEFAULT_SETTINGS.notificationStartTime;
 }
 
 function clampNumber(value: unknown, fallback: number, min: number, max: number) {

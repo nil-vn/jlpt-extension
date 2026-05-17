@@ -89,7 +89,6 @@
         5,
         120
       ),
-      notificationStartTime: normalizeTime(stored.settings.notificationStartTime),
       orderMode: stored.settings.orderMode === 'random' ? 'random' : 'sequential',
       theme: normalizeTheme(stored.settings.theme),
       notificationEnabled: Boolean(stored.settings.notificationEnabled)
@@ -128,12 +127,6 @@
     if (!Number.isFinite(parsed)) return fallback;
 
     return Math.min(max, Math.max(min, Math.round(parsed)));
-  }
-
-  function normalizeTime(value: unknown) {
-    if (typeof value !== 'string' || !/^\d{2}:\d{2}$/.test(value)) return defaultSettings.notificationStartTime;
-
-    return value;
   }
 
   function normalizeTheme(value: unknown): UserSettings['theme'] {
@@ -353,11 +346,6 @@
       </label>
 
       <label class="setting-row">
-        <span>Reminder window starts at</span>
-        <input type="time" bind:value={settings.notificationStartTime} on:change={persistSettings} />
-      </label>
-
-      <label class="setting-row">
         <span>Display duration hint (seconds)</span>
         <input
           min="5"
@@ -369,9 +357,9 @@
       </label>
 
       <p class="help-text">
-        Bật notification để service worker tạo alarm định kỳ; thay đổi interval sẽ tự cập nhật alarm đang chạy.
+        Bật notification để service worker tạo alarm theo interval đã cấu hình; thay đổi interval sẽ tự cập nhật alarm đang chạy.
         Chrome Notifications API không đảm bảo thời lượng hiển thị cố định; hệ điều hành có thể tự quyết định.
-        MVP lưu giá trị này để service worker có thể dùng làm hint hoặc tự clear notification khi phù hợp.
+        MVP lưu giá trị duration để service worker có thể dùng làm hint hoặc tự clear notification khi phù hợp.
       </p>
     </section>
 

@@ -54,7 +54,7 @@ Người dùng có thể cấu hình:
 - Xem số lượng card hợp lệ sau khi load.
 - Chọn theme sáng/tối/system.
 - Chọn thời gian giữa các notification.
-- Chọn thời lượng hiển thị/thời điểm tạo notification theo khả năng của Chrome Notifications API.
+- Chọn thời lượng hiển thị theo khả năng của Chrome Notifications API; notification bắt đầu theo interval khi user enable hoặc extension active.
 - Chọn chế độ học:
   - Random.
   - Tuần tự theo thứ tự JSON.
@@ -83,9 +83,9 @@ Sau khi user đã cấu hình và load data:
 - Khi alarm kích hoạt, extension chọn card theo mode random/tuần tự.
 - Dùng `chrome.notifications.create` để show notification.
 - Nội dung notification nên gồm:
-  - Tiêu đề: `[N5] Từ vựng: 食べる`.
-  - Message: `たべる - ăn`.
-  - Context/example nếu có và còn đủ chỗ.
+  - Line 1/title: `[N5 - Từ vựng]  食べる (たべる)`.
+  - Line 2/message: `[THỰC] Ăn`.
+  - Line 3 nếu còn đủ chỗ: example nếu có.
 - Khi user pause notification, service worker không tạo notification mới.
 
 ## 4. Kiến trúc Chrome Extension
