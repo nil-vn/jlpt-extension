@@ -2,11 +2,11 @@ import { defaultN2Vocabulary } from '../data/flashcards';
 import type { Flashcard, FlashcardCategory, JlptLevel, StudySettings } from '../types/flashcard';
 
 export type UserSettings = StudySettings & {
-  theme: 'light' | 'dark' | 'system';
+  theme: 'light' | 'dark';
   notificationIntervalMinutes: number;
   notificationEnabled: boolean;
   orderMode: 'random' | 'sequential';
-  notificationDisplaySeconds?: number;
+  revealAnswers: boolean;
 };
 
 export type ExtensionState = {
@@ -46,11 +46,11 @@ export const DEFAULT_SETTINGS: UserSettings = {
   dailyGoal: 20,
   selectedLevels: ['n2'],
   enabledCategories: ['locabulary', 'kanji', 'gramma'],
-  theme: 'system',
+  theme: 'light',
   notificationIntervalMinutes: 60,
   notificationEnabled: false,
   orderMode: 'sequential',
-  notificationDisplaySeconds: 20
+  revealAnswers: false
 };
 
 export const DEFAULT_EXTENSION_STATE: ExtensionState = {
@@ -219,12 +219,7 @@ function normalizeSettings(settings: Partial<UserSettings> | undefined): UserSet
     ),
     notificationEnabled: Boolean(merged.notificationEnabled),
     orderMode: merged.orderMode === 'random' ? 'random' : 'sequential',
-    notificationDisplaySeconds: clampNumber(
-      merged.notificationDisplaySeconds,
-      DEFAULT_SETTINGS.notificationDisplaySeconds ?? 20,
-      5,
-      120
-    )
+    revealAnswers: Boolean(merged.revealAnswers)
   };
 }
 
@@ -260,7 +255,7 @@ function normalizeCategory(category: unknown) {
 }
 
 function normalizeTheme(theme: unknown): UserSettings['theme'] {
-  return theme === 'light' || theme === 'dark' || theme === 'system' ? theme : DEFAULT_SETTINGS.theme;
+  return theme === 'dark' ? 'dark' : DEFAULT_SETTINGS.theme;
 }
 
 function clampNumber(value: unknown, fallback: number, min: number, max: number) {

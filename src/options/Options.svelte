@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Bell, BookOpenCheck, CheckCircle2, Database, FileJson, Info, RotateCcw, Settings2, Shuffle, SlidersHorizontal, SunMoon, Target, UploadCloud } from '@lucide/svelte';
+  import { Bell, BookOpenCheck, CheckCircle2, Database, FileJson, Info, ListOrdered, Moon, RotateCcw, Settings2, Shuffle, SlidersHorizontal, Sun, Target, UploadCloud } from '@lucide/svelte';
   import { onMount } from 'svelte';
   import '../app.css';
   import { LevelSelector } from '../lib/components';
@@ -87,12 +87,6 @@
         1,
         1440
       ),
-      notificationDisplaySeconds: clampNumber(
-        stored.settings.notificationDisplaySeconds,
-        defaultSettings.notificationDisplaySeconds ?? 20,
-        5,
-        120
-      ),
       orderMode: stored.settings.orderMode === 'random' ? 'random' : 'sequential',
       theme: normalizeTheme(stored.settings.theme),
       notificationEnabled: Boolean(stored.settings.notificationEnabled)
@@ -134,7 +128,7 @@
   }
 
   function normalizeTheme(value: unknown): UserSettings['theme'] {
-    return value === 'light' || value === 'dark' || value === 'system' ? value : 'system';
+    return value === 'dark' ? 'dark' : 'light';
   }
 
   function readFileAsText(file: File) {
@@ -201,8 +195,7 @@
     settings = {
       ...settings,
       dailyGoal: clampNumber(settings.dailyGoal, defaultSettings.dailyGoal, 1, 999),
-      notificationIntervalMinutes: clampNumber(settings.notificationIntervalMinutes, 60, 1, 1440),
-      notificationDisplaySeconds: clampNumber(settings.notificationDisplaySeconds, 20, 5, 120)
+      notificationIntervalMinutes: clampNumber(settings.notificationIntervalMinutes, 60, 1, 1440)
     };
 
     isSaving = true;
@@ -304,27 +297,28 @@
         <h2><Shuffle size={20} /> Study mode</h2>
       </div>
 
-      <label class="radio-row">
-        <input
-          checked={settings.orderMode === 'random'}
-          name="study-mode"
-          type="radio"
-          value="random"
-          on:change={() => updateSetting('orderMode', 'random')}
-        />
-        <span>Random</span>
-      </label>
-
-      <label class="radio-row">
-        <input
-          checked={settings.orderMode === 'sequential'}
-          name="study-mode"
-          type="radio"
-          value="sequential"
-          on:change={() => updateSetting('orderMode', 'sequential')}
-        />
-        <span>Sequential</span>
-      </label>
+      <div class="segmented-toggle" role="group" aria-label="Study mode">
+        <button
+          class:active={settings.orderMode === 'random'}
+          class="toggle-icon-button"
+          type="button"
+          aria-pressed={settings.orderMode === 'random'}
+          on:click={() => updateSetting('orderMode', 'random')}
+        >
+          <Shuffle size={18} />
+          <span>Random</span>
+        </button>
+        <button
+          class:active={settings.orderMode === 'sequential'}
+          class="toggle-icon-button"
+          type="button"
+          aria-pressed={settings.orderMode === 'sequential'}
+          on:click={() => updateSetting('orderMode', 'sequential')}
+        >
+          <ListOrdered size={18} />
+          <span>Sequential</span>
+        </button>
+      </div>
     </Card>
 
     <Card class="settings-grid">
@@ -354,37 +348,39 @@
         />
       </label>
 
-      <label class="setting-row">
-        <span>Display duration hint (seconds)</span>
-        <input
-          min="5"
-          max="120"
-          type="number"
-          bind:value={settings.notificationDisplaySeconds}
-          on:change={persistSettings}
-        />
-      </label>
-
       <p class="help-text">
         Bật notification để service worker tạo alarm theo interval đã cấu hình; thay đổi interval sẽ tự cập nhật alarm đang chạy.
-        Chrome Notifications API không đảm bảo thời lượng hiển thị cố định; hệ điều hành có thể tự quyết định.
-        MVP lưu giá trị duration để service worker có thể dùng làm hint hoặc tự clear notification khi phù hợp.
+        Thời lượng hiển thị notification do Chrome và hệ điều hành tự xử lý.
       </p>
     </Card>
 
     <Card class="settings-grid">
       <div class="section-heading">
-        <h2><SunMoon size={20} /> Appearance</h2>
+        <h2><Sun size={20} /> Appearance</h2>
       </div>
 
-      <label class="setting-row">
-        <span>Theme</span>
-        <select bind:value={settings.theme} on:change={persistSettings}>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-          <option value="system">System</option>
-        </select>
-      </label>
+      <div class="segmented-toggle" role="group" aria-label="Theme">
+        <button
+          class:active={settings.theme === 'light'}
+          class="toggle-icon-button"
+          type="button"
+          aria-pressed={settings.theme === 'light'}
+          on:click={() => updateSetting('theme', 'light')}
+        >
+          <Sun size={18} />
+          <span>Light</span>
+        </button>
+        <button
+          class:active={settings.theme === 'dark'}
+          class="toggle-icon-button"
+          type="button"
+          aria-pressed={settings.theme === 'dark'}
+          on:click={() => updateSetting('theme', 'dark')}
+        >
+          <Moon size={18} />
+          <span>Dark</span>
+        </button>
+      </div>
     </Card>
 
     <Card class="settings-grid">
