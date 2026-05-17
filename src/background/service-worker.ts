@@ -18,7 +18,7 @@ const LEGACY_PAUSED_KEY = "jlptNotificationPaused";
 
 const CATEGORY_LABEL_KEYS: Record<Flashcard["category"], Parameters<typeof translate>[1]> = {
   gramma: "categoryGrammar",
-  locabulary: "categoryVocabulary",
+  vocabulary: "categoryVocabulary",
   kanji: "categoryKanji",
   reading: "categoryReading",
   listening: "categoryListening",

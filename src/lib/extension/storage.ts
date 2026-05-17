@@ -61,7 +61,7 @@ const STORAGE_KEYS: Array<keyof StorageSnapshot> = [
 export const DEFAULT_SETTINGS: UserSettings = {
   dailyGoal: 20,
   selectedLevels: ['n2'],
-  enabledCategories: ['locabulary', 'kanji', 'gramma'],
+  enabledCategories: ['vocabulary', 'kanji', 'gramma'],
   theme: 'light',
   notificationIntervalMinutes: DEFAULT_NOTIFICATION_INTERVAL_MINUTES,
   notificationEnabled: false,
@@ -252,7 +252,7 @@ function normalizeCategories(categories: unknown): FlashcardCategory[] {
   const normalized = categories
     .map((category) => normalizeCategory(category))
     .filter((category): category is FlashcardCategory =>
-      ['gramma', 'locabulary', 'kanji', 'reading', 'listening'].includes(category)
+      ['gramma', 'vocabulary', 'kanji', 'reading', 'listening'].includes(category)
     );
 
   return normalized.length > 0 ? Array.from(new Set(normalized)) : DEFAULT_SETTINGS.enabledCategories;
@@ -262,7 +262,7 @@ function normalizeCategory(category: unknown) {
   const normalized = String(category).toLowerCase();
 
   if (normalized === 'grammar') return 'gramma';
-  if (normalized === 'vocabulary') return 'locabulary';
+  if (normalized === 'vocabulary') return 'vocabulary';
 
   return normalized;
 }
