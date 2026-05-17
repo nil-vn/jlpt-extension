@@ -9,6 +9,11 @@ export type UserSettings = StudySettings & {
   revealAnswers: boolean;
 };
 
+export type NotificationIntervalOption = {
+  label: string;
+  minutes: number;
+};
+
 export type ExtensionState = {
   dataset: Flashcard[];
   currentIndex: number;
@@ -30,6 +35,15 @@ type StorageSnapshot = {
   jlptNotificationPaused?: boolean;
 };
 
+export const NOTIFICATION_INTERVAL_OPTIONS: NotificationIntervalOption[] = [
+  { label: '30 giây', minutes: 0.5 },
+  { label: '1 phút', minutes: 1 },
+  { label: '3 phút', minutes: 3 },
+  { label: '10 phút', minutes: 10 }
+];
+
+export const DEFAULT_NOTIFICATION_INTERVAL_MINUTES = 1;
+
 const EXTENSION_STATE_KEY = 'jlptExtensionState';
 const STORAGE_KEYS: Array<keyof StorageSnapshot> = [
   EXTENSION_STATE_KEY,
@@ -47,7 +61,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   selectedLevels: ['n2'],
   enabledCategories: ['locabulary', 'kanji', 'gramma'],
   theme: 'light',
-  notificationIntervalMinutes: 60,
+  notificationIntervalMinutes: DEFAULT_NOTIFICATION_INTERVAL_MINUTES,
   notificationEnabled: false,
   orderMode: 'sequential',
   revealAnswers: false
@@ -211,12 +225,7 @@ function normalizeSettings(settings: Partial<UserSettings> | undefined): UserSet
     selectedLevels: normalizeLevels(merged.selectedLevels),
     enabledCategories: normalizeCategories(merged.enabledCategories),
     theme: normalizeTheme(merged.theme),
-    notificationIntervalMinutes: clampNumber(
-      merged.notificationIntervalMinutes,
-      DEFAULT_SETTINGS.notificationIntervalMinutes,
-      1,
-      1440
-    ),
+    notificationIntervalMinutes: normalizeNotificationInterval(merged.notificationIntervalMinutes),
     notificationEnabled: Boolean(merged.notificationEnabled),
     orderMode: merged.orderMode === 'random' ? 'random' : 'sequential',
     revealAnswers: Boolean(merged.revealAnswers)
@@ -256,6 +265,15 @@ function normalizeCategory(category: unknown) {
 
 function normalizeTheme(theme: unknown): UserSettings['theme'] {
   return theme === 'dark' ? 'dark' : DEFAULT_SETTINGS.theme;
+}
+
+export function normalizeNotificationInterval(value: unknown) {
+  const parsed = Number(value);
+  const fallback = DEFAULT_SETTINGS.notificationIntervalMinutes;
+
+  if (!Number.isFinite(parsed)) return fallback;
+
+  return NOTIFICATION_INTERVAL_OPTIONS.some((option) => option.minutes === parsed) ? parsed : fallback;
 }
 
 function clampNumber(value: unknown, fallback: number, min: number, max: number) {

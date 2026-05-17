@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Bell, BellOff, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Eye, EyeOff, Settings, Sparkles } from '@lucide/svelte';
+  import { Bell, Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Eye, EyeOff, Settings, Sparkles } from '@lucide/svelte';
   import { onDestroy, onMount } from 'svelte';
   import '../app.css';
   import { LevelSelector, StudyCard } from '../lib/components';
@@ -53,7 +53,7 @@
   $: notificationButtonLabel = notificationPaused ? 'Resume notification' : 'Pause notification';
   $: notificationStatusLabel = notificationPaused
     ? 'Notifications đang tạm dừng cho tới khi bạn bật lại.'
-    : `Notifications đang bật mỗi ${storedSettings?.notificationIntervalMinutes ?? 60} phút.`;
+    : `Notifications đang bật mỗi ${formatNotificationInterval(storedSettings?.notificationIntervalMinutes)}.`;
 
   onMount(() => {
     void loadState();
@@ -166,12 +166,30 @@
   }
 
   function toggleNotifications() {
-    notificationPaused = !notificationPaused;
+    const nextPaused = !notificationPaused;
+    notificationPaused = nextPaused;
     storedSettings = { ...storedSettings, selectedLevels, orderMode: studyMode, notificationEnabled: !notificationPaused };
     void setNotificationPaused(notificationPaused).then((state) => {
       storedSettings = state.settings;
       notificationPaused = state.notificationPaused ?? !state.settings.notificationEnabled;
+
+      if (!notificationPaused) {
+        void showNotificationNow();
+      }
     });
+  }
+
+  function showNotificationNow() {
+    if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage) return Promise.resolve();
+
+    return chrome.runtime.sendMessage({ type: 'SHOW_STUDY_NOTIFICATION_NOW' });
+  }
+
+  function formatNotificationInterval(intervalMinutes: number | undefined) {
+    if (intervalMinutes === 0.5) return '30 giây';
+    if (intervalMinutes === 1) return '1 phút';
+
+    return `${intervalMinutes ?? 1} phút`;
   }
 
   function openOptionsPage() {
@@ -240,14 +258,20 @@
             Đánh dấu xem lại
           {/if}
         </Button>
-        <Button variant="outline" on:click={toggleNotifications} aria-pressed={!notificationPaused}>
-          {#if notificationPaused}
-            <Bell size={16} />
-          {:else}
-            <BellOff size={16} />
-          {/if}
-          {notificationButtonLabel}
-        </Button>
+        <label class="notification-toggle">
+          <span><Bell size={16} /> {notificationButtonLabel}</span>
+          <input
+            checked={!notificationPaused}
+            role="switch"
+            type="checkbox"
+            on:change={toggleNotifications}
+          />
+          <span class="ios-switch-track" aria-hidden="true">
+            <span class="ios-switch-icon ios-switch-icon--off">Off</span>
+            <span class="ios-switch-icon ios-switch-icon--on">On</span>
+            <span class="ios-switch-thumb"></span>
+          </span>
+        </label>
       </div>
 
       <p class="help-text">{notificationStatusLabel}</p>
