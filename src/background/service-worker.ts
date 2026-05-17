@@ -242,7 +242,7 @@ function normalizeIndex(index: number, length: number) {
 
 async function createNotification(notificationId: string, card: Flashcard) {
   const title = formatNotificationTitle(card);
-  const message = [`Nghĩa: ${card.mean}`, card.example]
+  const message = [card.mean, card.example]
     .filter(Boolean)
     .join("\n");
 
