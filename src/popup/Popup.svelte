@@ -286,7 +286,6 @@
   {:else if currentCard}
     <StudyCard card={currentCard} {revealed}>
       <div class="study-card-controls" slot="header-actions">
-        <Badge class="study-progress-badge" variant={showBookmarkedOnly ? 'success' : 'secondary'}>{studyProgressLabel}</Badge>
         <Button class="study-card-bookmark-button" variant={isBookmarked ? 'secondary' : 'outline'} size="sm" on:click={toggleBookmark} aria-pressed={isBookmarked}>
           {#if isBookmarked}
             <BookmarkCheck size={16} />
@@ -296,6 +295,7 @@
             Đánh dấu xem lại
           {/if}
         </Button>
+        <Badge class="study-progress-badge" variant={showBookmarkedOnly ? 'success' : 'secondary'}>{studyProgressLabel}</Badge>
       </div>
 
       <label class="note-field study-card__note" slot="footer">
