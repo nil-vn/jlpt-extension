@@ -1,6 +1,6 @@
 export type JlptLevel = 'n5' | 'n4' | 'n3' | 'n2' | 'n1';
 
-export type FlashcardCategory = 'gramma' | 'locabulary' | 'kanji' | 'reading' | 'listening';
+export type FlashcardCategory = 'gramma' | 'vocabulary' | 'kanji' | 'reading' | 'listening';
 
 export interface Flashcard {
   level: JlptLevel;
