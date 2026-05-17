@@ -540,6 +540,21 @@ textarea:focus-visible {
   flex: 1 1 auto;
 }
 
+.learning-pagination {
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+}
+
+.learning-pagination .ui-button {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-inline: 0.75rem;
+}
+
+.learning-pagination .ui-button:not(.ui-button--outline) {
+  flex: 1 1 auto;
+}
+
 .note-field textarea,
 .setting-row input,
 .setting-row select {
