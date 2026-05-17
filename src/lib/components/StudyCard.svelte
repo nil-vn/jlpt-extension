@@ -1,22 +1,14 @@
 <script lang="ts">
   import type { Flashcard } from '../types/flashcard';
 
-  type PlannedFlashcard = Omit<Partial<Flashcard>, 'level' | 'category' | 'example'> & {
+  type PlannedFlashcard = Partial<Flashcard> & {
     level?: string;
     category?: string;
-    name?: string;
-    mean?: string;
-    hiragana?: string;
-    image?: string | null;
-    audio?: string | null;
-    example?: string | null;
   };
 
   const categoryLabels: Record<string, string> = {
     gramma: 'Ngữ pháp',
-    grammar: 'Ngữ pháp',
     locabulary: 'Từ vựng',
-    vocabulary: 'Từ vựng',
     kanji: 'Kanji',
     reading: 'Đọc hiểu',
     listening: 'Nghe hiểu'
@@ -26,9 +18,10 @@
   export let revealed = false;
 
   $: categoryLabel = categoryLabels[String(card.category).toLowerCase()] ?? card.category;
-  $: cardName = card.name ?? card.prompt;
-  $: cardMeaning = card.mean ?? card.answer;
-  $: cardReading = card.hiragana ?? card.reading;
+  $: levelLabel = card.level ? card.level.toUpperCase() : '';
+  $: cardName = card.name ?? '';
+  $: cardMeaning = card.mean ?? '';
+  $: cardReading = card.hiragana ?? '';
 
   function playAudio() {
     if (!card.audio) return;
@@ -40,7 +33,7 @@
 
 <article class="study-card" aria-live="polite">
   <div class="study-card__meta">
-    <span>{card.level}</span>
+    <span>{levelLabel}</span>
     <span>{categoryLabel}</span>
   </div>
 

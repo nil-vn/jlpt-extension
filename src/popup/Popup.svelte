@@ -3,18 +3,12 @@
   import '../app.css';
   import { LevelSelector, StudyCard } from '../lib/components';
   import { starterFlashcards } from '../lib/data';
-  import type { Flashcard, JlptLevel } from '../lib/types/flashcard';
+  import { createFlashcardId, type Flashcard, type JlptLevel } from '../lib/types/flashcard';
 
   type StudyMode = 'sequential' | 'random';
-  type PlannedFlashcard = Omit<Partial<Flashcard>, 'level' | 'category' | 'example'> & {
+  type PlannedFlashcard = Flashcard & {
     level: string;
     category: string;
-    name?: string;
-    mean?: string;
-    hiragana?: string;
-    image?: string | null;
-    audio?: string | null;
-    example?: string | null;
   };
   type StoredStudySettings = {
     selectedLevels?: string[];
@@ -32,7 +26,7 @@
   };
 
   const NOTE_SAVE_DELAY_MS = 400;
-  const defaultSelectedLevels: JlptLevel[] = ['N5'];
+  const defaultSelectedLevels: JlptLevel[] = ['n5'];
 
   let dataset: PlannedFlashcard[] = [];
   let selectedLevels: JlptLevel[] = defaultSelectedLevels;
@@ -72,15 +66,11 @@
   }
 
   function normalizeLevel(level: string): JlptLevel {
-    return level.toUpperCase() as JlptLevel;
+    return level.toLowerCase() as JlptLevel;
   }
 
   function getCardId(card: PlannedFlashcard) {
-    if (card.id) return card.id;
-
-    return [card.level, card.category, card.name ?? card.prompt, card.hiragana ?? card.reading, card.mean ?? card.answer]
-      .map((part) => String(part ?? '').trim())
-      .join('|');
+    return createFlashcardId(card);
   }
 
   function readStorage(keys: Array<keyof StorageSnapshot>): Promise<StorageSnapshot> {
@@ -106,7 +96,7 @@
       'jlptNotificationPaused'
     ]);
 
-    dataset = stored.jlptDataset ?? stored.dataset ?? (hasChromeStorage() ? [] : (starterFlashcards as PlannedFlashcard[]));
+    dataset = stored.jlptDataset ?? stored.dataset ?? (hasChromeStorage() ? [] : starterFlashcards);
     selectedLevels = ((stored.jlptSettings?.selectedLevels ?? defaultSelectedLevels).map(normalizeLevel) as JlptLevel[]).filter(
       (level, index, levels) => levels.indexOf(level) === index
     );

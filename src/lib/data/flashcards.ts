@@ -2,29 +2,33 @@ import type { Flashcard } from '../types/flashcard';
 
 export const starterFlashcards: Flashcard[] = [
   {
-    id: 'n5-001',
-    level: 'N5',
-    category: 'vocabulary',
-    prompt: '水',
-    reading: 'みず',
-    answer: 'water',
+    level: 'n5',
+    category: 'locabulary',
+    name: '水',
+    hiragana: 'みず',
+    mean: 'water',
+    image: null,
+    audio: null,
     example: '水をください。'
   },
   {
-    id: 'n5-002',
-    level: 'N5',
-    category: 'grammar',
-    prompt: '〜です',
-    answer: 'polite copula: is/am/are',
+    level: 'n5',
+    category: 'gramma',
+    name: '〜です',
+    hiragana: '',
+    mean: 'polite copula: is/am/are',
+    image: null,
+    audio: null,
     example: '学生です。'
   },
   {
-    id: 'n4-001',
-    level: 'N4',
+    level: 'n4',
     category: 'kanji',
-    prompt: '駅',
-    reading: 'えき',
-    answer: 'station',
+    name: '駅',
+    hiragana: 'えき',
+    mean: 'station',
+    image: null,
+    audio: null,
     example: '駅で友だちに会います。'
   }
 ];
