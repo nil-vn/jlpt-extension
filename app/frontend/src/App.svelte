@@ -6,8 +6,12 @@
     FlashcardDTO,
     ImportResult,
     LibrarySummary,
+    StudySettingsDTO,
+    StudyStateDTO,
     ValidationError,
   } from '../bindings/github.com/nil-vn/jlpt-extension/app/models';
+  import LevelSelector from './lib/components/LevelSelector.svelte';
+  import StudyCard from './lib/components/StudyCard.svelte';
 
   type SelectedImportFile = {
     name: string;
@@ -17,6 +21,14 @@
     parseError: string | null;
   };
 
+  const categories = [
+    { value: 'gramma', label: 'Grammar' },
+    { value: 'vocabulary', label: 'Vocabulary' },
+    { value: 'kanji', label: 'Kanji' },
+    { value: 'reading', label: 'Reading' },
+    { value: 'listening', label: 'Listening' },
+  ];
+
   let status = $state<AppStatus | null>(null);
   let time = $state('Đang chờ event từ Wails...');
   let selectedFile = $state<SelectedImportFile | null>(null);
@@ -24,14 +36,17 @@
   let importResult = $state<ImportResult | null>(null);
   let library = $state<FlashcardDTO[]>([]);
   let summary = $state<LibrarySummary | null>(null);
+  let study = $state<StudyStateDTO | null>(null);
   let search = $state('');
   let isBusy = $state(false);
   let isDragging = $state(false);
   let errorMessage = $state<string | null>(null);
+  let successMessage = $state<string | null>(null);
 
   let canImport = $derived(selectedFile !== null && !isBusy);
   let latestResult = $derived(importResult ?? previewResult);
   let hasValidationErrors = $derived((latestResult?.errors?.length ?? 0) > 0);
+  let settings = $derived(study?.settings ?? null);
 
   const formatBytes = (size: number): string => {
     if (size < 1024) return `${size} B`;
@@ -42,6 +57,19 @@
   const validationLocation = (item: ValidationError): string => {
     const row = item.index === undefined || item.index === null ? 'File' : `Dòng ${item.index + 1}`;
     return item.field ? `${row} · ${item.field}` : row;
+  };
+
+  const runAction = async (action: () => Promise<void>): Promise<void> => {
+    isBusy = true;
+    errorMessage = null;
+    successMessage = null;
+    try {
+      await action();
+    } catch (error) {
+      errorMessage = error instanceof Error ? error.message : String(error);
+    } finally {
+      isBusy = false;
+    }
   };
 
   const loadStatus = async (): Promise<void> => {
@@ -57,12 +85,17 @@
     summary = librarySummary;
   };
 
+  const loadStudy = async (): Promise<void> => {
+    study = await AppService.GetStudyState();
+  };
+
   const refreshAll = async (): Promise<void> => {
-    await Promise.all([loadStatus(), loadLibrary()]);
+    await Promise.all([loadStatus(), loadLibrary(), loadStudy()]);
   };
 
   const readSelectedFile = async (file: File): Promise<void> => {
     errorMessage = null;
+    successMessage = null;
     previewResult = null;
     importResult = null;
 
@@ -92,35 +125,23 @@
 
   const previewImport = async (): Promise<void> => {
     if (!selectedFile) return;
-    isBusy = true;
-    errorMessage = null;
-    try {
-      previewResult = await AppService.PreviewImportJSON(selectedFile.name, selectedFile.content);
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : String(error);
-    } finally {
-      isBusy = false;
-    }
+    await runAction(async () => {
+      previewResult = await AppService.PreviewImportJSON(selectedFile!.name, selectedFile!.content);
+    });
   };
 
   const importFile = async (): Promise<void> => {
     if (!selectedFile) return;
-    isBusy = true;
-    errorMessage = null;
-    importResult = null;
-    try {
-      importResult = await AppService.ImportFlashcardsFromJSON(selectedFile.name, selectedFile.content, {
+    await runAction(async () => {
+      importResult = await AppService.ImportFlashcardsFromJSON(selectedFile!.name, selectedFile!.content, {
         replaceLibrary: false,
         dryRun: false,
       });
       if ((importResult.errors?.length ?? 0) === 0) {
         await refreshAll();
+        successMessage = 'Import thành công. Study, settings và Library đã refresh từ SQLite.';
       }
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : String(error);
-    } finally {
-      isBusy = false;
-    }
+    });
   };
 
   const handleInputChange = async (event: Event): Promise<void> => {
@@ -150,6 +171,58 @@
     await loadLibrary();
   };
 
+  const moveNext = async (): Promise<void> => {
+    await runAction(async () => {
+      study = await AppService.MoveNext();
+    });
+  };
+
+  const movePrevious = async (): Promise<void> => {
+    await runAction(async () => {
+      study = await AppService.MovePrevious();
+    });
+  };
+
+  const updateSettings = async (patch: Partial<StudySettingsDTO>): Promise<void> => {
+    if (!study) return;
+    await runAction(async () => {
+      study = await AppService.UpdateStudySettings({ ...study!.settings, ...patch });
+    });
+  };
+
+  const toggleCategory = async (category: string): Promise<void> => {
+    if (!settings) return;
+    const enabledCategories = settings.enabledCategories.includes(category)
+      ? settings.enabledCategories.filter((item) => item !== category)
+      : [...settings.enabledCategories, category];
+    await updateSettings({ enabledCategories });
+  };
+
+  const saveNote = async (note: string): Promise<void> => {
+    const cardID = study?.currentCard?.id;
+    if (!cardID) return;
+    await runAction(async () => {
+      const card = await AppService.SaveNote(cardID, note);
+      study = { ...study!, currentCard: card };
+      successMessage = 'Đã lưu note vào SQLite.';
+    });
+  };
+
+  const toggleBookmark = async (): Promise<void> => {
+    const cardID = study?.currentCard?.id;
+    if (!cardID) return;
+    await runAction(async () => {
+      const card = await AppService.ToggleBookmark(cardID);
+      study = { ...study!, currentCard: card };
+      await loadLibrary();
+      successMessage = card.bookmarked ? 'Đã bookmark card.' : 'Đã bỏ bookmark card.';
+    });
+  };
+
+  const revealCurrent = async (): Promise<void> => {
+    await updateSettings({ revealAnswers: true });
+  };
+
   refreshAll().catch((error: unknown) => {
     errorMessage = error instanceof Error ? error.message : String(error);
   });
@@ -162,10 +235,10 @@
 <main class="shell">
   <section class="hero">
     <div>
-      <p class="eyebrow">Milestone 3 · Desktop import UI</p>
-      <h1>Import JLPT JSON</h1>
+      <p class="eyebrow">Milestone 4 · Study UI parity</p>
+      <h1>JLPT Desktop Study</h1>
       <p class="lede">
-        Chọn hoặc kéo thả dataset JSON từ máy. Go backend sẽ validate schema, import vào SQLite và Library sẽ refresh ngay sau khi import thành công.
+        Import dataset JSON, học flashcard theo thứ tự hoặc random qua Go service, lưu bookmark/note và settings cơ bản vào SQLite.
       </p>
     </div>
     <div class="hero-stat" aria-label="Library total">
@@ -177,6 +250,90 @@
   {#if errorMessage}
     <section class="alert error" role="alert">{errorMessage}</section>
   {/if}
+  {#if successMessage}
+    <section class="alert success" role="status">{successMessage}</section>
+  {/if}
+
+  <section class="workspace study-workspace">
+    <article class="card study-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow muted">Study</p>
+          <h2>Flashcard hiện tại</h2>
+        </div>
+        <span class="pill">{(study?.currentIndex ?? -1) + 1}/{study?.totalCards ?? 0}</span>
+      </div>
+
+      <StudyCard
+        card={study?.currentCard ?? null}
+        revealAnswers={study?.settings.revealAnswers ?? false}
+        onreveal={revealCurrent}
+        ontogglebookmark={toggleBookmark}
+        onsavenote={saveNote}
+      />
+
+      <div class="actions study-actions">
+        <button type="button" class="secondary" disabled={isBusy || !study?.currentCard} onclick={movePrevious}>Previous</button>
+        <button type="button" disabled={isBusy || !study?.currentCard} onclick={moveNext}>Next</button>
+      </div>
+    </article>
+
+    <article class="card settings-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow muted">Settings</p>
+          <h2>Filter & mode</h2>
+        </div>
+        <span class="pill">SQLite</span>
+      </div>
+
+      {#if settings}
+        <div class="settings-stack">
+          <label>
+            <span>Study mode</span>
+            <div class="segmented">
+              <button type="button" class:active={settings.orderMode === 'sequential'} onclick={() => updateSettings({ orderMode: 'sequential' })}>Sequential</button>
+              <button type="button" class:active={settings.orderMode === 'random'} onclick={() => updateSettings({ orderMode: 'random' })}>Random</button>
+            </div>
+          </label>
+
+          <label>
+            <span>JLPT levels</span>
+            <LevelSelector selectedLevels={settings.selectedLevels} onchange={(selectedLevels) => updateSettings({ selectedLevels })} />
+          </label>
+
+          <label>
+            <span>Categories</span>
+            <div class="category-grid">
+              {#each categories as category}
+                <button
+                  type="button"
+                  class="chip"
+                  class:active={settings.enabledCategories.includes(category.value)}
+                  aria-pressed={settings.enabledCategories.includes(category.value)}
+                  onclick={() => toggleCategory(category.value)}
+                >
+                  {category.label}
+                </button>
+              {/each}
+            </div>
+          </label>
+
+          <label>
+            <span>Daily goal</span>
+            <input
+              type="number"
+              min="1"
+              value={settings.dailyGoal}
+              onchange={(event) => updateSettings({ dailyGoal: Number((event.currentTarget as HTMLInputElement).value) })}
+            />
+          </label>
+        </div>
+      {:else}
+        <p class="empty-state">Đang tải settings từ SQLite...</p>
+      {/if}
+    </article>
+  </section>
 
   <section class="workspace">
     <article class="card import-card">
@@ -219,12 +376,8 @@
       {/if}
 
       <div class="actions">
-        <button type="button" class="secondary" disabled={!selectedFile || isBusy} onclick={previewImport}>
-          Validate lại
-        </button>
-        <button type="button" disabled={!canImport} onclick={importFile}>
-          {isBusy ? 'Đang xử lý...' : 'Import vào Library'}
-        </button>
+        <button type="button" class="secondary" disabled={!selectedFile || isBusy} onclick={previewImport}>Validate lại</button>
+        <button type="button" disabled={!canImport} onclick={importFile}>{isBusy ? 'Đang xử lý...' : 'Import vào Library'}</button>
       </div>
     </article>
 
@@ -264,7 +417,7 @@
             <p class="inline-warning">Còn {latestResult.errors.length - 8} lỗi khác. Sửa file JSON rồi validate lại.</p>
           {/if}
         {:else if importResult}
-          <p class="success-message">Import thành công. Library bên dưới đã được refresh từ SQLite.</p>
+          <p class="success-message">Import thành công. Library và Study đã được refresh từ SQLite.</p>
         {:else}
           <p class="success-message">File hợp lệ. Bấm “Import vào Library” để ghi vào SQLite.</p>
         {/if}
@@ -300,12 +453,14 @@
           <article class="flashcard">
             <div class="flashcard-top">
               <span>{card.level.toUpperCase()}</span>
-              <span>{card.category}</span>
+              <span>{card.bookmarked ? '★' : ''} {card.category}</span>
             </div>
             <h3>{card.name}</h3>
             <p class="hiragana">{card.hiragana}</p>
             <p>{card.mean}</p>
-            {#if card.example}
+            {#if card.note}
+              <small>Note: {card.note}</small>
+            {:else if card.example}
               <small>{card.example}</small>
             {/if}
           </article>

@@ -167,3 +167,59 @@ func nullableStringPtr(value sql.NullString) *string {
 	}
 	return &value.String
 }
+
+func (r *Repository) SaveNote(ctx context.Context, cardID string, note string) error {
+	if _, found, err := r.Get(ctx, cardID); err != nil {
+		return err
+	} else if !found {
+		return fmt.Errorf("flashcard %q not found", cardID)
+	}
+	_, err := r.db.ExecContext(ctx, `INSERT INTO card_notes (card_id, note)
+VALUES (?, ?)
+ON CONFLICT(card_id) DO UPDATE SET note = excluded.note, updated_at = CURRENT_TIMESTAMP`, cardID, note)
+	if err != nil {
+		return fmt.Errorf("save note for flashcard %q: %w", cardID, err)
+	}
+	return nil
+}
+
+func (r *Repository) GetNote(ctx context.Context, cardID string) (string, error) {
+	var note string
+	if err := r.db.QueryRowContext(ctx, "SELECT note FROM card_notes WHERE card_id = ?", cardID).Scan(&note); err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+		return "", fmt.Errorf("get note for flashcard %q: %w", cardID, err)
+	}
+	return note, nil
+}
+
+func (r *Repository) ToggleBookmark(ctx context.Context, cardID string) (bool, error) {
+	if _, found, err := r.Get(ctx, cardID); err != nil {
+		return false, err
+	} else if !found {
+		return false, fmt.Errorf("flashcard %q not found", cardID)
+	}
+	bookmarked, err := r.IsBookmarked(ctx, cardID)
+	if err != nil {
+		return false, err
+	}
+	if bookmarked {
+		if _, err := r.db.ExecContext(ctx, "DELETE FROM card_bookmarks WHERE card_id = ?", cardID); err != nil {
+			return false, fmt.Errorf("remove bookmark for flashcard %q: %w", cardID, err)
+		}
+		return false, nil
+	}
+	if _, err := r.db.ExecContext(ctx, "INSERT INTO card_bookmarks (card_id) VALUES (?)", cardID); err != nil {
+		return false, fmt.Errorf("add bookmark for flashcard %q: %w", cardID, err)
+	}
+	return true, nil
+}
+
+func (r *Repository) IsBookmarked(ctx context.Context, cardID string) (bool, error) {
+	var exists int
+	if err := r.db.QueryRowContext(ctx, "SELECT EXISTS(SELECT 1 FROM card_bookmarks WHERE card_id = ?)", cardID).Scan(&exists); err != nil {
+		return false, fmt.Errorf("check bookmark for flashcard %q: %w", cardID, err)
+	}
+	return exists != 0, nil
+}

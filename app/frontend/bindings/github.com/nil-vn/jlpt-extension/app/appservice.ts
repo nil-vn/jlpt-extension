@@ -9,37 +9,75 @@ import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Cr
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
+const service = "main.AppService";
+
 export function Echo(message: string): $CancellablePromise<string> {
-    return $Call.ByID(1133556155, message);
+    return $Call.ByName(`${service}.Echo`, message);
+}
+
+export function GetStudyState(): $CancellablePromise<$models.StudyStateDTO> {
+    return $Call.ByName(`${service}.GetStudyState`).then(($result: any) => {
+        return $$createType5($result);
+    });
 }
 
 export function ImportFlashcardsFromJSON(filename: string, content: string, options: $models.ImportOptions): $CancellablePromise<$models.ImportResult> {
-    return $Call.ByID(2629060060, filename, content, options).then(($result: any) => {
+    return $Call.ByName(`${service}.ImportFlashcardsFromJSON`, filename, content, options).then(($result: any) => {
         return $$createType0($result);
     });
 }
 
 export function LibrarySummary(): $CancellablePromise<$models.LibrarySummary> {
-    return $Call.ByID(321587835).then(($result: any) => {
+    return $Call.ByName(`${service}.LibrarySummary`).then(($result: any) => {
         return $$createType1($result);
     });
 }
 
 export function ListFlashcards(filter: $models.FlashcardFilter): $CancellablePromise<$models.FlashcardDTO[]> {
-    return $Call.ByID(1199277611, filter).then(($result: any) => {
+    return $Call.ByName(`${service}.ListFlashcards`, filter).then(($result: any) => {
         return $$createType3($result);
     });
 }
 
+export function MoveNext(): $CancellablePromise<$models.StudyStateDTO> {
+    return $Call.ByName(`${service}.MoveNext`).then(($result: any) => {
+        return $$createType5($result);
+    });
+}
+
+export function MovePrevious(): $CancellablePromise<$models.StudyStateDTO> {
+    return $Call.ByName(`${service}.MovePrevious`).then(($result: any) => {
+        return $$createType5($result);
+    });
+}
+
 export function PreviewImportJSON(filename: string, content: string): $CancellablePromise<$models.ImportResult> {
-    return $Call.ByID(1814367721, filename, content).then(($result: any) => {
+    return $Call.ByName(`${service}.PreviewImportJSON`, filename, content).then(($result: any) => {
         return $$createType0($result);
     });
 }
 
+export function SaveNote(cardID: string, note: string): $CancellablePromise<$models.FlashcardDTO> {
+    return $Call.ByName(`${service}.SaveNote`, cardID, note).then(($result: any) => {
+        return $$createType2($result);
+    });
+}
+
 export function Status(): $CancellablePromise<$models.AppStatus> {
-    return $Call.ByID(838280468).then(($result: any) => {
+    return $Call.ByName(`${service}.Status`).then(($result: any) => {
         return $$createType4($result);
+    });
+}
+
+export function ToggleBookmark(cardID: string): $CancellablePromise<$models.FlashcardDTO> {
+    return $Call.ByName(`${service}.ToggleBookmark`, cardID).then(($result: any) => {
+        return $$createType2($result);
+    });
+}
+
+export function UpdateStudySettings(input: $models.StudySettingsDTO): $CancellablePromise<$models.StudyStateDTO> {
+    return $Call.ByName(`${service}.UpdateStudySettings`, input).then(($result: any) => {
+        return $$createType5($result);
     });
 }
 
@@ -49,3 +87,4 @@ const $$createType1 = $models.LibrarySummary.createFrom;
 const $$createType2 = $models.FlashcardDTO.createFrom;
 const $$createType3 = $Create.Array($$createType2);
 const $$createType4 = $models.AppStatus.createFrom;
+const $$createType5 = $models.StudyStateDTO.createFrom;
