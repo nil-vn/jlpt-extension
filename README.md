@@ -4,6 +4,7 @@
 4. Open config page
 5. Load data from `/data`
 6. Customize: make json data, for example:
+```json
 [{
       "level": "n2",
       "category": "vocabulary",
@@ -14,3 +15,4 @@
       "audio": null,
       "example": "兄（あに）が私（わたし）達（たち）一家（いっか）を支（ささ）えてくれている。"
   }, ...]
+  ```
