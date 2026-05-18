@@ -13,11 +13,39 @@ export function Echo(message: string): $CancellablePromise<string> {
     return $Call.ByID(1133556155, message);
 }
 
-export function Status(): $CancellablePromise<$models.AppStatus> {
-    return $Call.ByID(838280468).then(($result: any) => {
+export function ImportFlashcardsFromJSON(filename: string, content: string, options: $models.ImportOptions): $CancellablePromise<$models.ImportResult> {
+    return $Call.ByID(2629060060, filename, content, options).then(($result: any) => {
         return $$createType0($result);
     });
 }
 
+export function LibrarySummary(): $CancellablePromise<$models.LibrarySummary> {
+    return $Call.ByID(321587835).then(($result: any) => {
+        return $$createType1($result);
+    });
+}
+
+export function ListFlashcards(filter: $models.FlashcardFilter): $CancellablePromise<$models.FlashcardDTO[]> {
+    return $Call.ByID(1199277611, filter).then(($result: any) => {
+        return $$createType3($result);
+    });
+}
+
+export function PreviewImportJSON(filename: string, content: string): $CancellablePromise<$models.ImportResult> {
+    return $Call.ByID(1814367721, filename, content).then(($result: any) => {
+        return $$createType0($result);
+    });
+}
+
+export function Status(): $CancellablePromise<$models.AppStatus> {
+    return $Call.ByID(838280468).then(($result: any) => {
+        return $$createType4($result);
+    });
+}
+
 // Private type creation functions
-const $$createType0 = $models.AppStatus.createFrom;
+const $$createType0 = $models.ImportResult.createFrom;
+const $$createType1 = $models.LibrarySummary.createFrom;
+const $$createType2 = $models.FlashcardDTO.createFrom;
+const $$createType3 = $Create.Array($$createType2);
+const $$createType4 = $models.AppStatus.createFrom;

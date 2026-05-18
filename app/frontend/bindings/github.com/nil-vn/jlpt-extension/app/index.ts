@@ -7,5 +7,11 @@ export {
 };
 
 export {
-    AppStatus
+    AppStatus,
+    FlashcardDTO,
+    FlashcardFilter,
+    ImportOptions,
+    ImportResult,
+    LibrarySummary,
+    ValidationError
 } from "./models.js";
