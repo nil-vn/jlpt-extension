@@ -1,0 +1,10 @@
+{
+  "name": "JLPT Study Companion",
+  "frontend": {
+    "dir": ".",
+    "install": "npm install",
+    "build": "npm run build:wails",
+    "dev": "npm run dev:wails",
+    "devServerUrl": "http://localhost:5173"
+  }
+}
