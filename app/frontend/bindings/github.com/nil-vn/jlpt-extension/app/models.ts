@@ -6,44 +6,18 @@
 import { Create as $Create } from "@wailsio/runtime";
 
 export class AppStatus {
-    "name": string;
-    "runtime": string;
-    "frontend": string;
-    "storage": string;
-    "startedAt": string;
-    "importTarget": string;
-    "libraryCount": number;
+    "name" = "";
+    "runtime" = "";
+    "frontend" = "";
+    "storage" = "";
+    "startedAt" = "";
+    "importTarget" = "";
+    "libraryCount" = 0;
 
-    /** Creates a new AppStatus instance. */
     constructor($$source: Partial<AppStatus> = {}) {
-        if (!("name" in $$source)) {
-            this["name"] = "";
-        }
-        if (!("runtime" in $$source)) {
-            this["runtime"] = "";
-        }
-        if (!("frontend" in $$source)) {
-            this["frontend"] = "";
-        }
-        if (!("storage" in $$source)) {
-            this["storage"] = "";
-        }
-        if (!("startedAt" in $$source)) {
-            this["startedAt"] = "";
-        }
-        if (!("importTarget" in $$source)) {
-            this["importTarget"] = "";
-        }
-        if (!("libraryCount" in $$source)) {
-            this["libraryCount"] = 0;
-        }
-
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new AppStatus instance from a string or object.
-     */
     static createFrom($$source: any = {}): AppStatus {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new AppStatus($$parsedSource as Partial<AppStatus>);
@@ -51,52 +25,22 @@ export class AppStatus {
 }
 
 export class FlashcardDTO {
-    "id": string;
-    "level": string;
-    "category": string;
-    "name": string;
-    "mean": string;
-    "hiragana": string;
-    "image": string | null;
-    "audio": string | null;
-    "example": string | null;
+    "id" = "";
+    "level" = "";
+    "category" = "";
+    "name" = "";
+    "mean" = "";
+    "hiragana" = "";
+    "image": string | null = null;
+    "audio": string | null = null;
+    "example": string | null = null;
+    "note" = "";
+    "bookmarked" = false;
 
-    /** Creates a new FlashcardDTO instance. */
     constructor($$source: Partial<FlashcardDTO> = {}) {
-        if (!("id" in $$source)) {
-            this["id"] = "";
-        }
-        if (!("level" in $$source)) {
-            this["level"] = "";
-        }
-        if (!("category" in $$source)) {
-            this["category"] = "";
-        }
-        if (!("name" in $$source)) {
-            this["name"] = "";
-        }
-        if (!("mean" in $$source)) {
-            this["mean"] = "";
-        }
-        if (!("hiragana" in $$source)) {
-            this["hiragana"] = "";
-        }
-        if (!("image" in $$source)) {
-            this["image"] = null;
-        }
-        if (!("audio" in $$source)) {
-            this["audio"] = null;
-        }
-        if (!("example" in $$source)) {
-            this["example"] = null;
-        }
-
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new FlashcardDTO instance from a string or object.
-     */
     static createFrom($$source: any = {}): FlashcardDTO {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new FlashcardDTO($$parsedSource as Partial<FlashcardDTO>);
@@ -104,36 +48,16 @@ export class FlashcardDTO {
 }
 
 export class FlashcardFilter {
-    "level": string;
-    "category": string;
-    "search": string;
-    "limit": number;
-    "offset": number;
+    "level" = "";
+    "category" = "";
+    "search" = "";
+    "limit" = 0;
+    "offset" = 0;
 
-    /** Creates a new FlashcardFilter instance. */
     constructor($$source: Partial<FlashcardFilter> = {}) {
-        if (!("level" in $$source)) {
-            this["level"] = "";
-        }
-        if (!("category" in $$source)) {
-            this["category"] = "";
-        }
-        if (!("search" in $$source)) {
-            this["search"] = "";
-        }
-        if (!("limit" in $$source)) {
-            this["limit"] = 0;
-        }
-        if (!("offset" in $$source)) {
-            this["offset"] = 0;
-        }
-
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new FlashcardFilter instance from a string or object.
-     */
     static createFrom($$source: any = {}): FlashcardFilter {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new FlashcardFilter($$parsedSource as Partial<FlashcardFilter>);
@@ -141,24 +65,13 @@ export class FlashcardFilter {
 }
 
 export class ImportOptions {
-    "replaceLibrary": boolean;
-    "dryRun": boolean;
+    "replaceLibrary" = false;
+    "dryRun" = false;
 
-    /** Creates a new ImportOptions instance. */
     constructor($$source: Partial<ImportOptions> = {}) {
-        if (!("replaceLibrary" in $$source)) {
-            this["replaceLibrary"] = false;
-        }
-        if (!("dryRun" in $$source)) {
-            this["dryRun"] = false;
-        }
-
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new ImportOptions instance from a string or object.
-     */
     static createFrom($$source: any = {}): ImportOptions {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new ImportOptions($$parsedSource as Partial<ImportOptions>);
@@ -166,52 +79,23 @@ export class ImportOptions {
 }
 
 export class ImportResult {
-    "batchId": number;
-    "sourceSha256": string;
-    "totalRows": number;
-    "validRows": number;
-    "invalidRows": number;
-    "inserted": number;
-    "updated": number;
-    "errors": ValidationError[];
+    "batchId" = 0;
+    "sourceSha256" = "";
+    "totalRows" = 0;
+    "validRows" = 0;
+    "invalidRows" = 0;
+    "inserted" = 0;
+    "updated" = 0;
+    "errors": ValidationError[] = [];
 
-    /** Creates a new ImportResult instance. */
     constructor($$source: Partial<ImportResult> = {}) {
-        if (!("batchId" in $$source)) {
-            this["batchId"] = 0;
-        }
-        if (!("sourceSha256" in $$source)) {
-            this["sourceSha256"] = "";
-        }
-        if (!("totalRows" in $$source)) {
-            this["totalRows"] = 0;
-        }
-        if (!("validRows" in $$source)) {
-            this["validRows"] = 0;
-        }
-        if (!("invalidRows" in $$source)) {
-            this["invalidRows"] = 0;
-        }
-        if (!("inserted" in $$source)) {
-            this["inserted"] = 0;
-        }
-        if (!("updated" in $$source)) {
-            this["updated"] = 0;
-        }
-        if (!("errors" in $$source)) {
-            this["errors"] = [];
-        }
-
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new ImportResult instance from a string or object.
-     */
     static createFrom($$source: any = {}): ImportResult {
         const $$createField7_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("errors" in $$parsedSource) {
+        if ($$parsedSource && "errors" in $$parsedSource) {
             $$parsedSource["errors"] = $$createField7_0($$parsedSource["errors"]);
         }
         return new ImportResult($$parsedSource as Partial<ImportResult>);
@@ -219,55 +103,72 @@ export class ImportResult {
 }
 
 export class LibrarySummary {
-    "total": number;
-    "shown": number;
-    "byLevel": { [_ in string]?: number };
+    "total" = 0;
+    "shown" = 0;
+    "byLevel": { [_ in string]?: number } = {};
 
-    /** Creates a new LibrarySummary instance. */
     constructor($$source: Partial<LibrarySummary> = {}) {
-        if (!("total" in $$source)) {
-            this["total"] = 0;
-        }
-        if (!("shown" in $$source)) {
-            this["shown"] = 0;
-        }
-        if (!("byLevel" in $$source)) {
-            this["byLevel"] = {};
-        }
-
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new LibrarySummary instance from a string or object.
-     */
     static createFrom($$source: any = {}): LibrarySummary {
         const $$createField2_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("byLevel" in $$parsedSource) {
+        if ($$parsedSource && "byLevel" in $$parsedSource) {
             $$parsedSource["byLevel"] = $$createField2_0($$parsedSource["byLevel"]);
         }
         return new LibrarySummary($$parsedSource as Partial<LibrarySummary>);
     }
 }
 
-export class ValidationError {
-    "index"?: number | null;
-    "field"?: string;
-    "message": string;
+export class StudySettingsDTO {
+    "selectedLevels": string[] = [];
+    "enabledCategories": string[] = [];
+    "orderMode" = "sequential";
+    "revealAnswers" = false;
+    "dailyGoal" = 10;
 
-    /** Creates a new ValidationError instance. */
-    constructor($$source: Partial<ValidationError> = {}) {
-        if (!("message" in $$source)) {
-            this["message"] = "";
-        }
-
+    constructor($$source: Partial<StudySettingsDTO> = {}) {
         Object.assign(this, $$source);
     }
 
-    /**
-     * Creates a new ValidationError instance from a string or object.
-     */
+    static createFrom($$source: any = {}): StudySettingsDTO {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new StudySettingsDTO($$parsedSource as Partial<StudySettingsDTO>);
+    }
+}
+
+export class StudyStateDTO {
+    "currentCard": FlashcardDTO | null = null;
+    "currentIndex" = -1;
+    "totalCards" = 0;
+    "settings": StudySettingsDTO = new StudySettingsDTO();
+
+    constructor($$source: Partial<StudyStateDTO> = {}) {
+        Object.assign(this, $$source);
+    }
+
+    static createFrom($$source: any = {}): StudyStateDTO {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ($$parsedSource && $$parsedSource["currentCard"] !== null && $$parsedSource["currentCard"] !== undefined) {
+            $$parsedSource["currentCard"] = FlashcardDTO.createFrom($$parsedSource["currentCard"]);
+        }
+        if ($$parsedSource && "settings" in $$parsedSource) {
+            $$parsedSource["settings"] = StudySettingsDTO.createFrom($$parsedSource["settings"]);
+        }
+        return new StudyStateDTO($$parsedSource as Partial<StudyStateDTO>);
+    }
+}
+
+export class ValidationError {
+    "index"?: number | null;
+    "field"?: string;
+    "message" = "";
+
+    constructor($$source: Partial<ValidationError> = {}) {
+        Object.assign(this, $$source);
+    }
+
     static createFrom($$source: any = {}): ValidationError {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new ValidationError($$parsedSource as Partial<ValidationError>);
@@ -277,4 +178,4 @@ export class ValidationError {
 // Private type creation functions
 const $$createType0 = ValidationError.createFrom;
 const $$createType1 = $Create.Array($$createType0);
-const $$createType2 = $Create.Map($Create.Any, $Create.Any);
+const $$createType2 = $Create.Map((source: any) => String(source), $Create.Any);

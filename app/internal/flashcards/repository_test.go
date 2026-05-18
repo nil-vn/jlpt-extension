@@ -63,4 +63,37 @@ func TestRepositoryUpsertGetListAndCount(t *testing.T) {
 	if len(cards) != 1 || cards[0].Mean != "a cat" {
 		t.Fatalf("List() = %+v, want updated card", cards)
 	}
+
+	if err := repo.SaveNote(ctx, card.ID, "Remember pitch accent"); err != nil {
+		t.Fatalf("SaveNote() error = %v", err)
+	}
+	note, err := repo.GetNote(ctx, card.ID)
+	if err != nil {
+		t.Fatalf("GetNote() error = %v", err)
+	}
+	if note != "Remember pitch accent" {
+		t.Fatalf("GetNote() = %q, want saved note", note)
+	}
+
+	bookmarked, err := repo.ToggleBookmark(ctx, card.ID)
+	if err != nil {
+		t.Fatalf("ToggleBookmark() add error = %v", err)
+	}
+	if !bookmarked {
+		t.Fatal("ToggleBookmark() = false, want true after add")
+	}
+	bookmarked, err = repo.IsBookmarked(ctx, card.ID)
+	if err != nil {
+		t.Fatalf("IsBookmarked() error = %v", err)
+	}
+	if !bookmarked {
+		t.Fatal("IsBookmarked() = false, want true")
+	}
+	bookmarked, err = repo.ToggleBookmark(ctx, card.ID)
+	if err != nil {
+		t.Fatalf("ToggleBookmark() remove error = %v", err)
+	}
+	if bookmarked {
+		t.Fatal("ToggleBookmark() = true, want false after remove")
+	}
 }
