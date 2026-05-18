@@ -1,0 +1,21 @@
+[
+  {
+    "level": "n0",
+    "category": "vocabulary",
+    "name": "猫",
+    "mean": "cat",
+    "hiragana": "ねこ",
+    "image": null,
+    "audio": null,
+    "example": null
+  },
+  {
+    "level": "n5",
+    "category": "vocabulary",
+    "name": "",
+    "hiragana": "いぬ",
+    "image": 42,
+    "audio": null,
+    "example": null
+  }
+]
