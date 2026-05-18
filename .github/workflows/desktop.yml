@@ -1,0 +1,90 @@
+name: desktop-phase-1
+
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - '.github/workflows/desktop.yml'
+      - 'docs/desktop-migration-plan.md'
+      - 'README.md'
+  push:
+    branches:
+      - work
+    paths:
+      - 'app/**'
+      - '.github/workflows/desktop.yml'
+      - 'docs/desktop-migration-plan.md'
+      - 'README.md'
+
+jobs:
+  wails-svelte-spike:
+    name: Wails v3 + Svelte 5 spike
+    runs-on: ubuntu-24.04
+    env:
+      WAILS_VERSION: v3.0.0-alpha.93
+      WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS: '1'
+      WEBKIT_DISABLE_DMABUF_RENDERER: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Linux Wails dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev dbus-x11 xvfb
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.1'
+          cache-dependency-path: app/go.sum
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.15.0'
+          cache: npm
+          cache-dependency-path: app/frontend/package-lock.json
+
+      - name: Install pinned Wails CLI
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@${WAILS_VERSION}
+
+      - name: Install frontend dependencies
+        working-directory: app/frontend
+        run: npm ci
+
+      - name: Generate Wails bindings
+        working-directory: app
+        run: wails3 generate bindings -ts -clean=true
+
+      - name: Check frontend
+        working-directory: app/frontend
+        run: npm run check
+
+      - name: Build frontend
+        working-directory: app/frontend
+        run: npm run build
+
+      - name: Test Go backend
+        working-directory: app
+        run: go test ./...
+
+      - name: Build Wails dev binary
+        working-directory: app
+        run: wails3 build DEV=true
+
+      - name: Smoke Wails dev startup under Xvfb
+        working-directory: app
+        run: |
+          set +e
+          timeout 45s xvfb-run -a wails3 dev -config ./build/config.yml -port 9245 2>&1 | tee /tmp/wails-dev.log
+          status=${PIPESTATUS[0]}
+          grep -q 'Connected to frontend dev server' /tmp/wails-dev.log
+          connected=$?
+          if [ "$connected" -ne 0 ]; then
+            exit "$status"
+          fi
+          # Wails dev is a long-running process. Once the frontend dev server connects,
+          # this smoke test has proven the dev loop starts; headless WebKit can later
+          # terminate because CI containers do not provide a real desktop session.
+          exit 0
