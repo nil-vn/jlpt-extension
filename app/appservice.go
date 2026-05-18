@@ -30,7 +30,7 @@ func (s *AppService) Status() AppStatus {
 		Name:         appDisplayName,
 		Runtime:      "Golang + Wails " + wailsVersion,
 		Frontend:     "Svelte " + svelteVersion + " + Vite",
-		Storage:      "SQLite3 planned for Milestone 1",
+		Storage:      "SQLite3 foundation with embedded migrations",
 		StartedAt:    s.startedAt.Format(time.RFC3339),
 		ImportTarget: "User-uploaded JLPT JSON datasets",
 	}

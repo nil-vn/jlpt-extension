@@ -1,6 +1,6 @@
 # JLPT Flashcard Desktop
 
-This is the Milestone 0 desktop migration spike for the JLPT flashcard app. It uses Golang, Wails v3 and Svelte 5, with SQLite3 planned as the canonical storage in Milestone 1.
+This is the Milestone 0 desktop migration spike for the JLPT flashcard app. It uses Golang, Wails v3 and Svelte 5, with SQLite3 available as the canonical storage foundation for Milestone 1.
 
 ## Toolchain
 
@@ -23,7 +23,7 @@ cd frontend
 npm ci
 cd ..
 wails3 generate bindings -ts -clean=true
-wails3 dev -config ./build/config.yml -port 9245
+GOFLAGS=-tags=desktop wails3 dev -config ./build/config.yml -port 9245
 ```
 
 The landing screen calls `AppService.Status` and `AppService.Echo` through generated Wails TypeScript bindings to prove the Svelte frontend can reach the Go backend.
@@ -33,6 +33,6 @@ The landing screen calls `AppService.Status` and `AppService.Echo` through gener
 ```bash
 cd frontend && npm run check && npm run build
 cd .. && go test ./...
-wails3 build DEV=true
-wails3 build
+GOFLAGS=-tags=desktop wails3 build DEV=true
+GOFLAGS=-tags=desktop wails3 build
 ```
