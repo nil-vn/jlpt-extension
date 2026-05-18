@@ -3,11 +3,13 @@
 package main
 
 import (
+	"context"
 	"embed"
 	_ "embed"
 	"log"
 	"time"
 
+	"github.com/nil-vn/jlpt-extension/app/internal/database"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -30,6 +32,12 @@ func init() {
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
 func main() {
+	ctx := context.Background()
+	db, err := database.Open(ctx, database.Options{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
@@ -40,7 +48,7 @@ func main() {
 		Name:        appDisplayName,
 		Description: "Desktop JLPT flashcard study app",
 		Services: []application.Service{
-			application.NewService(NewAppService()),
+			application.NewService(NewAppService(db)),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -77,7 +85,7 @@ func main() {
 	}()
 
 	// Run the application. This blocks until the application has been exited.
-	err := app.Run()
+	err = app.Run()
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {
