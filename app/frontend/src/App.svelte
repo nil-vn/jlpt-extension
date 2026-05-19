@@ -51,6 +51,7 @@
   let errorMessage = $state<string | null>(null);
   let successMessage = $state<string | null>(null);
   let lastNotification = $state<NotificationPayload | null>(null);
+  let replaceLibrary = $state(false);
 
   let canImport = $derived(selectedFile !== null && !isBusy);
   let latestResult = $derived(importResult ?? previewResult);
@@ -143,7 +144,7 @@
     if (!selectedFile) return;
     await runAction(async () => {
       importResult = await AppService.ImportFlashcardsFromJSON(selectedFile!.name, selectedFile!.content, {
-        replaceLibrary: false,
+        replaceLibrary,
         dryRun: false,
       });
       if ((importResult.errors?.length ?? 0) === 0) {
@@ -464,6 +465,11 @@
         {/if}
       {/if}
 
+      <label class="replace-toggle">
+        <input type="checkbox" bind:checked={replaceLibrary} disabled={isBusy} />
+        <span>Replace library (xóa card cũ không còn trong dataset mới)</span>
+      </label>
+
       <div class="actions">
         <button type="button" class="secondary" disabled={!selectedFile || isBusy} onclick={previewImport}>Validate lại</button>
         <button type="button" disabled={!canImport} onclick={importFile}>{isBusy ? 'Đang xử lý...' : 'Import vào Library'}</button>
@@ -562,3 +568,8 @@
 
   <footer>{time}</footer>
 </main>
+
+
+<style>
+  .replace-toggle { display: flex; gap: 0.5rem; align-items: center; font-size: 0.9rem; margin-top: 0.75rem; }
+</style>
