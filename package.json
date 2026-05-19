@@ -7,12 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "dev:wails": "vite --config vite.wails.config.ts",
-    "build:wails": "vite build --config vite.wails.config.ts",
-    "wails:dev": "wails3 dev",
-    "wails:build": "wails3 build",
-    "wails:build:windows": "wails3 build GOOS=windows"
+    "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@lucide/svelte": "^1.16.0",
