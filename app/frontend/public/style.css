@@ -588,3 +588,60 @@ textarea {
     align-items: stretch;
   }
 }
+
+select {
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #d9c9c8;
+  border-radius: 14px;
+  color: #172033;
+  background: #fff;
+  font: inherit;
+}
+
+.notification-settings {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgb(143 61 86 / 16%);
+  border-radius: 18px;
+  background: #fff8fa;
+}
+
+.notification-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notification-row small,
+.notification-preview {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+}
+
+.switch input {
+  width: 18px;
+  height: 18px;
+  min-width: auto;
+  padding: 0;
+}
+
+.compact-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compact-actions button {
+  padding: 9px 12px;
+}

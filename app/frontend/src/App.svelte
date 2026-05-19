@@ -9,6 +9,7 @@
     StudySettingsDTO,
     StudyStateDTO,
     ValidationError,
+    NotificationPayload,
   } from '../bindings/github.com/nil-vn/jlpt-extension/app/models';
   import LevelSelector from './lib/components/LevelSelector.svelte';
   import StudyCard from './lib/components/StudyCard.svelte';
@@ -20,6 +21,13 @@
     itemCount: number | null;
     parseError: string | null;
   };
+
+  const notificationIntervals = [
+    { label: '30 giây', minutes: 0.5 },
+    { label: '1 phút', minutes: 1 },
+    { label: '3 phút', minutes: 3 },
+    { label: '10 phút', minutes: 10 },
+  ];
 
   const categories = [
     { value: 'gramma', label: 'Grammar' },
@@ -42,6 +50,7 @@
   let isDragging = $state(false);
   let errorMessage = $state<string | null>(null);
   let successMessage = $state<string | null>(null);
+  let lastNotification = $state<NotificationPayload | null>(null);
 
   let canImport = $derived(selectedFile !== null && !isBusy);
   let latestResult = $derived(importResult ?? previewResult);
@@ -198,6 +207,42 @@
     await updateSettings({ enabledCategories });
   };
 
+  const toggleNotifications = async (enabled: boolean): Promise<void> => {
+    await updateSettings({ notificationEnabled: enabled, notificationPaused: !enabled });
+  };
+
+  const setNotificationPaused = async (paused: boolean): Promise<void> => {
+    await runAction(async () => {
+      study = await AppService.SetNotificationPaused(paused);
+      successMessage = paused ? 'Đã tạm dừng notification.' : 'Đã bật lại notification scheduler.';
+    });
+  };
+
+  const sendTestNotification = async (): Promise<void> => {
+    await runAction(async () => {
+      const payload = await AppService.ShowStudyNotificationNow();
+      await showDesktopNotification(payload);
+      await refreshAll();
+      successMessage = 'Đã gửi notification test từ Go scheduler.';
+    });
+  };
+
+  const showDesktopNotification = async (payload: NotificationPayload): Promise<void> => {
+    lastNotification = payload;
+    if (!('Notification' in window)) return;
+
+    let permission = Notification.permission;
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+    if (permission !== 'granted') return;
+
+    new Notification(payload.title, {
+      body: payload.message,
+      tag: payload.id,
+    });
+  };
+
   const saveNote = async (note: string): Promise<void> => {
     const cardID = study?.currentCard?.id;
     if (!cardID) return;
@@ -230,15 +275,19 @@
   Events.On('time', (timeValue: { data: string }) => {
     time = timeValue.data;
   });
+
+  Events.On('flashcard-notification', (event: { data: NotificationPayload }) => {
+    void showDesktopNotification(event.data);
+  });
 </script>
 
 <main class="shell">
   <section class="hero">
     <div>
-      <p class="eyebrow">Milestone 4 · Study UI parity</p>
+      <p class="eyebrow">Milestone 5 · Notifications desktop</p>
       <h1>JLPT Desktop Study</h1>
       <p class="lede">
-        Import dataset JSON, học flashcard theo thứ tự hoặc random qua Go service, lưu bookmark/note và settings cơ bản vào SQLite.
+        Import dataset JSON, học flashcard từ SQLite và để Go scheduler phát notification định kỳ khi app đang mở.
       </p>
     </div>
     <div class="hero-stat" aria-label="Library total">
@@ -328,6 +377,46 @@
               onchange={(event) => updateSettings({ dailyGoal: Number((event.currentTarget as HTMLInputElement).value) })}
             />
           </label>
+
+          <div class="notification-settings">
+            <div class="notification-row">
+              <div>
+                <strong>Notifications</strong>
+                <small>{settings.notificationEnabled && !settings.notificationPaused ? `Đang bật mỗi ${settings.notificationIntervalMinutes} phút` : 'Đang tắt hoặc tạm dừng'}</small>
+              </div>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  checked={settings.notificationEnabled && !settings.notificationPaused}
+                  onchange={(event) => toggleNotifications(event.currentTarget.checked)}
+                />
+                <span>Enable</span>
+              </label>
+            </div>
+
+            <label>
+              <span>Notification interval</span>
+              <select
+                value={settings.notificationIntervalMinutes}
+                disabled={!settings.notificationEnabled}
+                onchange={(event) => updateSettings({ notificationIntervalMinutes: Number((event.currentTarget as HTMLSelectElement).value) })}
+              >
+                {#each notificationIntervals as option}
+                  <option value={option.minutes}>{option.label}</option>
+                {/each}
+              </select>
+            </label>
+
+            <div class="actions compact-actions">
+              <button type="button" class="secondary" disabled={!settings.notificationEnabled || settings.notificationPaused || isBusy} onclick={() => setNotificationPaused(true)}>Pause</button>
+              <button type="button" class="secondary" disabled={!settings.notificationEnabled || !settings.notificationPaused || isBusy} onclick={() => setNotificationPaused(false)}>Resume</button>
+              <button type="button" disabled={!settings.notificationEnabled || settings.notificationPaused || isBusy || !study?.currentCard} onclick={sendTestNotification}>Test now</button>
+            </div>
+
+            {#if lastNotification}
+              <p class="notification-preview"><strong>{lastNotification.title}</strong><br />{lastNotification.message}</p>
+            {/if}
+          </div>
         </div>
       {:else}
         <p class="empty-state">Đang tải settings từ SQLite...</p>

@@ -63,6 +63,18 @@ export function SaveNote(cardID: string, note: string): $CancellablePromise<$mod
     });
 }
 
+export function SetNotificationPaused(paused: boolean): $CancellablePromise<$models.StudyStateDTO> {
+    return $Call.ByName(`${service}.SetNotificationPaused`, paused).then(($result: any) => {
+        return $$createType5($result);
+    });
+}
+
+export function ShowStudyNotificationNow(): $CancellablePromise<$models.NotificationPayload> {
+    return $Call.ByName(`${service}.ShowStudyNotificationNow`).then(($result: any) => {
+        return $$createType6($result);
+    });
+}
+
 export function Status(): $CancellablePromise<$models.AppStatus> {
     return $Call.ByName(`${service}.Status`).then(($result: any) => {
         return $$createType4($result);
@@ -88,3 +100,4 @@ const $$createType2 = $models.FlashcardDTO.createFrom;
 const $$createType3 = $Create.Array($$createType2);
 const $$createType4 = $models.AppStatus.createFrom;
 const $$createType5 = $models.StudyStateDTO.createFrom;
+const $$createType6 = $models.NotificationPayload.createFrom;
