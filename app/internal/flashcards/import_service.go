@@ -97,6 +97,12 @@ func (s *ImportService) ImportFlashcardsFromBytes(ctx context.Context, filename 
 	}
 	result.BatchID = batchID
 
+	if options.ReplaceLibrary {
+		if err := deleteFlashcardsNotInDataset(ctx, tx, cards); err != nil {
+			return ImportResult{}, err
+		}
+	}
+
 	for _, card := range cards {
 		card.SourceBatchID = &batchID
 		exists, err := flashcardExists(ctx, tx, card.ID)
@@ -322,6 +328,28 @@ ON CONFLICT(id) DO UPDATE SET
   updated_at = CURRENT_TIMESTAMP`, card.ID, card.Level, card.Category, card.Name, card.Mean, card.Hiragana, card.Image, card.Audio, card.Example, card.SourceBatchID)
 	if err != nil {
 		return fmt.Errorf("upsert flashcard %q: %w", card.ID, err)
+	}
+	return nil
+}
+
+
+func deleteFlashcardsNotInDataset(ctx context.Context, db importDB, cards []Flashcard) error {
+	if len(cards) == 0 {
+		if _, err := db.ExecContext(ctx, "DELETE FROM flashcards"); err != nil {
+			return fmt.Errorf("replace library delete flashcards: %w", err)
+		}
+		return nil
+	}
+
+	placeholders := make([]string, len(cards))
+	args := make([]any, len(cards))
+	for i, card := range cards {
+		placeholders[i] = "?"
+		args[i] = card.ID
+	}
+	query := fmt.Sprintf("DELETE FROM flashcards WHERE id NOT IN (%s)", strings.Join(placeholders, ","))
+	if _, err := db.ExecContext(ctx, query, args...); err != nil {
+		return fmt.Errorf("replace library delete removed cards: %w", err)
 	}
 	return nil
 }

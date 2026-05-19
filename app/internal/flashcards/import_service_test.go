@@ -121,6 +121,49 @@ func TestImportServiceUpsertsExistingCards(t *testing.T) {
 	assertCount(t, db, "import_batches", 2)
 }
 
+
+func TestImportServiceReplaceLibraryDeletesMissingCardsAndCascadesMetadata(t *testing.T) {
+	ctx := context.Background()
+	db, _, err := database.OpenInDir(ctx, t.TempDir())
+	if err != nil {
+		t.Fatalf("OpenInDir() error = %v", err)
+	}
+	defer db.Close()
+	service := flashcards.NewImportService(db)
+
+	content := readFixture(t, "valid.json")
+	first, err := service.ImportFlashcardsFromBytes(ctx, "valid.json", content, flashcards.ImportOptions{})
+	if err != nil {
+		t.Fatalf("first import error = %v", err)
+	}
+	if first.Inserted != 2 {
+		t.Fatalf("first import = %+v, want 2 inserted", first)
+	}
+
+	var keepCardID string
+	if err := db.QueryRowContext(ctx, "SELECT id FROM flashcards WHERE name = ? LIMIT 1" , "猫").Scan(&keepCardID); err != nil {
+		t.Fatalf("select keep card id: %v", err)
+	}
+	if _, err := db.ExecContext(ctx, "INSERT INTO card_notes(card_id, note) VALUES(?, ?)", keepCardID, "keep"); err != nil {
+		t.Fatalf("insert note: %v", err)
+	}
+	if _, err := db.ExecContext(ctx, "INSERT INTO card_bookmarks(card_id) VALUES(?)", keepCardID); err != nil {
+		t.Fatalf("insert bookmark: %v", err)
+	}
+
+	secondContent := []byte(`[{"level":"n5","category":"vocabulary","name":"猫","mean":"cat","hiragana":"ねこ","image":null,"audio":null,"example":"猫がいます。"}]`)
+	second, err := service.ImportFlashcardsFromBytes(ctx, "replace.json", secondContent, flashcards.ImportOptions{ReplaceLibrary: true})
+	if err != nil {
+		t.Fatalf("replace import error = %v", err)
+	}
+	if second.Inserted != 0 || second.Updated != 1 {
+		t.Fatalf("replace import = %+v, want 1 updated and 0 inserted", second)
+	}
+	assertCount(t, db, "flashcards", 1)
+	assertCount(t, db, "card_notes", 1)
+	assertCount(t, db, "card_bookmarks", 1)
+}
+
 func TestImportServiceImportsRepositoryN2Dataset(t *testing.T) {
 	ctx := context.Background()
 	db, _, err := database.OpenInDir(ctx, t.TempDir())
