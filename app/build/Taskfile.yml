@@ -179,9 +179,17 @@ tasks:
       - wails3 generate bindings -f '{{.BUILD_FLAGS}}' -clean=true -ts
 
   generate:icons:
-    summary: Skips generated icon assets in source control for the desktop spike.
+    summary: Generates ignored raster icon assets from the reviewed SVG source.
+    sources:
+      - build/assets/appicon.svg
+      - scripts/generate-app-icons.py
+    generates:
+      - build/generated/appicon.png
+      - build/windows/icon.ico
+      - build/darwin/icons.icns
     cmds:
-      - echo "Skipping icon generation for the Milestone 0 spike; packaging assets will be added as reviewed source files later."
+      - python3 scripts/generate-app-icons.py
+      - wails3 generate icons -input build/generated/appicon.png -windowsfilename build/windows/icon.ico -macfilename build/darwin/icons.icns
 
   dev:frontend:
     summary: Runs the frontend in development mode

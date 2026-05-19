@@ -5,9 +5,14 @@
 // @ts-ignore: Unused imports
 import type { Events } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import type * as notifications$0 from "../../../../nil-vn/jlpt-extension/app/internal/notifications/models.js";
+
 declare module "@wailsio/runtime" {
     namespace Events {
         interface CustomEvents {
+            "flashcard-notification": notifications$0.Payload;
             "time": string;
         }
     }

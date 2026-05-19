@@ -23,3 +23,4 @@ Migration planning for the Golang + Wails v3 + Svelte 5 desktop app is documente
 
 Phase 1 Wails v3 + Svelte 5 spike notes are documented in [`docs/desktop-phase-1.md`](docs/desktop-phase-1.md).
 
+Desktop release and extension migration instructions are documented in [`docs/desktop-release.md`](docs/desktop-release.md).
