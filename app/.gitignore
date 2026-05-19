@@ -18,3 +18,5 @@ build/windows/info.json
 build/windows/msix/
 build/windows/nsis/
 build/windows/wails.exe.manifest
+build/generated/
+build/appicon.png

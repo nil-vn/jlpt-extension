@@ -57,3 +57,15 @@ tasks:
     summary: Builds and runs the Docker image
     cmds:
       - task: common:run:docker
+
+  release:linux:tar:
+    summary: Builds and archives a Linux desktop release tarball with install/migration docs
+    cmds:
+      - ./scripts/package-release.sh
+
+  smoke:release:
+    summary: Smoke-tests a release tarball by extracting, user-installing, linking, and importing JSON
+    cmds:
+      - ./scripts/smoke-release.sh {{.ARTIFACT}}
+    vars:
+      ARTIFACT: '{{.ARTIFACT}}'

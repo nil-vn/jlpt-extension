@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="JLPT Flashcard Desktop icon">
+  <defs>
+    <linearGradient id="bg" x1="128" y1="96" x2="896" y2="928" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f97316"/>
+      <stop offset="0.52" stop-color="#ef4444"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="card" x1="268" y1="192" x2="756" y2="832" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7ed"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect x="252" y="180" width="520" height="664" rx="72" fill="#1f2937" opacity="0.2" transform="rotate(8 512 512)"/>
+  <rect x="228" y="164" width="520" height="664" rx="72" fill="url(#card)"/>
+  <path d="M328 292h320" stroke="#f97316" stroke-width="42" stroke-linecap="round"/>
+  <path d="M328 422h240" stroke="#f97316" stroke-width="34" stroke-linecap="round" opacity="0.72"/>
+  <path d="M328 724h320" stroke="#7c3aed" stroke-width="42" stroke-linecap="round"/>
+  <text x="512" y="625" text-anchor="middle" font-family="Noto Sans JP, Hiragino Sans, sans-serif" font-size="180" font-weight="800" fill="#111827">日</text>
+</svg>

@@ -13,5 +13,8 @@ export {
     ImportOptions,
     ImportResult,
     LibrarySummary,
+    NotificationPayload,
+    StudySettingsDTO,
+    StudyStateDTO,
     ValidationError
 } from "./models.js";
