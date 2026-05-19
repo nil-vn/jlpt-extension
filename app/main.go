@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/nil-vn/jlpt-extension/app/internal/database"
+	"github.com/nil-vn/jlpt-extension/app/internal/notifications"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -26,6 +27,16 @@ func init() {
 	// This is not required, but the binding generator will pick up registered events
 	// and provide a strongly typed JS/TS API for them.
 	application.RegisterEvent[string]("time")
+	application.RegisterEvent[notifications.Payload]("flashcard-notification")
+}
+
+type eventNotifier struct {
+	emit func(string, ...any) bool
+}
+
+func (n eventNotifier) ShowFlashcard(_ context.Context, payload notifications.Payload) error {
+	n.emit("flashcard-notification", payload)
+	return nil
 }
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
@@ -47,9 +58,6 @@ func main() {
 	app := application.New(application.Options{
 		Name:        appDisplayName,
 		Description: "Desktop JLPT flashcard study app",
-		Services: []application.Service{
-			application.NewService(NewAppService(db)),
-		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -57,6 +65,11 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 	})
+
+	service := NewAppServiceWithNotifier(db, eventNotifier{emit: app.Event.Emit})
+	service.StartNotificationScheduler(ctx)
+	defer service.StopNotificationScheduler()
+	app.RegisterService(application.NewService(service))
 
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.

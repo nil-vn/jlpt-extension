@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/nil-vn/jlpt-extension/app/internal/flashcards"
+	"github.com/nil-vn/jlpt-extension/app/internal/notifications"
 	"github.com/nil-vn/jlpt-extension/app/internal/settings"
 	"github.com/nil-vn/jlpt-extension/app/internal/study"
 )
@@ -82,12 +83,19 @@ type ImportResult struct {
 }
 
 type StudySettingsDTO struct {
-	SelectedLevels    []string `json:"selectedLevels"`
-	EnabledCategories []string `json:"enabledCategories"`
-	OrderMode         string   `json:"orderMode"`
-	RevealAnswers     bool     `json:"revealAnswers"`
-	DailyGoal         int      `json:"dailyGoal"`
+	SelectedLevels                  []string `json:"selectedLevels"`
+	EnabledCategories               []string `json:"enabledCategories"`
+	OrderMode                       string   `json:"orderMode"`
+	RevealAnswers                   bool     `json:"revealAnswers"`
+	DailyGoal                       int      `json:"dailyGoal"`
+	NotificationEnabled             bool     `json:"notificationEnabled"`
+	NotificationPaused              bool     `json:"notificationPaused"`
+	NotificationIntervalMinutes     float64  `json:"notificationIntervalMinutes"`
+	LastNotificationStatus          string   `json:"lastNotificationStatus"`
+	LastNotificationStatusUpdatedAt string   `json:"lastNotificationStatusUpdatedAt"`
 }
+
+type NotificationPayload = notifications.Payload
 
 type StudyStateDTO struct {
 	CurrentCard  *FlashcardDTO    `json:"currentCard"`
@@ -102,17 +110,28 @@ type AppService struct {
 	repo         *flashcards.Repository
 	studyRepo    *study.Repository
 	settingsRepo *settings.Repository
+	scheduler    *notifications.Scheduler
 }
 
 func NewAppService(db *sql.DB) *AppService {
-	return &AppService{
+	return NewAppServiceWithNotifier(db, noopNotifier{})
+}
+
+func NewAppServiceWithNotifier(db *sql.DB, notifier notifications.Notifier) *AppService {
+	service := &AppService{
 		startedAt:    time.Now().UTC(),
 		importer:     flashcards.NewImportService(db),
 		repo:         flashcards.NewRepository(db),
 		studyRepo:    study.NewRepository(db),
 		settingsRepo: settings.NewRepository(db),
 	}
+	service.scheduler = notifications.NewScheduler(service, notifier)
+	return service
 }
+
+type noopNotifier struct{}
+
+func (noopNotifier) ShowFlashcard(context.Context, notifications.Payload) error { return nil }
 
 func (s *AppService) Status() (AppStatus, error) {
 	count, err := s.repo.Count(context.Background())
@@ -190,6 +209,52 @@ func (s *AppService) MoveNext() (StudyStateDTO, error) {
 
 func (s *AppService) MovePrevious() (StudyStateDTO, error) {
 	return s.studyState(context.Background(), "previous")
+}
+
+func (s *AppService) StartNotificationScheduler(ctx context.Context) {
+	s.scheduler.Start(ctx)
+}
+
+func (s *AppService) StopNotificationScheduler() {
+	s.scheduler.Stop()
+}
+
+func (s *AppService) SetNotificationPaused(paused bool) (StudyStateDTO, error) {
+	ctx := context.Background()
+	prefs, err := s.studySettings(ctx)
+	if err != nil {
+		return StudyStateDTO{}, err
+	}
+	prefs.NotificationPaused = paused
+	if paused {
+		prefs.LastNotificationStatus = "paused"
+	} else {
+		prefs.LastNotificationStatus = "enabled"
+	}
+	prefs.LastNotificationStatusUpdatedAt = time.Now().UTC().Format(time.RFC3339)
+	if err := settings.Set(ctx, s.settingsRepo, studyPreferencesKey, prefs); err != nil {
+		return StudyStateDTO{}, err
+	}
+	return s.studyState(ctx, "current")
+}
+
+func (s *AppService) ShowStudyNotificationNow() (NotificationPayload, error) {
+	ctx := context.Background()
+	prefs, err := s.studySettings(ctx)
+	if err != nil {
+		return NotificationPayload{}, err
+	}
+	if !prefs.NotificationEnabled || prefs.NotificationPaused {
+		return NotificationPayload{}, fmt.Errorf("notifications are disabled or paused")
+	}
+	payload, found, err := s.scheduler.ShowNow(ctx)
+	if err != nil {
+		return NotificationPayload{}, err
+	}
+	if !found {
+		return NotificationPayload{}, fmt.Errorf("no flashcards match the selected level/category")
+	}
+	return payload, nil
 }
 
 func (s *AppService) UpdateStudySettings(input StudySettingsDTO) (StudyStateDTO, error) {
@@ -343,6 +408,45 @@ func (s *AppService) studyCards(ctx context.Context, prefs StudySettingsDTO) ([]
 	return filtered, nil
 }
 
+func (s *AppService) NotificationSettings(ctx context.Context) (notifications.Settings, error) {
+	prefs, err := s.studySettings(ctx)
+	if err != nil {
+		return notifications.Settings{}, err
+	}
+	return notifications.Settings{
+		Enabled:         prefs.NotificationEnabled,
+		Paused:          prefs.NotificationPaused,
+		IntervalMinutes: prefs.NotificationIntervalMinutes,
+	}, nil
+}
+
+func (s *AppService) NextNotificationCard(ctx context.Context) (notifications.Flashcard, bool, error) {
+	state, err := s.studyState(ctx, "current")
+	if err != nil {
+		return notifications.Flashcard{}, false, err
+	}
+	if state.TotalCards == 0 || state.CurrentCard == nil {
+		return notifications.Flashcard{}, false, nil
+	}
+	card := toNotificationFlashcard(*state.CurrentCard)
+	if _, err := s.studyState(ctx, "next"); err != nil {
+		return notifications.Flashcard{}, false, err
+	}
+	return card, true, nil
+}
+
+func toNotificationFlashcard(card FlashcardDTO) notifications.Flashcard {
+	return notifications.Flashcard{
+		ID:       card.ID,
+		Level:    card.Level,
+		Category: card.Category,
+		Name:     card.Name,
+		Mean:     card.Mean,
+		Hiragana: card.Hiragana,
+		Example:  card.Example,
+	}
+}
+
 func (s *AppService) toFlashcardDTO(ctx context.Context, card flashcards.Flashcard) (FlashcardDTO, error) {
 	note, err := s.repo.GetNote(ctx, card.ID)
 	if err != nil {
@@ -385,28 +489,45 @@ func (s *AppService) importJSON(filename string, content string, options ImportO
 
 func defaultStudySettings() StudySettingsDTO {
 	return StudySettingsDTO{
-		SelectedLevels:    []string{"n5", "n4", "n3", "n2", "n1"},
-		EnabledCategories: []string{"gramma", "vocabulary", "kanji", "reading", "listening"},
-		OrderMode:         string(study.OrderModeSequential),
-		RevealAnswers:     false,
-		DailyGoal:         10,
+		SelectedLevels:              []string{"n5", "n4", "n3", "n2", "n1"},
+		EnabledCategories:           []string{"gramma", "vocabulary", "kanji", "reading", "listening"},
+		OrderMode:                   string(study.OrderModeSequential),
+		RevealAnswers:               false,
+		DailyGoal:                   10,
+		NotificationEnabled:         false,
+		NotificationPaused:          true,
+		NotificationIntervalMinutes: 1,
 	}
 }
 
 func sanitizeStudySettings(input StudySettingsDTO) StudySettingsDTO {
 	defaults := defaultStudySettings()
 	prefs := StudySettingsDTO{
-		SelectedLevels:    normalizeSelection(input.SelectedLevels, defaults.SelectedLevels, map[string]bool{"n5": true, "n4": true, "n3": true, "n2": true, "n1": true}),
-		EnabledCategories: normalizeSelection(input.EnabledCategories, defaults.EnabledCategories, map[string]bool{"gramma": true, "vocabulary": true, "kanji": true, "reading": true, "listening": true}),
-		OrderMode:         input.OrderMode,
-		RevealAnswers:     input.RevealAnswers,
-		DailyGoal:         input.DailyGoal,
+		SelectedLevels:                  normalizeSelection(input.SelectedLevels, defaults.SelectedLevels, map[string]bool{"n5": true, "n4": true, "n3": true, "n2": true, "n1": true}),
+		EnabledCategories:               normalizeSelection(input.EnabledCategories, defaults.EnabledCategories, map[string]bool{"gramma": true, "vocabulary": true, "kanji": true, "reading": true, "listening": true}),
+		OrderMode:                       input.OrderMode,
+		RevealAnswers:                   input.RevealAnswers,
+		DailyGoal:                       input.DailyGoal,
+		NotificationEnabled:             input.NotificationEnabled,
+		NotificationPaused:              input.NotificationPaused,
+		NotificationIntervalMinutes:     input.NotificationIntervalMinutes,
+		LastNotificationStatus:          strings.TrimSpace(input.LastNotificationStatus),
+		LastNotificationStatusUpdatedAt: strings.TrimSpace(input.LastNotificationStatusUpdatedAt),
 	}
 	if prefs.OrderMode != string(study.OrderModeRandom) {
 		prefs.OrderMode = string(study.OrderModeSequential)
 	}
 	if prefs.DailyGoal <= 0 {
 		prefs.DailyGoal = defaults.DailyGoal
+	}
+	if prefs.NotificationIntervalMinutes <= 0 {
+		prefs.NotificationIntervalMinutes = defaults.NotificationIntervalMinutes
+	}
+	if prefs.NotificationIntervalMinutes < 0.5 {
+		prefs.NotificationIntervalMinutes = 0.5
+	}
+	if !prefs.NotificationEnabled {
+		prefs.NotificationPaused = true
 	}
 	return prefs
 }

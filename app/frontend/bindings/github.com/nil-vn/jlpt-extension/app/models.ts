@@ -121,12 +121,56 @@ export class LibrarySummary {
     }
 }
 
+export class NotificationFlashcard {
+    "id" = "";
+    "level" = "";
+    "category" = "";
+    "name" = "";
+    "mean" = "";
+    "hiragana" = "";
+    "example": string | null = null;
+
+    constructor($$source: Partial<NotificationFlashcard> = {}) {
+        Object.assign(this, $$source);
+    }
+
+    static createFrom($$source: any = {}): NotificationFlashcard {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new NotificationFlashcard($$parsedSource as Partial<NotificationFlashcard>);
+    }
+}
+
+export class NotificationPayload {
+    "id" = "";
+    "title" = "";
+    "message" = "";
+    "card": NotificationFlashcard = new NotificationFlashcard();
+    "createdAt" = "";
+
+    constructor($$source: Partial<NotificationPayload> = {}) {
+        Object.assign(this, $$source);
+    }
+
+    static createFrom($$source: any = {}): NotificationPayload {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ($$parsedSource && "card" in $$parsedSource) {
+            $$parsedSource["card"] = NotificationFlashcard.createFrom($$parsedSource["card"]);
+        }
+        return new NotificationPayload($$parsedSource as Partial<NotificationPayload>);
+    }
+}
+
 export class StudySettingsDTO {
     "selectedLevels": string[] = [];
     "enabledCategories": string[] = [];
     "orderMode" = "sequential";
     "revealAnswers" = false;
     "dailyGoal" = 10;
+    "notificationEnabled" = false;
+    "notificationPaused" = true;
+    "notificationIntervalMinutes" = 1;
+    "lastNotificationStatus" = "";
+    "lastNotificationStatusUpdatedAt" = "";
 
     constructor($$source: Partial<StudySettingsDTO> = {}) {
         Object.assign(this, $$source);
