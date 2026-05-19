@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/nil-vn/jlpt-extension/app/internal/notifications"
 	"github.com/nil-vn/jlpt-extension/app/internal/settings"
 	"github.com/nil-vn/jlpt-extension/app/internal/study"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 const (
@@ -164,6 +166,35 @@ func (s *AppService) PreviewImportJSON(filename string, content string) (ImportR
 func (s *AppService) ImportFlashcardsFromJSON(filename string, content string, options ImportOptions) (ImportResult, error) {
 	options.DryRun = false
 	return s.importJSON(filename, content, options)
+}
+
+func (s *AppService) ImportFlashcardsFromFile(path string, options ImportOptions) (ImportResult, error) {
+	options.DryRun = false
+	return s.importer.ImportFlashcardsFromFile(context.Background(), strings.TrimSpace(path), flashcards.ImportOptions(options))
+}
+
+func (s *AppService) PickAndImportFlashcardsFile(options ImportOptions) (ImportResult, error) {
+	selectedPath, err := application.Get().Dialog.OpenFile().
+		SetTitle("Chọn file JLPT JSON").
+		SetMessage("Chọn file .json để import thư viện flashcard").
+		AddFilter("JSON files", "*.json").
+		PromptForSingleSelection()
+	if err != nil {
+		return ImportResult{}, fmt.Errorf("open file dialog: %w", err)
+	}
+	if strings.TrimSpace(selectedPath) == "" {
+		return ImportResult{}, fmt.Errorf("không có file nào được chọn")
+	}
+	info, err := os.Stat(selectedPath)
+	if err != nil {
+		return ImportResult{}, fmt.Errorf("stat import file: %w", err)
+	}
+	if info.Size() > flashcards.MaxImportFileSizeBytes {
+		return ImportResult{}, fmt.Errorf("import file size %d exceeds limit %d", info.Size(), flashcards.MaxImportFileSizeBytes)
+	}
+
+	options.DryRun = false
+	return s.importer.ImportFlashcardsFromFile(context.Background(), selectedPath, flashcards.ImportOptions(options))
 }
 
 func (s *AppService) ListFlashcards(filter FlashcardFilter) ([]FlashcardDTO, error) {

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/nil-vn/jlpt-extension/app/internal/database"
@@ -73,6 +75,30 @@ func TestAppServiceStudyNavigationSettingsNotesAndBookmarks(t *testing.T) {
 	}
 	if !card.Bookmarked {
 		t.Fatal("ToggleBookmark() bookmarked = false, want true")
+	}
+}
+
+func TestAppServiceImportFlashcardsFromFile(t *testing.T) {
+	ctx := context.Background()
+	db, _, err := database.OpenInDir(ctx, t.TempDir())
+	if err != nil {
+		t.Fatalf("OpenInDir() error = %v", err)
+	}
+	defer db.Close()
+
+	path := filepath.Join(t.TempDir(), "n5.json")
+	content := `[{"level":"n5","category":"vocabulary","name":"犬","mean":"dog","hiragana":"いぬ","image":"","audio":"","example":""}]`
+	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
+		t.Fatalf("WriteFile() error = %v", err)
+	}
+
+	service := NewAppService(db)
+	result, err := service.ImportFlashcardsFromFile(path, ImportOptions{})
+	if err != nil {
+		t.Fatalf("ImportFlashcardsFromFile() error = %v", err)
+	}
+	if result.Inserted != 1 || result.ValidRows != 1 || result.InvalidRows != 0 {
+		t.Fatalf("ImportFlashcardsFromFile() result = %+v", result)
 	}
 }
 
