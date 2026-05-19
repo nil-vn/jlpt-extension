@@ -37,7 +37,25 @@
     { value: 'listening', label: 'Listening' },
   ];
 
+
+  const routes = [
+    { key: 'study', label: 'Study' },
+    { key: 'import', label: 'Import' },
+    { key: 'library', label: 'Library' },
+    { key: 'settings', label: 'Settings' },
+  ] as const;
+
+  type RouteKey = (typeof routes)[number]['key'];
+  const isRoute = (value: string | null): value is RouteKey =>
+    value !== null && routes.some((route) => route.key === value);
+
+  const readRoute = (): RouteKey => {
+    const hashRoute = window.location.hash.replace('#', '').trim();
+    return isRoute(hashRoute) ? hashRoute : 'study';
+  };
+
   let status = $state<AppStatus | null>(null);
+  let activeRoute = $state<RouteKey>(readRoute());
   let time = $state('Đang chờ event từ Wails...');
   let selectedFile = $state<SelectedImportFile | null>(null);
   let previewResult = $state<ImportResult | null>(null);
@@ -280,6 +298,10 @@
   Events.On('flashcard-notification', (event: { data: NotificationPayload }) => {
     void showDesktopNotification(event.data);
   });
+
+  window.addEventListener('hashchange', () => {
+    activeRoute = readRoute();
+  });
 </script>
 
 <main class="shell">
@@ -304,8 +326,16 @@
     <section class="alert success" role="status">{successMessage}</section>
   {/if}
 
+
+  <nav class="route-tabs" aria-label="Desktop sections">
+    {#each routes as route}
+      <a class:active={activeRoute === route.key} href={`#${route.key}`}>{route.label}</a>
+    {/each}
+  </nav>
+
+  {#if activeRoute === 'study' || activeRoute === 'settings'}
   <section class="workspace study-workspace">
-    <article class="card study-panel">
+    <article class="card study-panel" hidden={activeRoute === "settings"}>
       <div class="section-heading">
         <div>
           <p class="eyebrow muted">Study</p>
@@ -328,7 +358,7 @@
       </div>
     </article>
 
-    <article class="card settings-panel">
+    <article class="card settings-panel" hidden={activeRoute === "study"}>
       <div class="section-heading">
         <div>
           <p class="eyebrow muted">Settings</p>
@@ -424,7 +454,9 @@
       {/if}
     </article>
   </section>
+  {/if}
 
+  {#if activeRoute === 'import'}
   <section class="workspace">
     <article class="card import-card">
       <div class="section-heading">
@@ -521,7 +553,9 @@
       {/if}
     </article>
   </section>
+  {/if}
 
+  {#if activeRoute === 'library'}
   <section class="card library-card">
     <div class="section-heading">
       <div>
@@ -565,11 +599,15 @@
       <p class="empty-state">Library đang trống. Import một file JSON hợp lệ để thấy card trong app.</p>
     {/if}
   </section>
+  {/if}
 
   <footer>{time}</footer>
 </main>
 
 
 <style>
+  .route-tabs { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .route-tabs a { text-decoration: none; color: #723047; background: #fff0f3; padding: 0.5rem 0.85rem; border-radius: 999px; font-weight: 700; }
+  .route-tabs a.active { background: #8f3d56; color: #fff; }
   .replace-toggle { display: flex; gap: 0.5rem; align-items: center; font-size: 0.9rem; margin-top: 0.75rem; }
 </style>
