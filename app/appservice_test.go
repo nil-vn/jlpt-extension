@@ -179,3 +179,40 @@ func TestAppServiceNotificationsSettingsPauseResumeAndContent(t *testing.T) {
 		t.Fatalf("NotificationPaused = true, want false")
 	}
 }
+
+func TestAppServiceOpenCardFromNotificationFlow(t *testing.T) {
+	ctx := context.Background()
+	db, _, err := database.OpenInDir(ctx, t.TempDir())
+	if err != nil {
+		t.Fatalf("OpenInDir() error = %v", err)
+	}
+	defer db.Close()
+
+	repo := flashcards.NewRepository(db)
+	cards := []flashcards.Flashcard{
+		{ID: "n5:vocabulary:inu", Level: flashcards.LevelN5, Category: flashcards.CategoryVocabulary, Name: "犬", Mean: "dog", Hiragana: "いぬ"},
+		{ID: "n5:vocabulary:neko", Level: flashcards.LevelN5, Category: flashcards.CategoryVocabulary, Name: "猫", Mean: "cat", Hiragana: "ねこ"},
+	}
+	for _, card := range cards {
+		if err := repo.Upsert(ctx, card); err != nil {
+			t.Fatalf("Upsert(%q) error = %v", card.ID, err)
+		}
+	}
+
+	service := NewAppService(db)
+	if _, err := service.UpdateStudySettings(StudySettingsDTO{
+		SelectedLevels:    []string{"n5"},
+		EnabledCategories: []string{"vocabulary"},
+		OrderMode:         "sequential",
+	}); err != nil {
+		t.Fatalf("UpdateStudySettings() error = %v", err)
+	}
+
+	state, err := service.OpenCard("n5:vocabulary:neko")
+	if err != nil {
+		t.Fatalf("OpenCard() error = %v", err)
+	}
+	if state.CurrentCard == nil || state.CurrentCard.ID != "n5:vocabulary:neko" {
+		t.Fatalf("OpenCard() current = %+v, want requested card", state.CurrentCard)
+	}
+}

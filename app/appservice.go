@@ -242,6 +242,41 @@ func (s *AppService) MovePrevious() (StudyStateDTO, error) {
 	return s.studyState(context.Background(), "previous")
 }
 
+func (s *AppService) OpenCard(cardID string) (StudyStateDTO, error) {
+	ctx := context.Background()
+	cardID = strings.TrimSpace(cardID)
+	if cardID == "" {
+		return StudyStateDTO{}, fmt.Errorf("cardID is required")
+	}
+	prefs, err := s.studySettings(ctx)
+	if err != nil {
+		return StudyStateDTO{}, err
+	}
+	cards, err := s.studyCards(ctx, prefs)
+	if err != nil {
+		return StudyStateDTO{}, err
+	}
+	index := findCardIndex(cards, &cardID)
+	if index < 0 {
+		return StudyStateDTO{}, fmt.Errorf("flashcard %q not found in current study filters", cardID)
+	}
+	state, err := s.studyRepo.Get(ctx)
+	if err != nil {
+		return StudyStateDTO{}, err
+	}
+	state.CurrentCardID = &cards[index].ID
+	state.OrderMode = study.OrderMode(prefs.OrderMode)
+	state.RevealAnswers = prefs.RevealAnswers
+	if err := s.studyRepo.Save(ctx, state); err != nil {
+		return StudyStateDTO{}, err
+	}
+	current, err := s.toFlashcardDTO(ctx, cards[index])
+	if err != nil {
+		return StudyStateDTO{}, err
+	}
+	return StudyStateDTO{CurrentCard: &current, CurrentIndex: index, TotalCards: len(cards), Settings: prefs}, nil
+}
+
 func (s *AppService) StartNotificationScheduler(ctx context.Context) {
 	s.scheduler.Start(ctx)
 }

@@ -256,9 +256,24 @@
     }
     if (permission !== 'granted') return;
 
-    new Notification(payload.title, {
+    const notification = new Notification(payload.title, {
       body: payload.message,
       tag: payload.id,
+    });
+    notification.onclick = () => {
+      void openCardFromNotification(payload.card.id);
+      notification.close();
+    };
+  };
+
+  const openCardFromNotification = async (cardID: string): Promise<void> => {
+    if (!cardID) return;
+    activeRoute = 'study';
+    window.location.hash = '#study';
+    window.focus();
+    await runAction(async () => {
+      study = await AppService.OpenCard(cardID);
+      successMessage = 'Đã mở card từ notification.';
     });
   };
 
